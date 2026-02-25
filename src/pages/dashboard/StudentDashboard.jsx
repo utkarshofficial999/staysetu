@@ -20,6 +20,7 @@ const StudentDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [propertyType, setPropertyType] = useState('all');
+    const [genderFilter, setGenderFilter] = useState('all');
     const [priceRange, setPriceRange] = useState(100000);
     const [stats, setStats] = useState({ saved: 0, viewed: 0 });
 
@@ -154,7 +155,12 @@ const StudentDashboard = () => {
             listing.location?.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesType = propertyType === 'all' || listing.type === propertyType;
         const matchesPrice = listing.price <= priceRange;
-        return matchesSearch && matchesType && matchesPrice;
+        let matchesGender = true;
+        if (genderFilter !== 'all') {
+            const genderValue = genderFilter === 'male' ? 'boys' : 'girls';
+            matchesGender = listing.gender_preference === genderValue || listing.gender_preference === 'any';
+        }
+        return matchesSearch && matchesType && matchesPrice && matchesGender;
     });
 
     const timeAgo = (dateStr) => {
@@ -277,6 +283,21 @@ const StudentDashboard = () => {
                                                 }`}
                                         >
                                             {type === 'all' ? 'All' : type}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="flex gap-2">
+                                    {[{ key: 'all', label: 'All' }, { key: 'male', label: 'Boys' }, { key: 'female', label: 'Girls' }].map(({ key, label }) => (
+                                        <button
+                                            key={key}
+                                            onClick={() => setGenderFilter(key)}
+                                            className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${genderFilter === key
+                                                ? 'bg-indigo-500 text-white shadow-md shadow-indigo-200'
+                                                : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-100'
+                                                }`}
+                                        >
+                                            {label}
                                         </button>
                                     ))}
                                 </div>
