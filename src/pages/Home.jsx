@@ -36,7 +36,7 @@ const Home = () => {
     }, []);
 
     return (
-        <div className="relative min-h-screen overflow-x-hidden bg-slate-50">
+        <div className="relative min-h-screen overflow-x-hidden bg-surface">
 
             {/* Hero Section */}
             <Hero />
@@ -54,8 +54,8 @@ const Home = () => {
                             <Link
                                 key={label}
                                 to={`/listings?type=${type}`}
-                                className="px-4 py-2 bg-white border border-slate-200/60 text-slate-600 rounded-xl text-[13px] font-medium transition-all duration-200 hover:border-plum-200 hover:text-plum-900 hover:bg-plum-50 hover:-translate-y-0.5"
-                                style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}
+                                className="px-5 py-2.5 bg-white/5 border border-white/10 text-slate-300 rounded-2xl text-[13px] font-medium transition-all duration-300 hover:border-plum-400/50 hover:text-white hover:bg-white/10 hover:-translate-y-0.5"
+                                style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
                             >
                                 {emoji} {label}
                             </Link>
@@ -65,14 +65,14 @@ const Home = () => {
             </section>
 
             {/* Featured Listings */}
-            <section className="py-12 relative z-10">
+            <section className="py-16 relative z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-10">
+                    <div className="text-center mb-12">
                         <span className="section-label mb-4 inline-block">Featured</span>
-                        <h2 className="section-title" style={{ fontFamily: 'Space Grotesk' }}>
+                        <h2 className="section-title text-white" style={{ fontFamily: 'Space Grotesk' }}>
                             Popular Stays
                         </h2>
-                        <p className="text-slate-500 font-normal text-base mt-2 max-w-lg mx-auto">
+                        <p className="text-slate-400 font-normal text-base mt-3 max-w-lg mx-auto">
                             Hand-picked, verified, and loved by thousands of students.
                         </p>
                     </div>
@@ -80,12 +80,12 @@ const Home = () => {
                     {loading ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                             {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="bg-white animate-pulse rounded-3xl" style={{ height: 360, border: '1px solid rgba(0,0,0,0.04)' }} />
+                                <div key={i} className="bg-white/5 animate-pulse rounded-3xl" style={{ height: 360, border: '1px solid rgba(255,255,255,0.05)' }} />
                             ))}
                         </div>
                     ) : featuredListings.length > 0 ? (
                         <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {featuredListings.map((listing) => (
                                     <PropertyCard key={listing.id} property={listing} />
                                 ))}
@@ -97,8 +97,8 @@ const Home = () => {
                             </div>
                         </>
                     ) : (
-                        <div className="text-center py-20 card-elevated rounded-[2rem] border border-dashed border-slate-200">
-                            <HomeIcon size={40} className="mx-auto text-slate-300 mb-4" />
+                        <div className="text-center py-20 card-elevated rounded-[2rem] border border-dashed border-white/10">
+                            <HomeIcon size={40} className="mx-auto text-slate-700 mb-4" />
                             <p className="text-slate-500 font-medium mb-6">No featured listings yet. Be the first!</p>
                             <Link to="/signup" className="btn-primary py-3 px-8">List Your Property</Link>
                         </div>
@@ -113,26 +113,26 @@ const Home = () => {
             <HowItWorks />
 
             {/* Why StaySetu */}
-            <section className="py-14 bg-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-mesh opacity-30 pointer-events-none" />
+            <section className="py-16 relative overflow-hidden bg-[#0c0a0c]">
+                <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-10">
+                    <div className="text-center mb-12">
                         <span className="section-label mb-4 inline-block">Why Us</span>
-                        <h2 className="section-title" style={{ fontFamily: 'Space Grotesk' }}>
+                        <h2 className="section-title text-white" style={{ fontFamily: 'Space Grotesk' }}>
                             Built for Students, by Students
                         </h2>
-                        <p className="text-slate-500 font-normal text-base mt-2 max-w-lg mx-auto">
+                        <p className="text-slate-400 font-normal text-base mt-3 max-w-lg mx-auto">
                             Everything you need to find the perfect stay, stress-free.
                         </p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {whys.map(({ icon: Icon, title, desc }, i) => (
-                            <div key={i} className="card-elevated p-7 group">
-                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"
-                                    style={{ background: 'linear-gradient(135deg, #3A1F3D, #524058)', boxShadow: '0 8px 20px -4px rgba(58,31,61,0.25)' }}>
+                            <div key={i} className="card-elevated p-8 group !bg-white/5 hover:!bg-white/[0.08]">
+                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
+                                    style={{ background: 'linear-gradient(135deg, #3A1F3D, #524058)', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.3)' }}>
                                     <Icon size={22} className="text-white" />
                                 </div>
-                                <h3 className="font-bold text-slate-900 mb-2 text-lg" style={{ fontFamily: 'Space Grotesk' }}>{title}</h3>
+                                <h3 className="font-bold text-white mb-3 text-lg" style={{ fontFamily: 'Space Grotesk' }}>{title}</h3>
                                 <p className="text-slate-400 text-sm leading-relaxed font-normal">{desc}</p>
                             </div>
                         ))}

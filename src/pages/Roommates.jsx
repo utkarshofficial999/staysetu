@@ -79,17 +79,17 @@ const Roommates = () => {
     });
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-24 pb-12">
+        <div className="min-h-screen bg-[#0a080a] pt-24 pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div>
                         <span className="section-label mb-4 block w-fit">Community</span>
-                        <h1 className="text-3xl md:text-4xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>
+                        <h1 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>
                             Find Roommates
                         </h1>
-                        <p className="text-slate-500 font-normal mt-2 max-w-md text-sm">
+                        <p className="text-slate-400 font-normal mt-2 max-w-md text-sm">
                             Connect with verified students looking for roommates near your college.
                         </p>
                     </div>
@@ -108,8 +108,8 @@ const Roommates = () => {
                 {showForm && (
                     <div className="card-elevated p-8 mb-10 animate-slide-up">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>Post Your Requirement</h2>
-                            <button onClick={() => setShowForm(false)} className="w-8 h-8 bg-slate-100 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors">
+                            <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>Post Your Requirement</h2>
+                            <button onClick={() => setShowForm(false)} className="w-8 h-8 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition-colors">
                                 <X size={16} />
                             </button>
                         </div>
@@ -123,23 +123,23 @@ const Roommates = () => {
 
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-2">Preferred Location</label>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Preferred Location</label>
                                 <input type="text" required className="input-field text-sm" placeholder="e.g. Alpha 1, Greater Noida" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-2">Budget (₹/month)</label>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Budget (₹/month)</label>
                                 <input type="number" required className="input-field text-sm" placeholder="5000" value={form.budget} onChange={e => setForm({ ...form, budget: e.target.value })} />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-2">College/University</label>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">College/University</label>
                                 <input type="text" required className="input-field text-sm" placeholder="Your college name" value={form.college} onChange={e => setForm({ ...form, college: e.target.value })} />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-2">WhatsApp Number</label>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">WhatsApp Number</label>
                                 <input type="tel" required className="input-field text-sm" placeholder="91XXXXXXXXXX" value={form.whatsapp} onChange={e => setForm({ ...form, whatsapp: e.target.value })} />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-2">Gender Preference</label>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Gender Preference</label>
                                 <select className="input-field text-sm cursor-pointer" value={form.gender_preference} onChange={e => setForm({ ...form, gender_preference: e.target.value })}>
                                     <option value="any">Any</option>
                                     <option value="male">Male</option>
@@ -147,11 +147,11 @@ const Roommates = () => {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-2">Move-in Date</label>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Move-in Date</label>
                                 <input type="date" className="input-field text-sm cursor-pointer" value={form.move_in_date} onChange={e => setForm({ ...form, move_in_date: e.target.value })} />
                             </div>
                             <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-slate-600 mb-2">Description</label>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
                                 <textarea rows={3} required className="input-field text-sm resize-none" placeholder="Tell a bit about yourself and what you're looking for..." value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
                             </div>
                             <div className="md:col-span-2">
@@ -182,7 +182,7 @@ const Roommates = () => {
                                 onClick={() => setFilterGender(g)}
                                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border ${filterGender === g
                                     ? 'bg-plum-50 text-plum-600 border-plum-200'
-                                    : 'bg-white text-slate-500 border-slate-200/60 hover:border-plum-200 hover:text-plum-500'
+                                    : 'bg-[#141114] text-slate-400 border-white/10/60 hover:border-plum-200 hover:text-plum-500'
                                     }`}
                             >
                                 {g === 'all' ? 'All' : g === 'male' ? 'Male' : 'Female'}
@@ -195,7 +195,7 @@ const Roommates = () => {
                 {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="bg-white rounded-3xl animate-pulse" style={{ height: 260, border: '1px solid rgba(0,0,0,0.04)' }} />
+                            <div key={i} className="bg-[#141114] rounded-3xl animate-pulse" style={{ height: 260, border: '1px solid rgba(0,0,0,0.04)' }} />
                         ))}
                     </div>
                 ) : filtered.length > 0 ? (
@@ -209,7 +209,7 @@ const Roommates = () => {
                                             {(req.name || 'U').charAt(0).toUpperCase()}
                                         </div>
                                         <div>
-                                            <h3 className="font-semibold text-slate-900 text-sm" style={{ fontFamily: 'Space Grotesk' }}>{req.name}</h3>
+                                            <h3 className="font-semibold text-white text-sm" style={{ fontFamily: 'Space Grotesk' }}>{req.name}</h3>
                                             {req.college && (
                                                 <p className="text-slate-400 text-xs flex items-center gap-1 mt-0.5">
                                                     <GraduationCap size={10} /> {req.college}
@@ -223,27 +223,27 @@ const Roommates = () => {
                                 </div>
 
                                 {/* Description */}
-                                <p className="text-slate-500 text-sm leading-relaxed mb-4 flex-1 line-clamp-2">{req.description}</p>
+                                <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-2">{req.description}</p>
 
                                 {/* Info pills */}
                                 <div className="flex flex-wrap gap-2 mb-4">
                                     {req.location && (
-                                        <span className="flex items-center gap-1.5 text-[11px] font-medium bg-slate-50 text-slate-500 border border-slate-100 px-2.5 py-1 rounded-lg">
+                                        <span className="flex items-center gap-1.5 text-[11px] font-medium bg-[#0a080a] text-slate-400 border border-white/5 px-2.5 py-1 rounded-lg">
                                             <MapPin size={10} className="text-plum-400" /> {req.location}
                                         </span>
                                     )}
                                     {req.budget && (
-                                        <span className="flex items-center gap-1 text-[11px] font-medium bg-slate-50 text-slate-500 border border-slate-100 px-2.5 py-1 rounded-lg">
+                                        <span className="flex items-center gap-1 text-[11px] font-medium bg-[#0a080a] text-slate-400 border border-white/5 px-2.5 py-1 rounded-lg">
                                             <IndianRupee size={10} className="text-plum-400" /> {req.budget?.toLocaleString()}/mo
                                         </span>
                                     )}
                                     {req.gender_preference !== 'any' && (
-                                        <span className="flex items-center gap-1 text-[11px] font-medium bg-slate-50 text-slate-500 border border-slate-100 px-2.5 py-1 rounded-lg">
+                                        <span className="flex items-center gap-1 text-[11px] font-medium bg-[#0a080a] text-slate-400 border border-white/5 px-2.5 py-1 rounded-lg">
                                             <User size={10} className="text-plum-400" /> {req.gender_preference}
                                         </span>
                                     )}
                                     {req.move_in_date && (
-                                        <span className="flex items-center gap-1 text-[11px] font-medium bg-slate-50 text-slate-500 border border-slate-100 px-2.5 py-1 rounded-lg">
+                                        <span className="flex items-center gap-1 text-[11px] font-medium bg-[#0a080a] text-slate-400 border border-white/5 px-2.5 py-1 rounded-lg">
                                             <Calendar size={10} className="text-plum-400" /> {new Date(req.move_in_date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
                                         </span>
                                     )}
@@ -264,11 +264,11 @@ const Roommates = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="card-elevated rounded-[2rem] p-16 text-center border border-dashed border-slate-200">
-                        <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-5 text-slate-300">
+                    <div className="card-elevated rounded-[2rem] p-16 text-center border border-dashed border-white/10">
+                        <div className="w-16 h-16 bg-[#0a080a] rounded-2xl flex items-center justify-center mx-auto mb-5 text-slate-300">
                             <Users size={32} />
                         </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-2" style={{ fontFamily: 'Space Grotesk' }}>No roommate requests yet</h3>
+                        <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk' }}>No roommate requests yet</h3>
                         <p className="text-slate-400 font-normal mb-6 text-sm">Be the first to post your requirement!</p>
                         {user && (
                             <button onClick={() => setShowForm(true)} className="btn-primary text-sm">

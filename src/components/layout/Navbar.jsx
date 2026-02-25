@@ -91,8 +91,8 @@ const Navbar = () => {
                                     key={link.name}
                                     to={link.path}
                                     className={`relative px-4 py-2 rounded-xl text-[13px] font-medium transition-all duration-200 ${isActive(link.path)
-                                        ? 'text-plum-900 bg-plum-50'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                                        ? 'text-plum-400 bg-plum-400/10'
+                                        : 'text-slate-400 hover:text-white hover:bg-white/5'
                                         }`}
                                 >
                                     {link.name}
@@ -106,12 +106,12 @@ const Navbar = () => {
                                 <div className="relative">
                                     <button
                                         onClick={() => setDropdownOpen(!dropdownOpen)}
-                                        className="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 pl-1.5 pr-3 py-1.5 rounded-full transition-all duration-200"
+                                        className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 pl-1.5 pr-3 py-1.5 rounded-full transition-all duration-200"
                                     >
                                         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-plum-800 to-plum-900 flex items-center justify-center text-white text-xs font-semibold">
                                             {(profile?.full_name || 'U').charAt(0).toUpperCase()}
                                         </div>
-                                        <span className="text-sm font-medium text-slate-700 max-w-[100px] truncate">
+                                        <span className="text-sm font-medium text-slate-200 max-w-[100px] truncate">
                                             {profile?.full_name?.split(' ')[0] || 'User'}
                                         </span>
                                         <ChevronDown size={14} className={`text-slate-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
@@ -121,11 +121,11 @@ const Navbar = () => {
                                     {dropdownOpen && (
                                         <>
                                             <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
-                                            <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-premium z-50 py-2 animate-fade-in origin-top-right">
+                                            <div className="absolute right-0 mt-2 w-56 bg-slate-900 border border-white/10 rounded-2xl shadow-premium z-50 py-2 animate-fade-in origin-top-right">
                                                 {/* User info */}
-                                                <div className="px-4 py-3 border-b border-slate-50">
-                                                    <p className="text-sm font-semibold text-slate-900 truncate">{profile?.full_name || user.email}</p>
-                                                    <p className="text-xs text-slate-400 truncate mt-0.5">{user.email}</p>
+                                                <div className="px-4 py-3 border-b border-white/5">
+                                                    <p className="text-sm font-semibold text-white truncate">{profile?.full_name || user.email}</p>
+                                                    <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
                                                     <span className={`inline-flex items-center gap-1 mt-2 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md ${roleBadge.bg} ${roleBadge.text}`}>
                                                         {role === 'admin' && <ShieldCheck size={10} />}
                                                         {roleBadge.label}
@@ -133,7 +133,7 @@ const Navbar = () => {
                                                 </div>
                                                 <Link
                                                     to={dashPath}
-                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
                                                     onClick={() => setDropdownOpen(false)}
                                                 >
                                                     <LayoutDashboard size={15} /> Dashboard
@@ -141,16 +141,16 @@ const Navbar = () => {
                                                 {role === 'admin' && (
                                                     <Link
                                                         to="/admin"
-                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
                                                         onClick={() => setDropdownOpen(false)}
                                                     >
                                                         <ShieldCheck size={15} /> Admin Panel
                                                     </Link>
                                                 )}
-                                                <div className="h-px bg-slate-100 my-1" />
+                                                <div className="h-px bg-white/5 my-1" />
                                                 <button
                                                     onClick={handleLogout}
-                                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
+                                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors"
                                                 >
                                                     <LogOut size={15} /> Log out
                                                 </button>
@@ -160,7 +160,7 @@ const Navbar = () => {
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
-                                    <Link to="/login" className="text-[13px] font-medium text-slate-500 hover:text-slate-900 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all">
+                                    <Link to="/login" className="text-[13px] font-medium text-slate-400 hover:text-white px-4 py-2 rounded-xl hover:bg-white/5 transition-all">
                                         Log in
                                     </Link>
                                     <Link to="/signup" className="btn-primary py-2 px-5 text-[13px]">
@@ -173,7 +173,7 @@ const Navbar = () => {
                         {/* Mobile hamburger */}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all"
+                            className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all"
                         >
                             {isOpen ? <X size={20} /> : <Menu size={20} />}
                         </button>
@@ -182,7 +182,7 @@ const Navbar = () => {
 
                 {/* Mobile dropdown */}
                 {isOpen && (
-                    <div className="md:hidden bg-white/95 backdrop-blur-2xl border-t border-slate-100/50 animate-fade-in">
+                    <div className="md:hidden bg-surface/95 backdrop-blur-2xl border-t border-white/5 animate-fade-in">
                         <div className="px-4 pt-2 pb-6 space-y-1">
                             {navLinks.map((link) => (
                                 <Link

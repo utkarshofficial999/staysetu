@@ -219,7 +219,7 @@ const OwnerDashboard = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+            <div className="min-h-screen flex items-center justify-center bg-[#0a080a]">
                 <div className="text-center">
                     <div className="w-10 h-10 border-3 border-plum-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-slate-400 font-normal text-sm">Loading dashboard...</p>
@@ -229,7 +229,7 @@ const OwnerDashboard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-20 pb-12">
+        <div className="min-h-screen bg-[#0a080a] pt-20 pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header */}
@@ -242,7 +242,7 @@ const OwnerDashboard = () => {
                                     <Building2 size={22} />
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h1 className="text-2xl md:text-3xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>
                                         Owner Dashboard
                                     </h1>
                                     <p className="text-slate-400 font-normal text-sm">
@@ -275,28 +275,28 @@ const OwnerDashboard = () => {
                                 style={{ boxShadow: '0 4px 12px -2px rgba(0,0,0,0.15)' }}>
                                 <stat.icon size={18} />
                             </div>
-                            <p className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>{stat.value}</p>
+                            <p className="text-2xl font-black text-white" style={{ fontFamily: 'Space Grotesk' }}>{stat.value}</p>
                             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</span>
                         </div>
                     ))}
                 </div>
 
                 {/* Tab Navigation */}
-                <div className="bg-white rounded-2xl p-1.5 border border-slate-100/60 shadow-sm mb-8 flex gap-1 overflow-x-auto">
+                <div className="bg-[#141114] rounded-2xl p-1.5 border border-white/5/60 shadow-sm mb-8 flex gap-1 overflow-x-auto">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 whitespace-nowrap ${activeTab === tab.id
                                 ? 'bg-plum-500 text-white'
-                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                                : 'text-slate-400 hover:bg-[#0a080a] hover:text-slate-200'
                                 }`}
                             style={activeTab === tab.id ? { boxShadow: '0 4px 14px -2px rgba(99,102,241,0.35)' } : {}}
                         >
                             <tab.icon size={16} />
                             <span>{tab.label}</span>
                             {tab.count !== undefined && (
-                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'
+                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${activeTab === tab.id ? 'bg-[#141114]/20 text-white' : 'bg-slate-100 text-slate-400'
                                     }`}>
                                     {tab.count}
                                 </span>
@@ -311,7 +311,7 @@ const OwnerDashboard = () => {
                         <div className="card-elevated overflow-hidden">
                             <div className="p-6 md:p-8 border-b border-slate-50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                                 <div>
-                                    <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>Your Properties</h3>
+                                    <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>Your Properties</h3>
                                     <p className="text-slate-400 text-sm font-normal">Manage and track all your listed stays.</p>
                                 </div>
                                 <button
@@ -327,7 +327,7 @@ const OwnerDashboard = () => {
                             <div className="hidden md:block overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-slate-50/50">
+                                        <tr className="bg-[#0a080a]/50">
                                             <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Property</th>
                                             <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Type</th>
                                             <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Rent</th>
@@ -338,10 +338,10 @@ const OwnerDashboard = () => {
                                     </thead>
                                     <tbody className="divide-y divide-slate-50">
                                         {listings.length > 0 ? listings.map((listing) => (
-                                            <tr key={listing.id} className="hover:bg-slate-50/50 transition-colors">
+                                            <tr key={listing.id} className="hover:bg-[#0a080a]/50 transition-colors">
                                                 <td className="px-8 py-5">
                                                     <div className="flex items-center">
-                                                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 mr-4 shrink-0 border border-slate-100 shadow-sm">
+                                                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 mr-4 shrink-0 border border-white/5 shadow-sm">
                                                             <img
                                                                 src={listing.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
                                                                 alt={listing.title}
@@ -349,7 +349,7 @@ const OwnerDashboard = () => {
                                                             />
                                                         </div>
                                                         <div className="min-w-0">
-                                                            <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Space Grotesk' }}>{listing.title}</h4>
+                                                            <h4 className="font-semibold text-white truncate max-w-[200px]" style={{ fontFamily: 'Space Grotesk' }}>{listing.title}</h4>
                                                             <span className="text-xs font-normal text-slate-400 flex items-center gap-1 mt-0.5">
                                                                 <MapPin size={10} className="text-plum-400 shrink-0" />
                                                                 <span className="truncate max-w-[180px]">{listing.location}</span>
@@ -358,7 +358,7 @@ const OwnerDashboard = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-50 px-2.5 py-1 rounded-md text-slate-500 border border-slate-100/60">{listing.type}</span>
+                                                    <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#0a080a] px-2.5 py-1 rounded-md text-slate-400 border border-white/5/60">{listing.type}</span>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center font-bold text-plum-600" style={{ fontFamily: 'Space Grotesk' }}>
@@ -373,7 +373,7 @@ const OwnerDashboard = () => {
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-5">
-                                                    <div className="flex items-center gap-1 text-slate-600 font-bold text-sm">
+                                                    <div className="flex items-center gap-1 text-slate-300 font-bold text-sm">
                                                         <Eye size={14} className="text-slate-400" />
                                                         {listing.views_count || 0}
                                                     </div>
@@ -382,7 +382,7 @@ const OwnerDashboard = () => {
                                                     <div className="flex items-center gap-2">
                                                         <Link
                                                             to={`/property/${listing.id}`}
-                                                            className="w-9 h-9 bg-slate-50 hover:bg-slate-100 text-slate-500 rounded-lg flex items-center justify-center transition-colors"
+                                                            className="w-9 h-9 bg-[#0a080a] hover:bg-slate-100 text-slate-400 rounded-lg flex items-center justify-center transition-colors"
                                                             title="View"
                                                         >
                                                             <Eye size={16} />
@@ -408,11 +408,11 @@ const OwnerDashboard = () => {
                                             <tr>
                                                 <td colSpan={6} className="px-8 py-20 text-center">
                                                     <div className="max-w-xs mx-auto">
-                                                        <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 mx-auto mb-4">
+                                                        <div className="w-16 h-16 bg-[#0a080a] rounded-2xl flex items-center justify-center text-slate-300 mx-auto mb-4">
                                                             <Home size={32} />
                                                         </div>
-                                                        <h4 className="text-lg font-bold text-slate-900 mb-1">No listings yet</h4>
-                                                        <p className="text-sm text-slate-500 font-medium mb-6">Start by adding your first property.</p>
+                                                        <h4 className="text-lg font-bold text-white mb-1">No listings yet</h4>
+                                                        <p className="text-sm text-slate-400 font-medium mb-6">Start by adding your first property.</p>
                                                         <button onClick={() => setActiveTab('add')} className="btn-primary py-3 px-6 text-sm">
                                                             Add Your First Property
                                                         </button>
@@ -427,9 +427,9 @@ const OwnerDashboard = () => {
                             {/* Mobile Cards */}
                             <div className="md:hidden p-4 space-y-2">
                                 {listings.length > 0 ? listings.map((listing) => (
-                                    <div key={listing.id} className="bg-slate-50 rounded-2xl p-4">
+                                    <div key={listing.id} className="bg-[#0a080a] rounded-2xl p-4">
                                         <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-[4.5rem] h-[4.5rem] rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-200">
+                                            <div className="w-[4.5rem] h-[4.5rem] rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-white/10">
                                                 <img
                                                     src={listing.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
                                                     alt={listing.title}
@@ -437,7 +437,7 @@ const OwnerDashboard = () => {
                                                 />
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <h4 className="font-bold text-slate-900 truncate">{listing.title}</h4>
+                                                <h4 className="font-bold text-white truncate">{listing.title}</h4>
                                                 <span className="text-xs text-slate-400 flex items-center font-medium">
                                                     <MapPin size={10} className="mr-1" /> {listing.location}
                                                 </span>
@@ -452,7 +452,7 @@ const OwnerDashboard = () => {
                                             </div>
                                         </div>
                                         <div className="flex gap-2">
-                                            <Link to={`/property/${listing.id}`} className="flex-1 bg-white text-center py-2 rounded-lg text-sm font-bold text-slate-600 border border-slate-100">View</Link>
+                                            <Link to={`/property/${listing.id}`} className="flex-1 bg-[#141114] text-center py-2 rounded-lg text-sm font-bold text-slate-300 border border-white/5">View</Link>
                                             <Link to={`/dashboard/edit-listing/${listing.id}`} className="flex-1 bg-blue-50 text-center py-2 rounded-lg text-sm font-bold text-blue-600">Edit</Link>
                                             <button onClick={() => handleDelete(listing.id)} className="bg-red-50 px-4 py-2 rounded-lg text-sm font-bold text-red-500">
                                                 <Trash2 size={14} />
@@ -462,7 +462,7 @@ const OwnerDashboard = () => {
                                 )) : (
                                     <div className="py-16 text-center">
                                         <Home size={40} className="mx-auto mb-4 text-slate-300" />
-                                        <p className="font-bold text-slate-900 mb-2">No listings yet</p>
+                                        <p className="font-bold text-white mb-2">No listings yet</p>
                                         <button onClick={() => setActiveTab('add')} className="btn-primary py-3 px-6 text-sm">Add Property</button>
                                     </div>
                                 )}
@@ -481,7 +481,7 @@ const OwnerDashboard = () => {
                                         <Plus size={24} />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>Add New Property</h2>
+                                        <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>Add New Property</h2>
                                         <p className="text-slate-400 font-normal text-sm">Provide details to attract students to your stay.</p>
                                     </div>
                                 </div>
@@ -504,7 +504,7 @@ const OwnerDashboard = () => {
 
                                 {/* Step 1 - Basic Info */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
                                         <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">1</span>
                                         Basic Information
                                     </h3>
@@ -564,7 +564,7 @@ const OwnerDashboard = () => {
 
                                 {/* Step 2 - Amenities */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
                                         <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">2</span>
                                         Amenities & Facilities
                                     </h3>
@@ -576,7 +576,7 @@ const OwnerDashboard = () => {
                                                 onClick={() => toggleAmenity(amenity)}
                                                 className={`flex items-center justify-center p-3.5 rounded-xl border transition-all font-medium text-sm ${formData.amenities.includes(amenity)
                                                     ? 'border-plum-300 bg-plum-50 text-plum-600'
-                                                    : 'border-slate-200/60 text-slate-500 hover:border-plum-200 hover:bg-slate-50'
+                                                    : 'border-white/10/60 text-slate-400 hover:border-plum-200 hover:bg-[#0a080a]'
                                                     }`}
                                             >
                                                 {formData.amenities.includes(amenity) && <CheckCircle size={14} className="mr-2" />}
@@ -588,7 +588,7 @@ const OwnerDashboard = () => {
 
                                 {/* Step 3 - Photos */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
                                         <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">3</span>
                                         Property Photos
                                     </h3>
@@ -609,8 +609,8 @@ const OwnerDashboard = () => {
                                         className={`w-full flex flex-col items-center justify-center py-10 border-2 border-dashed rounded-2xl transition-all ${uploadingImages
                                             ? 'border-plum-300 bg-plum-50 cursor-wait'
                                             : uploadedImages.length >= 8
-                                                ? 'border-slate-100 bg-slate-50 opacity-50 cursor-not-allowed'
-                                                : 'border-slate-200 hover:border-plum-400 hover:bg-plum-50/40 cursor-pointer'
+                                                ? 'border-white/5 bg-[#0a080a] opacity-50 cursor-not-allowed'
+                                                : 'border-white/10 hover:border-plum-400 hover:bg-plum-50/40 cursor-pointer'
                                             }`}
                                     >
                                         {uploadingImages ? (
@@ -624,7 +624,7 @@ const OwnerDashboard = () => {
                                                 <div className="w-14 h-14 bg-plum-50 rounded-2xl flex items-center justify-center text-plum-500 mb-4">
                                                     <Upload size={28} />
                                                 </div>
-                                                <p className="font-semibold text-slate-700 mb-1 text-sm">Click to upload photos</p>
+                                                <p className="font-semibold text-slate-200 mb-1 text-sm">Click to upload photos</p>
                                                 <p className="text-xs text-slate-400 font-normal">
                                                     JPG, PNG, WEBP — up to 8 photos · {uploadedImages.length}/8 uploaded
                                                 </p>
@@ -656,7 +656,7 @@ const OwnerDashboard = () => {
 
                                 {/* Step 4 - Contact */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
                                         <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">4</span>
                                         Contact Information
                                     </h3>
@@ -707,21 +707,21 @@ const OwnerDashboard = () => {
                 {/* ===== PROFILE TAB ===== */}
                 {activeTab === 'profile' && (
                     <div className="animate-fade-in max-w-2xl">
-                        <h2 className="text-2xl font-bold text-slate-900 mb-6" style={{ fontFamily: 'Space Grotesk' }}>Owner Profile</h2>
+                        <h2 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: 'Space Grotesk' }}>Owner Profile</h2>
 
                         <div className="card-elevated overflow-hidden">
                             {/* Profile Header */}
                             <div className="p-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
-                                <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+                                <div className="absolute top-0 right-0 w-40 h-40 bg-[#141114]/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                                <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#141114]/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
                                 <div className="relative flex items-center gap-5">
-                                    <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white text-3xl font-bold border-2 border-white/30">
+                                    <div className="w-20 h-20 bg-[#141114]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white text-3xl font-bold border-2 border-white/30">
                                         {profile?.name?.charAt(0)?.toUpperCase() || 'O'}
                                     </div>
                                     <div>
                                         <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>{profile?.name || 'Owner'}</h3>
                                         <p className="text-white/70 font-medium">{user?.email}</p>
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-lg text-[10px] font-semibold uppercase tracking-wider text-white mt-2">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#141114]/20 backdrop-blur-sm rounded-lg text-[10px] font-semibold uppercase tracking-wider text-white mt-2">
                                             <Briefcase size={10} />
                                             Owner / Broker
                                         </span>
@@ -737,8 +737,8 @@ const OwnerDashboard = () => {
                                         { label: 'Approved', value: stats.approved },
                                         { label: 'Total Views', value: stats.views },
                                     ].map((stat, i) => (
-                                        <div key={i} className="bg-slate-50 rounded-2xl p-4 text-center">
-                                            <p className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>{stat.value}</p>
+                                        <div key={i} className="bg-[#0a080a] rounded-2xl p-4 text-center">
+                                            <p className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>{stat.value}</p>
                                             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</span>
                                         </div>
                                     ))}
@@ -752,12 +752,12 @@ const OwnerDashboard = () => {
                                         { icon: Clock, label: 'Member Since', value: user?.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : 'N/A' },
                                     ].map((item, i) => (
                                         <div key={i} className="flex items-center gap-3 py-3">
-                                            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                                            <div className="w-10 h-10 bg-[#0a080a] rounded-xl flex items-center justify-center text-slate-400">
                                                 <item.icon size={18} />
                                             </div>
                                             <div>
                                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.label}</span>
-                                                <p className="text-slate-900 font-bold">{item.value}</p>
+                                                <p className="text-white font-bold">{item.value}</p>
                                             </div>
                                         </div>
                                     ))}

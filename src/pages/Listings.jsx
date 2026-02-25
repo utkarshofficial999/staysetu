@@ -74,7 +74,7 @@ const Listings = () => {
     const FilterPanel = ({ className = '' }) => (
         <div className={className}>
             <div className="flex items-center justify-between mb-8">
-                <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>Filters</h3>
+                <h3 className="text-lg font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>Filters</h3>
                 <button
                     onClick={() => {
                         setSearchQuery('');
@@ -100,7 +100,7 @@ const Listings = () => {
                             onClick={() => setPropertyType(type)}
                             className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all text-sm font-medium ${propertyType === type
                                 ? 'border-plum-200 bg-plum-50 text-plum-900'
-                                : 'border-transparent text-slate-500 hover:bg-slate-50'
+                                : 'border-transparent text-slate-400 hover:bg-[#0a080a]'
                                 }`}
                         >
                             <span>{type === 'all' ? 'Any Type' : type}</span>
@@ -120,7 +120,7 @@ const Listings = () => {
                             onClick={() => setGenderFilter(key)}
                             className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all text-sm font-medium ${genderFilter === key
                                 ? 'border-plum-200 bg-plum-50 text-plum-900'
-                                : 'border-transparent text-slate-500 hover:bg-slate-50'
+                                : 'border-transparent text-slate-400 hover:bg-[#0a080a]'
                                 }`}
                         >
                             <span>{label}</span>
@@ -134,8 +134,8 @@ const Listings = () => {
             <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
                     <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Max Price</label>
-                    <span className="text-plum-900 font-bold flex items-center text-sm" style={{ fontFamily: 'Space Grotesk' }}>
-                        <IndianRupee size={13} />
+                    <span className="text-white font-black flex items-center text-sm" style={{ fontFamily: 'Space Grotesk' }}>
+                        <IndianRupee size={14} className="mr-0.5" />
                         {priceRange.toLocaleString()}
                     </span>
                 </div>
@@ -164,12 +164,12 @@ const Listings = () => {
                                 onClick={() => toggleAmenity(amenity)}
                                 className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${amenities.includes(amenity)
                                     ? 'bg-plum-900 border-plum-900'
-                                    : 'border-slate-200 group-hover:border-plum-300'
+                                    : 'border-white/10 group-hover:border-plum-300'
                                     }`}
                             >
                                 {amenities.includes(amenity) && <Check size={12} className="text-white" />}
                             </div>
-                            <span className={`text-sm font-medium transition-colors ${amenities.includes(amenity) ? 'text-slate-900' : 'text-slate-500'}`}>
+                            <span className={`text-sm font-medium transition-colors ${amenities.includes(amenity) ? 'text-white' : 'text-slate-400'}`}>
                                 {amenity}
                             </span>
                         </label>
@@ -187,12 +187,12 @@ const Listings = () => {
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-24 pb-12">
+        <div className="min-h-screen bg-[#0a080a] pt-24 pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div>
-                        <h1 className="text-3xl font-bold text-slate-900 mb-1" style={{ fontFamily: 'Space Grotesk' }}>Explore Stays</h1>
+                        <h1 className="text-3xl font-bold text-white mb-1" style={{ fontFamily: 'Space Grotesk' }}>Explore Stays</h1>
                         <p className="text-slate-400 font-normal text-sm">
                             Discover {listings.length} verified properties for you
                         </p>
@@ -231,7 +231,7 @@ const Listings = () => {
                         {loading ? (
                             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
                                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                                    <div key={i} className="bg-white rounded-3xl animate-pulse" style={{ height: 380, border: '1px solid rgba(0,0,0,0.04)' }}></div>
+                                    <div key={i} className="bg-[#141114] rounded-3xl animate-pulse" style={{ height: 380, border: '1px solid rgba(0,0,0,0.04)' }}></div>
                                 ))}
                             </div>
                         ) : listings.length > 0 ? (
@@ -241,11 +241,11 @@ const Listings = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="card-elevated rounded-[2rem] p-20 text-center border border-dashed border-slate-200">
-                                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-5 text-slate-300">
+                            <div className="card-elevated rounded-[2rem] p-20 text-center border border-dashed border-white/10">
+                                <div className="w-16 h-16 bg-[#0a080a] rounded-2xl flex items-center justify-center mx-auto mb-5 text-slate-300">
                                     <Home size={32} />
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-900 mb-2" style={{ fontFamily: 'Space Grotesk' }}>No properties found</h3>
+                                <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk' }}>No properties found</h3>
                                 <p className="text-slate-400 font-normal mb-8 max-w-sm mx-auto text-sm">
                                     Try adjusting your filters or search query to find more options.
                                 </p>
@@ -270,13 +270,13 @@ const Listings = () => {
 
             {/* Mobile Filters Modal */}
             {showFilters && (
-                <div className="fixed inset-0 z-[100] bg-white animate-fade-in md:hidden">
+                <div className="fixed inset-0 z-[100] bg-[#141114] animate-fade-in md:hidden">
                     <div className="flex flex-col h-full">
-                        <div className="flex items-center justify-between p-6 border-b border-slate-100">
-                            <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>Filters</h3>
+                        <div className="flex items-center justify-between p-6 border-b border-white/5">
+                            <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>Filters</h3>
                             <button
                                 onClick={() => setShowFilters(false)}
-                                className="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600"
+                                className="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center text-slate-300"
                             >
                                 <X size={18} />
                             </button>
