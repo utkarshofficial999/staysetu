@@ -54,7 +54,7 @@ const Home = () => {
                             <Link
                                 key={label}
                                 to={`/listings?type=${type}`}
-                                className="px-4 py-2 bg-white border border-slate-200/60 text-slate-600 rounded-xl text-[13px] font-medium transition-all duration-200 hover:border-indigo-200 hover:text-indigo-600 hover:bg-indigo-50 hover:-translate-y-0.5"
+                                className="px-4 py-2 bg-white border border-slate-200/60 text-slate-600 rounded-xl text-[13px] font-medium transition-all duration-200 hover:border-plum-200 hover:text-plum-900 hover:bg-plum-50 hover:-translate-y-0.5"
                                 style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}
                             >
                                 {emoji} {label}
@@ -129,7 +129,7 @@ const Home = () => {
                         {whys.map(({ icon: Icon, title, desc }, i) => (
                             <div key={i} className="card-elevated p-7 group">
                                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"
-                                    style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 8px 20px -4px rgba(99,102,241,0.25)' }}>
+                                    style={{ background: 'linear-gradient(135deg, #3A1F3D, #524058)', boxShadow: '0 8px 20px -4px rgba(58,31,61,0.25)' }}>
                                     <Icon size={22} className="text-white" />
                                 </div>
                                 <h3 className="font-bold text-slate-900 mb-2 text-lg" style={{ fontFamily: 'Space Grotesk' }}>{title}</h3>
@@ -145,13 +145,13 @@ const Home = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="relative rounded-[2rem] overflow-hidden p-12 md:p-20 text-center"
                         style={{
-                            background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4f46e5 100%)',
+                            background: 'linear-gradient(135deg, #2D1B2E 0%, #3A1F3D 40%, #524058 100%)',
                         }}>
                         {/* Decorative orbs */}
                         <div className="absolute top-0 right-0 w-80 h-80 rounded-full opacity-20 blur-[100px]"
-                            style={{ background: '#a78bfa' }} />
+                            style={{ background: '#C4949E' }} />
                         <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-20 blur-[100px]"
-                            style={{ background: '#6366f1' }} />
+                            style={{ background: '#EDD9C4' }} />
 
                         <div className="relative z-10">
                             <span className="inline-flex items-center gap-2 bg-white/10 border border-white/10 text-white/80 text-xs font-medium px-4 py-2 rounded-full mb-6">
@@ -166,7 +166,7 @@ const Home = () => {
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                                 <Link
                                     to="/signup"
-                                    className="w-full sm:w-auto bg-white text-indigo-600 font-semibold py-3.5 px-10 rounded-2xl hover:bg-indigo-50 transition-all active:scale-[0.97] text-sm"
+                                    className="w-full sm:w-auto bg-white text-plum-900 font-semibold py-3.5 px-10 rounded-2xl hover:bg-plum-50 transition-all active:scale-[0.97] text-sm"
                                     style={{ boxShadow: '0 4px 14px rgba(255,255,255,0.2)' }}
                                 >
                                     Get Started — It's Free

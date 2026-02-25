@@ -108,13 +108,13 @@ const Signup = () => {
                                     type="button"
                                     onClick={() => setRole('student')}
                                     className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'student'
-                                        ? 'border-indigo-300 bg-indigo-50'
+                                        ? 'border-plum-300 bg-plum-50'
                                         : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'
                                         }`}
                                     style={role === 'student' ? { boxShadow: '0 0 0 1px rgba(99,102,241,0.2)' } : {}}
                                 >
-                                    <UserCircle className={role === 'student' ? 'text-indigo-500' : 'text-slate-400'} size={24} />
-                                    <span className={`text-sm font-semibold mt-2 ${role === 'student' ? 'text-indigo-600' : 'text-slate-600'}`}>
+                                    <UserCircle className={role === 'student' ? 'text-plum-900' : 'text-slate-400'} size={24} />
+                                    <span className={`text-sm font-semibold mt-2 ${role === 'student' ? 'text-plum-900' : 'text-slate-600'}`}>
                                         Find a Stay
                                     </span>
                                     <span className="text-[10px] text-slate-400 mt-0.5">Student</span>
@@ -225,7 +225,7 @@ const Signup = () => {
 
                 <p className="mt-8 text-center text-slate-500 font-normal text-sm">
                     Already have an account?{' '}
-                    <Link to="/login" className="text-indigo-500 hover:text-indigo-600 font-semibold">
+                    <Link to="/login" className="text-plum-900 hover:text-plum-900 font-semibold">
                         Log in
                     </Link>
                 </p>

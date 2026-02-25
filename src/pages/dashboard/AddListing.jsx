@@ -92,7 +92,7 @@ const AddListing = () => {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <button
                     onClick={() => navigate('/dashboard')}
-                    className="flex items-center text-slate-600 hover:text-primary-500 font-bold mb-8 transition-colors"
+                    className="flex items-center text-slate-600 hover:text-plum-500 font-bold mb-8 transition-colors"
                 >
                     <ArrowLeft size={20} className="mr-2" /> Back to Dashboard
                 </button>
@@ -121,7 +121,7 @@ const AddListing = () => {
                         {/* Basic Info */}
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                                <span className="w-8 h-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center mr-3 text-sm">1</span>
+                                <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm">1</span>
                                 Basic Information
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -197,7 +197,7 @@ const AddListing = () => {
                         {/* Amenities */}
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                                <span className="w-8 h-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center mr-3 text-sm">2</span>
+                                <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm">2</span>
                                 Amenities & Facilities
                             </h3>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -207,7 +207,7 @@ const AddListing = () => {
                                         type="button"
                                         onClick={() => toggleAmenity(amenity)}
                                         className={`flex items-center justify-center p-3 rounded-xl border-2 transition-all font-bold text-sm ${formData.amenities.includes(amenity)
-                                            ? 'border-primary-500 bg-primary-50 text-primary-700'
+                                            ? 'border-plum-500 bg-plum-50 text-plum-700'
                                             : 'border-slate-50 text-slate-500 hover:border-slate-100'
                                             }`}
                                     >
@@ -220,7 +220,7 @@ const AddListing = () => {
                         {/* Photos */}
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                                <span className="w-8 h-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center mr-3 text-sm">3</span>
+                                <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm">3</span>
                                 Property Photos (URLs)
                             </h3>
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Paste image URLs from the web (Unsplash, etc.)</p>
@@ -248,7 +248,7 @@ const AddListing = () => {
                                 <button
                                     type="button"
                                     onClick={addImageField}
-                                    className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 flex items-center justify-center space-x-2 hover:border-primary-300 hover:text-primary-500 transition-all font-bold"
+                                    className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 flex items-center justify-center space-x-2 hover:border-plum-300 hover:text-plum-500 transition-all font-bold"
                                 >
                                     <Plus size={20} />
                                     <span>Add Another Image URL</span>
@@ -259,7 +259,7 @@ const AddListing = () => {
                         {/* Contact Info */}
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                                <span className="w-8 h-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center mr-3 text-sm">4</span>
+                                <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm">4</span>
                                 Contact Information
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

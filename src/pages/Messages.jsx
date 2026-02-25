@@ -297,7 +297,7 @@ const Messages = () => {
                                     placeholder="Search conversations..."
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
-                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 pl-9 pr-4 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 pl-9 pr-4 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-plum-300"
                                 />
                             </div>
                         </div>
@@ -315,14 +315,14 @@ const Messages = () => {
                                         key={conv.id}
                                         onClick={() => setActiveChat(conv)}
                                         className={`w-full flex items-center p-4 transition-all duration-200 border-b border-slate-50 ${activeChat?.id === conv.id
-                                                ? 'bg-primary-50 border-l-4 border-l-primary-500'
+                                                ? 'bg-plum-50 border-l-4 border-l-plum-500'
                                                 : 'hover:bg-slate-50'
                                             }`}
                                     >
                                         {/* Avatar */}
                                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0 mr-3 ${conv.role === 'owner'
                                                 ? 'bg-amber-100 text-amber-600'
-                                                : 'bg-primary-100 text-primary-600'
+                                                : 'bg-plum-100 text-plum-600'
                                             }`}>
                                             {conv.name.charAt(0).toUpperCase()}
                                         </div>
@@ -331,7 +331,7 @@ const Messages = () => {
                                                 <h4 className="font-bold text-slate-800 truncate text-sm">{conv.name}</h4>
                                                 <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-2 shrink-0 ${conv.role === 'owner'
                                                         ? 'bg-amber-100 text-amber-600'
-                                                        : 'bg-primary-100 text-primary-600'
+                                                        : 'bg-plum-100 text-plum-600'
                                                     }`}>
                                                     {conv.role === 'owner' ? 'Owner' : 'Student'}
                                                 </span>
@@ -367,7 +367,7 @@ const Messages = () => {
                                         </button>
                                         <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-lg mr-3 ${activeChat.role === 'owner'
                                                 ? 'bg-amber-100 text-amber-600'
-                                                : 'bg-primary-100 text-primary-600'
+                                                : 'bg-plum-100 text-plum-600'
                                             }`}>
                                             {activeChat.name.charAt(0).toUpperCase()}
                                         </div>
@@ -384,7 +384,7 @@ const Messages = () => {
                                     {listingId && (
                                         <button
                                             onClick={() => navigate(`/property/${listingId}`)}
-                                            className="flex items-center text-xs font-bold text-primary-500 bg-primary-50 px-3 py-2 rounded-xl hover:bg-primary-100 transition-colors"
+                                            className="flex items-center text-xs font-bold text-plum-500 bg-plum-50 px-3 py-2 rounded-xl hover:bg-plum-100 transition-colors"
                                         >
                                             <Home size={14} className="mr-1.5" />
                                             View Property
@@ -401,7 +401,7 @@ const Messages = () => {
                                         </div>
                                     ) : messages.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-20 text-center">
-                                            <div className="w-16 h-16 bg-primary-50 rounded-3xl flex items-center justify-center text-primary-400 mb-4">
+                                            <div className="w-16 h-16 bg-plum-50 rounded-3xl flex items-center justify-center text-plum-400 mb-4">
                                                 <MessageSquare size={32} />
                                             </div>
                                             <p className="font-bold text-slate-600">Start the conversation!</p>
@@ -419,7 +419,7 @@ const Messages = () => {
                                                     className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}
                                                 >
                                                     <div className={`max-w-[70%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${isMine
-                                                            ? 'bg-primary-500 text-white rounded-br-sm'
+                                                            ? 'bg-plum-500 text-white rounded-br-sm'
                                                             : 'bg-white text-slate-700 rounded-bl-sm border border-slate-100'
                                                         }`}>
                                                         {msg.content}
@@ -430,7 +430,7 @@ const Messages = () => {
                                                                 {formatTime(msg.created_at)}
                                                             </span>
                                                             {isMine && (
-                                                                <CheckCheck size={12} className={msg.is_read ? 'text-primary-400' : 'text-slate-300'} />
+                                                                <CheckCheck size={12} className={msg.is_read ? 'text-plum-400' : 'text-slate-300'} />
                                                             )}
                                                         </div>
                                                     )}
@@ -451,13 +451,13 @@ const Messages = () => {
                                             value={newMessage}
                                             onChange={e => setNewMessage(e.target.value)}
                                             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend(e)}
-                                            className="flex-1 bg-slate-50 border border-slate-100 rounded-2xl py-3.5 px-5 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent"
+                                            className="flex-1 bg-slate-50 border border-slate-100 rounded-2xl py-3.5 px-5 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-plum-300 focus:border-transparent"
                                             autoFocus
                                         />
                                         <button
                                             type="submit"
                                             disabled={!newMessage.trim() || sending}
-                                            className="w-12 h-12 bg-primary-500 hover:bg-primary-600 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-2xl flex items-center justify-center transition-all active:scale-95 shadow-md shadow-primary-100 shrink-0"
+                                            className="w-12 h-12 bg-plum-500 hover:bg-plum-600 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-2xl flex items-center justify-center transition-all active:scale-95 shadow-md shadow-plum-100 shrink-0"
                                         >
                                             {sending
                                                 ? <Loader2 size={18} className="animate-spin" />
@@ -470,7 +470,7 @@ const Messages = () => {
                         ) : (
                             /* Empty State */
                             <div className="flex flex-col items-center justify-center py-20 px-12 text-center">
-                                <div className="w-24 h-24 bg-gradient-to-br from-primary-100 to-indigo-100 rounded-[2rem] flex items-center justify-center text-primary-500 mb-6 shadow-lg shadow-primary-50">
+                                <div className="w-24 h-24 bg-gradient-to-br from-plum-100 to-plum-100 rounded-[2rem] flex items-center justify-center text-plum-500 mb-6 shadow-lg shadow-plum-50">
                                     <MessageSquare size={44} />
                                 </div>
                                 <h3 className="text-2xl font-black text-slate-900 mb-2">Your Inbox</h3>

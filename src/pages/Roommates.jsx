@@ -166,7 +166,7 @@ const Roommates = () => {
                 {/* Search & Filter */}
                 <div className="flex flex-col sm:flex-row gap-3 mb-8">
                     <div className="relative flex-1 group">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={16} />
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-plum-500 transition-colors" size={16} />
                         <input
                             type="text"
                             placeholder="Search by location, college..."
@@ -181,8 +181,8 @@ const Roommates = () => {
                                 key={g}
                                 onClick={() => setFilterGender(g)}
                                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border ${filterGender === g
-                                    ? 'bg-indigo-50 text-indigo-600 border-indigo-200'
-                                    : 'bg-white text-slate-500 border-slate-200/60 hover:border-indigo-200 hover:text-indigo-500'
+                                    ? 'bg-plum-50 text-plum-600 border-plum-200'
+                                    : 'bg-white text-slate-500 border-slate-200/60 hover:border-plum-200 hover:text-plum-500'
                                     }`}
                             >
                                 {g === 'all' ? 'All' : g === 'male' ? 'Male' : 'Female'}
@@ -205,7 +205,7 @@ const Roommates = () => {
                                 {/* Header */}
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white font-semibold text-sm">
+                                        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-plum-400 to-plum-500 flex items-center justify-center text-white font-semibold text-sm">
                                             {(req.name || 'U').charAt(0).toUpperCase()}
                                         </div>
                                         <div>
@@ -229,22 +229,22 @@ const Roommates = () => {
                                 <div className="flex flex-wrap gap-2 mb-4">
                                     {req.location && (
                                         <span className="flex items-center gap-1.5 text-[11px] font-medium bg-slate-50 text-slate-500 border border-slate-100 px-2.5 py-1 rounded-lg">
-                                            <MapPin size={10} className="text-indigo-400" /> {req.location}
+                                            <MapPin size={10} className="text-plum-400" /> {req.location}
                                         </span>
                                     )}
                                     {req.budget && (
                                         <span className="flex items-center gap-1 text-[11px] font-medium bg-slate-50 text-slate-500 border border-slate-100 px-2.5 py-1 rounded-lg">
-                                            <IndianRupee size={10} className="text-indigo-400" /> {req.budget?.toLocaleString()}/mo
+                                            <IndianRupee size={10} className="text-plum-400" /> {req.budget?.toLocaleString()}/mo
                                         </span>
                                     )}
                                     {req.gender_preference !== 'any' && (
                                         <span className="flex items-center gap-1 text-[11px] font-medium bg-slate-50 text-slate-500 border border-slate-100 px-2.5 py-1 rounded-lg">
-                                            <User size={10} className="text-indigo-400" /> {req.gender_preference}
+                                            <User size={10} className="text-plum-400" /> {req.gender_preference}
                                         </span>
                                     )}
                                     {req.move_in_date && (
                                         <span className="flex items-center gap-1 text-[11px] font-medium bg-slate-50 text-slate-500 border border-slate-100 px-2.5 py-1 rounded-lg">
-                                            <Calendar size={10} className="text-indigo-400" /> {new Date(req.move_in_date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
+                                            <Calendar size={10} className="text-plum-400" /> {new Date(req.move_in_date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
                                         </span>
                                     )}
                                 </div>

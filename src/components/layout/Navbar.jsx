@@ -57,9 +57,9 @@ const Navbar = () => {
 
     const roleBadge = {
         admin: { bg: 'bg-rose-50', text: 'text-rose-600', label: 'Admin' },
-        owner: { bg: 'bg-violet-50', text: 'text-violet-600', label: 'Owner' },
-        student: { bg: 'bg-indigo-50', text: 'text-indigo-600', label: 'Student' },
-    }[role] || { bg: 'bg-indigo-50', text: 'text-indigo-600', label: 'Student' };
+        owner: { bg: 'bg-plum-100', text: 'text-plum-700', label: 'Owner' },
+        student: { bg: 'bg-plum-50', text: 'text-plum-900', label: 'Student' },
+    }[role] || { bg: 'bg-plum-50', text: 'text-plum-900', label: 'Student' };
 
     return (
         <>
@@ -76,7 +76,7 @@ const Navbar = () => {
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-2.5 group" onClick={() => setIsOpen(false)}>
                             <div className="w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300 group-hover:shadow-glow"
-                                style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                                style={{ background: 'linear-gradient(135deg, #3A1F3D, #524058)' }}>
                                 <span className="text-white font-bold text-lg" style={{ fontFamily: 'Space Grotesk' }}>S</span>
                             </div>
                             <span className="text-xl font-bold tracking-tight gradient-text" style={{ fontFamily: 'Space Grotesk' }}>
@@ -91,7 +91,7 @@ const Navbar = () => {
                                     key={link.name}
                                     to={link.path}
                                     className={`relative px-4 py-2 rounded-xl text-[13px] font-medium transition-all duration-200 ${isActive(link.path)
-                                        ? 'text-indigo-600 bg-indigo-50'
+                                        ? 'text-plum-900 bg-plum-50'
                                         : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                                         }`}
                                 >
@@ -108,7 +108,7 @@ const Navbar = () => {
                                         onClick={() => setDropdownOpen(!dropdownOpen)}
                                         className="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 pl-1.5 pr-3 py-1.5 rounded-full transition-all duration-200"
                                     >
-                                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-xs font-semibold">
+                                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-plum-800 to-plum-900 flex items-center justify-center text-white text-xs font-semibold">
                                             {(profile?.full_name || 'U').charAt(0).toUpperCase()}
                                         </div>
                                         <span className="text-sm font-medium text-slate-700 max-w-[100px] truncate">
@@ -189,7 +189,7 @@ const Navbar = () => {
                                     key={link.name}
                                     to={link.path}
                                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${isActive(link.path)
-                                        ? 'bg-indigo-50 text-indigo-600'
+                                        ? 'bg-plum-50 text-plum-900'
                                         : 'text-slate-600 hover:bg-slate-50'
                                         }`}
                                     onClick={() => setIsOpen(false)}
@@ -203,7 +203,7 @@ const Navbar = () => {
                                     <>
                                         {/* User info card */}
                                         <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-xl mb-2">
-                                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-sm font-semibold">
+                                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-plum-800 to-plum-900 flex items-center justify-center text-white text-sm font-semibold">
                                                 {(profile?.full_name || 'U').charAt(0).toUpperCase()}
                                             </div>
                                             <div className="min-w-0 flex-1">

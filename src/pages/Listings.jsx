@@ -84,7 +84,7 @@ const Listings = () => {
                         setAmenities([]);
                         setSearchParams({});
                     }}
-                    className="text-indigo-500 text-xs font-semibold hover:text-indigo-600 transition-colors"
+                    className="text-plum-900 text-xs font-semibold hover:text-plum-900 transition-colors"
                 >
                     Reset
                 </button>
@@ -99,7 +99,7 @@ const Listings = () => {
                             key={type}
                             onClick={() => setPropertyType(type)}
                             className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all text-sm font-medium ${propertyType === type
-                                ? 'border-indigo-200 bg-indigo-50 text-indigo-600'
+                                ? 'border-plum-200 bg-plum-50 text-plum-900'
                                 : 'border-transparent text-slate-500 hover:bg-slate-50'
                                 }`}
                         >
@@ -119,7 +119,7 @@ const Listings = () => {
                             key={key}
                             onClick={() => setGenderFilter(key)}
                             className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all text-sm font-medium ${genderFilter === key
-                                ? 'border-indigo-200 bg-indigo-50 text-indigo-600'
+                                ? 'border-plum-200 bg-plum-50 text-plum-900'
                                 : 'border-transparent text-slate-500 hover:bg-slate-50'
                                 }`}
                         >
@@ -134,7 +134,7 @@ const Listings = () => {
             <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
                     <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Max Price</label>
-                    <span className="text-indigo-600 font-bold flex items-center text-sm" style={{ fontFamily: 'Space Grotesk' }}>
+                    <span className="text-plum-900 font-bold flex items-center text-sm" style={{ fontFamily: 'Space Grotesk' }}>
                         <IndianRupee size={13} />
                         {priceRange.toLocaleString()}
                     </span>
@@ -144,7 +144,7 @@ const Listings = () => {
                     min="2000"
                     max="100000"
                     step="500"
-                    className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-plum-900"
                     value={priceRange}
                     onChange={(e) => setPriceRange(parseInt(e.target.value))}
                 />
@@ -163,8 +163,8 @@ const Listings = () => {
                             <div
                                 onClick={() => toggleAmenity(amenity)}
                                 className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${amenities.includes(amenity)
-                                    ? 'bg-indigo-500 border-indigo-500'
-                                    : 'border-slate-200 group-hover:border-indigo-300'
+                                    ? 'bg-plum-900 border-plum-900'
+                                    : 'border-slate-200 group-hover:border-plum-300'
                                     }`}
                             >
                                 {amenities.includes(amenity) && <Check size={12} className="text-white" />}
@@ -200,7 +200,7 @@ const Listings = () => {
 
                     <form onSubmit={handleSearch} className="flex-1 md:max-w-sm group">
                         <div className="relative">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={16} />
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-plum-900 transition-colors" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search by area, college..."

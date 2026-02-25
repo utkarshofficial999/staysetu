@@ -6,25 +6,25 @@ const steps = [
         title: 'Create Account',
         description: 'Sign up as a student to find stays, or as an owner to list your property.',
         icon: UserPlus,
-        gradient: 'from-blue-500 to-indigo-600',
+        gradient: 'from-plum-800 to-plum-900',
     },
     {
         title: 'Browse & Filter',
         description: 'Use smart filters to find PGs or flats that match your preferences.',
         icon: Search,
-        gradient: 'from-indigo-500 to-violet-600',
+        gradient: 'from-plum-700 to-plum-800',
     },
     {
         title: 'Connect & Chat',
         description: 'Message owners directly on the platform or connect via WhatsApp.',
         icon: MessageSquare,
-        gradient: 'from-violet-500 to-purple-600',
+        gradient: 'from-plum-600 to-plum-700',
     },
     {
         title: 'Move In',
         description: 'Finalize the details, visit the stay, and move into your new home.',
         icon: Home,
-        gradient: 'from-purple-500 to-pink-600',
+        gradient: 'from-plum-500 to-plum-600',
     },
 ];
 
@@ -47,17 +47,17 @@ const HowItWorks = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
                     {/* Connector Line */}
-                    <div className="hidden lg:block absolute top-[52px] left-[10%] right-[10%] h-px bg-gradient-to-r from-indigo-200 via-violet-200 to-purple-200" />
+                    <div className="hidden lg:block absolute top-[52px] left-[10%] right-[10%] h-px bg-gradient-to-r from-plum-200 via-plum-300 to-plum-200" />
 
                     {steps.map((step, index) => (
                         <div key={index} className="relative z-10 flex flex-col items-center text-center group">
                             {/* Step number + icon */}
                             <div className="relative mb-8">
                                 <div className={`bg-gradient-to-br ${step.gradient} w-[68px] h-[68px] rounded-[20px] flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-500`}
-                                    style={{ boxShadow: '0 8px 24px -6px rgba(99,102,241,0.3)' }}>
+                                    style={{ boxShadow: '0 8px 24px -6px rgba(58,31,61,0.3)' }}>
                                     <step.icon size={28} strokeWidth={1.8} />
                                 </div>
-                                <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center border border-slate-100 text-xs font-bold text-indigo-600"
+                                <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center border border-slate-100 text-xs font-bold text-plum-900"
                                     style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
                                     {index + 1}
                                 </div>

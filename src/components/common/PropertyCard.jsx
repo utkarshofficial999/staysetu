@@ -13,8 +13,8 @@ const amenityIcons = { WiFi: Wifi, AC: Wind, Food: UtensilsCrossed, Parking: Car
 
 const typeStyles = {
     PG: { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-100' },
-    Flat: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-100' },
-    Hostel: { bg: 'bg-violet-50', text: 'text-violet-600', border: 'border-violet-100' },
+    Flat: { bg: 'bg-plum-50', text: 'text-plum-900', border: 'border-plum-100' },
+    Hostel: { bg: 'bg-plum-100', text: 'text-plum-700', border: 'border-plum-200' },
 };
 
 const PropertyCard = ({ property }) => {
@@ -89,7 +89,7 @@ const PropertyCard = ({ property }) => {
                 </div>
 
                 <div className="flex items-center text-slate-400 text-xs font-normal mb-3 gap-1">
-                    <MapPin size={11} className="text-indigo-400 shrink-0" />
+                    <MapPin size={11} className="text-plum-400 shrink-0" />
                     <span className="line-clamp-1">{property?.location || 'Greater Noida'}</span>
                 </div>
 
@@ -109,7 +109,7 @@ const PropertyCard = ({ property }) => {
                 {/* Price + CTA */}
                 <div className="flex items-center justify-between pt-3 border-t border-slate-100/80 mt-auto">
                     <div>
-                        <div className="flex items-center text-indigo-600 font-bold text-base" style={{ fontFamily: 'Space Grotesk' }}>
+                        <div className="flex items-center text-plum-900 font-bold text-base" style={{ fontFamily: 'Space Grotesk' }}>
                             <IndianRupee size={14} className="mr-0.5" />
                             {property?.price?.toLocaleString() || '8,500'}
                         </div>

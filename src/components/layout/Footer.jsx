@@ -6,7 +6,7 @@ const Footer = () => {
     return (
         <footer className="relative z-10 bg-slate-950 text-slate-400 pt-20 pb-8 overflow-hidden">
             {/* Subtle gradient accent at top */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-plum-400/30 to-transparent" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
@@ -15,7 +15,7 @@ const Footer = () => {
                     <div className="col-span-1 lg:col-span-1">
                         <Link to="/" className="flex items-center space-x-2.5 mb-6 group">
                             <div className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
-                                style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                                style={{ background: 'linear-gradient(135deg, #3A1F3D, #524058)' }}>
                                 <span className="text-white font-bold text-lg" style={{ fontFamily: 'Space Grotesk' }}>S</span>
                             </div>
                             <span className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>StaySetu</span>
@@ -25,7 +25,7 @@ const Footer = () => {
                         </p>
                         <div className="flex space-x-3">
                             {[Twitter, Instagram].map((Icon, i) => (
-                                <a key={i} href="#" className="w-9 h-9 bg-slate-800/60 rounded-xl flex items-center justify-center text-slate-500 hover:text-white hover:bg-indigo-600 transition-all duration-300">
+                                <a key={i} href="#" className="w-9 h-9 bg-slate-800/60 rounded-xl flex items-center justify-center text-slate-500 hover:text-white hover:bg-plum-800 transition-all duration-300">
                                     <Icon size={16} />
                                 </a>
                             ))}
@@ -73,19 +73,19 @@ const Footer = () => {
                         <ul className="space-y-4">
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-800/60 rounded-lg flex items-center justify-center shrink-0">
-                                    <Mail size={14} className="text-indigo-400" />
+                                    <Mail size={14} className="text-plum-400" />
                                 </div>
                                 <span>support@staysetu.com</span>
                             </li>
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-800/60 rounded-lg flex items-center justify-center shrink-0">
-                                    <Phone size={14} className="text-indigo-400" />
+                                    <Phone size={14} className="text-plum-400" />
                                 </div>
                                 <span>+91 98765 43210</span>
                             </li>
                             <li className="flex items-start space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-800/60 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                                    <MapPin size={14} className="text-indigo-400" />
+                                    <MapPin size={14} className="text-plum-400" />
                                 </div>
                                 <span>Knowledge Park, Greater Noida, UP</span>
                             </li>

@@ -28,7 +28,7 @@ const Hero = () => {
                             <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75" />
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                         </span>
-                        <Sparkles size={13} className="text-indigo-500" />
+                        <Sparkles size={13} className="text-primary-900" />
                         <span>India's #1 Student Housing Platform</span>
                     </div>
                 </div>
@@ -39,7 +39,7 @@ const Hero = () => {
                         style={{ fontFamily: 'Space Grotesk, Inter, sans-serif' }}>
                         <span className="block text-slate-900">Your New</span>
                         <span className="block py-1" style={{
-                            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 40%, #a78bfa 100%)',
+                            background: 'linear-gradient(135deg, #3A1F3D 0%, #524058 40%, #C4949E 100%)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text',
@@ -59,10 +59,10 @@ const Hero = () => {
                     <form
                         onSubmit={handleSearch}
                         className="bg-white p-2 rounded-2xl flex flex-col md:flex-row items-center gap-2"
-                        style={{ boxShadow: '0 4px 24px rgba(99,102,241,0.1), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(99,102,241,0.08)' }}
+                        style={{ boxShadow: '0 4px 24px rgba(58,31,61,0.08), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(58,31,61,0.06)' }}
                     >
                         <div className="flex-1 w-full flex items-center px-3 gap-2.5 border-b md:border-b-0 md:border-r border-slate-100">
-                            <Search className="text-indigo-400 shrink-0" size={18} />
+                            <Search className="text-primary-400 shrink-0" size={18} />
                             <input
                                 type="text"
                                 placeholder="Search area, college, or landmark..."
@@ -72,7 +72,7 @@ const Hero = () => {
                             />
                         </div>
                         <div className="w-full md:w-auto flex items-center gap-2 px-3 py-1">
-                            <Home className="text-indigo-300 shrink-0" size={16} />
+                            <Home className="text-primary-300 shrink-0" size={16} />
                             <select
                                 className="w-full md:w-32 py-1.5 focus:outline-none text-slate-600 font-medium bg-transparent cursor-pointer text-sm"
                                 value={type}

@@ -92,7 +92,7 @@ const AdminPanel = () => {
                         </div>
                         <p className="text-slate-400 font-normal text-sm">
                             Logged in as <span className="font-semibold text-slate-700">{profile?.full_name || profile?.name || user?.email}</span>
-                            <span className="ml-2 text-[10px] font-semibold bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-md">Admin</span>
+                            <span className="ml-2 text-[10px] font-semibold bg-plum-100 text-plum-600 px-2 py-0.5 rounded-md">Admin</span>
                         </p>
                     </div>
                     <button
@@ -106,8 +106,8 @@ const AdminPanel = () => {
                 {/* Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                     {[
-                        { label: 'Users', value: stats.users, icon: Users, gradient: 'from-violet-500 to-purple-600' },
-                        { label: 'Listings', value: stats.total, icon: Home, gradient: 'from-blue-500 to-indigo-600' },
+                        { label: 'Users', value: stats.users, icon: Users, gradient: 'from-plum-500 to-purple-600' },
+                        { label: 'Listings', value: stats.total, icon: Home, gradient: 'from-plum-950 to-plum-600' },
                         { label: 'Pending', value: stats.pending, icon: Clock, gradient: 'from-amber-500 to-orange-600' },
                         { label: 'Live', value: stats.approved, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600' },
                         { label: 'RM Pending', value: stats.roommate_pending, icon: Users, gradient: 'from-pink-500 to-rose-600' },
@@ -130,7 +130,7 @@ const AdminPanel = () => {
                         <button
                             onClick={() => { setActiveTab('listings'); setFilter('pending'); }}
                             className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === 'listings'
-                                ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/30'
+                                ? 'text-plum-600 border-b-2 border-plum-500 bg-plum-50/30'
                                 : 'text-slate-400 hover:text-slate-600'
                                 }`}
                         >
@@ -139,7 +139,7 @@ const AdminPanel = () => {
                         <button
                             onClick={() => { setActiveTab('roommates'); setFilter('pending'); }}
                             className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === 'roommates'
-                                ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/30'
+                                ? 'text-plum-600 border-b-2 border-plum-500 bg-plum-50/30'
                                 : 'text-slate-400 hover:text-slate-600'
                                 }`}
                         >
@@ -208,7 +208,7 @@ const AdminPanel = () => {
                                                         />
                                                     </div>
                                                 ) : (
-                                                    <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-violet-500 rounded-xl flex items-center justify-center shrink-0 text-white text-sm font-semibold">
+                                                    <div className="w-10 h-10 bg-gradient-to-br from-plum-400 to-plum-500 rounded-xl flex items-center justify-center shrink-0 text-white text-sm font-semibold">
                                                         {(item.name || 'U').charAt(0).toUpperCase()}
                                                     </div>
                                                 )}
@@ -232,7 +232,7 @@ const AdminPanel = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center text-slate-500 font-normal max-w-[180px] gap-1.5">
-                                                <MapPin size={12} className="text-indigo-400 shrink-0" />
+                                                <MapPin size={12} className="text-plum-400 shrink-0" />
                                                 <span className="truncate text-sm">{item.location}</span>
                                             </div>
                                         </td>
@@ -247,7 +247,7 @@ const AdminPanel = () => {
                                                     <button
                                                         onClick={() => approve(item.id)}
                                                         disabled={actionLoading === item.id + '_approve'}
-                                                        className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
+                                                        className="w-8 h-8 bg-gradient-to-br from-plum-500 to-plum-600 hover:from-plum-600 hover:to-plum-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
                                                         style={{ boxShadow: '0 2px 8px -2px rgba(99,102,241,0.4)' }}
                                                     >
                                                         {actionLoading === item.id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}

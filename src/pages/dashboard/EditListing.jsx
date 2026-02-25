@@ -119,7 +119,7 @@ const EditListing = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-4 border-plum-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -129,7 +129,7 @@ const EditListing = () => {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <button
                     onClick={() => navigate('/dashboard')}
-                    className="flex items-center text-slate-600 hover:text-primary-500 font-bold mb-8 transition-colors"
+                    className="flex items-center text-slate-600 hover:text-plum-500 font-bold mb-8 transition-colors"
                 >
                     <ArrowLeft size={20} className="mr-2" /> Back to Dashboard
                 </button>
@@ -157,7 +157,7 @@ const EditListing = () => {
 
                         {/* Basic Info */}
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-primary-500">Step 1 — Basic Information</h3>
+                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-plum-500">Step 1 — Basic Information</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2">
                                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Property Title</label>
@@ -230,7 +230,7 @@ const EditListing = () => {
 
                         {/* Amenities */}
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-primary-500">Step 2 — Amenities</h3>
+                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-plum-500">Step 2 — Amenities</h3>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {amenityOptions.map(amenity => (
                                     <button
@@ -238,7 +238,7 @@ const EditListing = () => {
                                         type="button"
                                         onClick={() => toggleAmenity(amenity)}
                                         className={`flex items-center justify-center p-3 rounded-xl border-2 transition-all font-bold text-sm ${formData.amenities.includes(amenity)
-                                                ? 'border-primary-500 bg-primary-50 text-primary-700'
+                                                ? 'border-plum-500 bg-plum-50 text-plum-700'
                                                 : 'border-slate-50 text-slate-500 hover:border-slate-100'
                                             }`}
                                     >
@@ -250,7 +250,7 @@ const EditListing = () => {
 
                         {/* Photos */}
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-primary-500">Step 3 — Photos</h3>
+                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-plum-500">Step 3 — Photos</h3>
                             <div className="space-y-4">
                                 {formData.images.map((url, index) => (
                                     <div key={index} className="flex gap-3">
@@ -275,7 +275,7 @@ const EditListing = () => {
                                 <button
                                     type="button"
                                     onClick={addImageField}
-                                    className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 flex items-center justify-center space-x-2 hover:border-primary-300 hover:text-primary-500 transition-all font-bold"
+                                    className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 flex items-center justify-center space-x-2 hover:border-plum-300 hover:text-plum-500 transition-all font-bold"
                                 >
                                     <Plus size={20} />
                                     <span>Add Another Image URL</span>
@@ -285,7 +285,7 @@ const EditListing = () => {
 
                         {/* Contact Info */}
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-primary-500">Step 4 — Contact</h3>
+                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-plum-500">Step 4 — Contact</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Phone Number</label>
