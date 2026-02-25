@@ -64,42 +64,41 @@ const Navbar = () => {
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
-                    ? 'bg-[#151515]/95 backdrop-blur-3xl shadow-[0_0_25px_rgba(57,255,20,0.2)]'
-                    : 'bg-[#1f1f1f]/90 backdrop-blur-2xl'
+                className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out px-4 py-2 ${scrolled
+                    ? 'top-4 w-[95%] max-w-7xl bg-black/95 rounded-[2rem] border border-[#39ff14]/40 shadow-[0_0_40px_rgba(57,255,20,0.25)]'
+                    : 'top-0 w-full bg-[#151515]/60 backdrop-blur-xl border-b border-[#39ff14]/10'
                     }`}
-                style={{ borderBottom: '1px solid rgba(57, 255, 20, 0.25)' }}
             >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-17 items-center">
+                <div className="max-w-7xl mx-auto px-2">
+                    <div className="flex justify-between h-14 items-center">
 
                         {/* Logo */}
-                        <Link to="/" className="flex items-center gap-2.5 group" onClick={() => setIsOpen(false)}>
-                            <div className="w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-300 shadow-[0_0_15px_rgba(57,255,20,0.3)]"
+                        <Link to="/" className="flex items-center gap-3 group" onClick={() => setIsOpen(false)}>
+                            <div className="w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-500 rotate-0 group-hover:rotate-[360deg] shadow-[0_0_20px_rgba(57,255,20,0.5)]"
                                 style={{ background: '#39ff14' }}>
                                 <span className="text-black font-black text-xl" style={{ fontFamily: 'Space Grotesk' }}>S</span>
                             </div>
-                            <span className="text-2xl font-black tracking-tight text-black"
+                            <span className="text-2xl font-black tracking-tighter text-black"
                                 style={{
                                     fontFamily: 'Space Grotesk',
-                                    textShadow: '0 0 10px rgba(57, 255, 20, 0.8), 0 0 20px rgba(57, 255, 20, 0.4)'
+                                    textShadow: '0 0 2px #39ff14, 0 0 10px #39ff14, 0 0 20px rgba(57, 255, 20, 0.4)'
                                 }}>
                                 StaySetu
                             </span>
                         </Link>
 
                         {/* Desktop Nav */}
-                        <div className="hidden md:flex items-center gap-1">
+                        <div className="hidden md:flex items-center gap-2 bg-black/40 p-1.5 rounded-full border border-[#39ff14]/20 shadow-[inset_0_0_10px_rgba(57,255,20,0.1)]">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.name}
                                     to={link.path}
-                                    className={`relative px-4 py-2 rounded-xl text-[14px] font-black transition-all duration-200 ${isActive(link.path)
-                                        ? 'bg-[#39ff14] text-black shadow-[0_0_15px_rgba(57,255,20,0.4)]'
-                                        : 'text-black hover:bg-[#39ff14]/10'
+                                    className={`relative px-6 py-2 rounded-full text-[13px] font-black uppercase tracking-widest transition-all duration-300 ${isActive(link.path)
+                                        ? 'bg-[#39ff14] text-black shadow-[0_0_15px_rgba(57,255,20,0.6)]'
+                                        : 'text-black hover:text-black/80'
                                         }`}
                                     style={{
-                                        textShadow: !isActive(link.path) ? '0 0 8px rgba(57, 255, 20, 0.9), 0 0 15px rgba(57, 255, 20, 0.3)' : 'none'
+                                        textShadow: !isActive(link.path) ? '0 0 8px #39ff14, 0 0 15px rgba(57, 255, 20, 0.5)' : 'none'
                                     }}
                                 >
                                     {link.name}
@@ -108,60 +107,63 @@ const Navbar = () => {
                         </div>
 
                         {/* Desktop Auth */}
-                        <div className="hidden md:flex items-center gap-3">
+                        <div className="hidden md:flex items-center gap-4">
                             {user ? (
                                 <div className="relative">
                                     <button
                                         onClick={() => setDropdownOpen(!dropdownOpen)}
-                                        className="flex items-center gap-2 bg-[#39ff14]/5 hover:bg-[#39ff14]/15 border border-[#39ff14]/20 pl-1.5 pr-3 py-1.5 rounded-full transition-all duration-200"
+                                        className="flex items-center gap-3 bg-black/40 hover:bg-black/60 border border-[#39ff14]/30 pl-2 pr-4 py-1.5 rounded-full transition-all duration-300 group"
                                     >
-                                        <div className="w-7 h-7 rounded-full bg-[#39ff14] flex items-center justify-center text-black text-xs font-black">
+                                        <div className="w-8 h-8 rounded-full bg-[#39ff14] flex items-center justify-center text-black text-xs font-black shadow-[0_0_10px_rgba(57,255,20,0.4)]">
                                             {(profile?.full_name || 'U').charAt(0).toUpperCase()}
                                         </div>
-                                        <span className="text-sm font-black text-black" style={{ textShadow: '0 0 8px rgba(57, 255, 20, 0.7)' }}>
+                                        <span className="text-[13px] font-black text-black uppercase tracking-wider"
+                                            style={{ textShadow: '0 0 8px #39ff14' }}>
                                             {profile?.full_name?.split(' ')[0] || 'User'}
                                         </span>
-                                        <ChevronDown size={14} className={`text-black transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+                                        <ChevronDown size={14} className={`text-black transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : ''}`}
+                                            style={{ filter: 'drop-shadow(0 0 5px #39ff14)' }} />
                                     </button>
 
                                     {/* Dropdown */}
                                     {dropdownOpen && (
                                         <>
                                             <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
-                                            <div className="absolute right-0 mt-2 w-56 bg-[#1a1a1a] border border-[#39ff14]/30 rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.5)] z-50 py-2 animate-fade-in origin-top-right">
+                                            <div className="absolute right-0 mt-3 w-56 bg-black border border-[#39ff14]/40 rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] z-50 py-3 animate-fade-in origin-top-right overflow-hidden">
                                                 {/* User info */}
-                                                <div className="px-4 py-3 border-b border-[#39ff14]/10">
-                                                    <p className="text-sm font-black text-white truncate">{profile?.full_name || user.email}</p>
-                                                    <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
-                                                    <span className={`inline-flex items-center gap-1 mt-2 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#39ff14]/20 text-[#39ff14]`}>
+                                                <div className="px-5 py-4 border-b border-[#39ff14]/10 bg-[#39ff14]/5">
+                                                    <p className="text-sm font-black text-white truncate uppercase tracking-tighter">{profile?.full_name || user.email}</p>
+                                                    <p className="text-[10px] text-slate-500 truncate mt-0.5 font-bold uppercase">{user.email}</p>
+                                                    <span className="inline-flex mt-2 px-2 py-0.5 rounded bg-[#39ff14] text-black text-[9px] font-black uppercase tracking-widest">
                                                         {roleBadge.label}
                                                     </span>
                                                 </div>
-                                                <Link
-                                                    to={dashPath}
-                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-black text-slate-400 hover:bg-[#39ff14]/10 hover:text-white transition-colors"
-                                                    onClick={() => setDropdownOpen(false)}
-                                                >
-                                                    <LayoutDashboard size={15} /> Dashboard
-                                                </Link>
-                                                <div className="h-px bg-[#39ff14]/10 my-1" />
-                                                <button
-                                                    onClick={handleLogout}
-                                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-black text-red-400 hover:bg-red-400/10 transition-colors"
-                                                >
-                                                    <LogOut size={15} /> Log out
-                                                </button>
+                                                <div className="px-2 py-2">
+                                                    <Link
+                                                        to={dashPath}
+                                                        className="flex items-center gap-3 px-4 py-3 text-[12px] font-black uppercase tracking-widest text-slate-400 hover:bg-[#39ff14] hover:text-black rounded-2xl transition-all"
+                                                        onClick={() => setDropdownOpen(false)}
+                                                    >
+                                                        <LayoutDashboard size={14} /> Dashboard
+                                                    </Link>
+                                                    <button
+                                                        onClick={handleLogout}
+                                                        className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-black uppercase tracking-widest text-red-500 hover:bg-red-500 hover:text-white rounded-2xl transition-all mt-1"
+                                                    >
+                                                        <LogOut size={14} /> Log out
+                                                    </button>
+                                                </div>
                                             </div>
                                         </>
                                     )}
                                 </div>
                             ) : (
-                                <div className="flex items-center gap-2">
-                                    <Link to="/login" className="text-[14px] font-black text-black px-4 py-2 rounded-xl hover:bg-[#39ff14]/10 transition-all"
-                                        style={{ textShadow: '0 0 8px rgba(57, 255, 20, 0.7)' }}>
+                                <div className="flex items-center gap-4">
+                                    <Link to="/login" className="text-[13px] font-black text-black uppercase tracking-widest px-4 py-2 hover:bg-[#39ff14]/10 rounded-full transition-all"
+                                        style={{ textShadow: '0 0 10px #39ff14' }}>
                                         Log in
                                     </Link>
-                                    <Link to="/signup" className="btn-primary py-2.5 px-6 text-[14px]">
+                                    <Link to="/signup" className="bg-[#39ff14] text-black px-7 py-2.5 rounded-full text-[13px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(57,255,20,0.4)] hover:shadow-[0_0_40px_rgba(57,255,20,0.6)] hover:-translate-y-0.5 transition-all">
                                         Get Started
                                     </Link>
                                 </div>
@@ -171,8 +173,7 @@ const Navbar = () => {
                         {/* Mobile hamburger */}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl text-black transition-all"
-                            style={{ filter: 'drop-shadow(0 0 5px rgba(57, 255, 20, 0.8))' }}
+                            className="md:hidden w-11 h-11 flex items-center justify-center rounded-full text-[#39ff14] transition-all bg-black/20 border border-[#39ff14]/20"
                         >
                             {isOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
