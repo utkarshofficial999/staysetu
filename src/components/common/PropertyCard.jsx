@@ -28,7 +28,7 @@ const PropertyCard = ({ property }) => {
     const ts = typeStyles[property?.type] || typeStyles.PG;
 
     return (
-        <div className="group card-elevated overflow-hidden flex flex-col bg-[#141114]">
+        <div className="group card-elevated overflow-hidden flex flex-col">
             {/* Image */}
             <div className="relative overflow-hidden" style={{ aspectRatio: '16/10' }}>
                 {!imgLoaded && (
@@ -82,7 +82,7 @@ const PropertyCard = ({ property }) => {
                     <h3 className="font-semibold text-white line-clamp-1 text-sm group-hover:text-plum-300 transition-colors" style={{ fontFamily: 'Space Grotesk' }}>
                         {property?.title || 'Comfortable Stay'}
                     </h3>
-                    <div className="flex items-center text-white font-black text-[10px] shrink-0 bg-white/10 px-2 py-0.5 rounded-md border border-white/20">
+                    <div className="flex items-center text-white font-black text-[10px] shrink-0 bg-white/10 px-2 py-0.5 rounded-md border border-white/40 shadow-[0_0_5px_rgba(255,255,255,0.1)]">
                         <Star size={9} fill="#fbbf24" className="mr-0.5 text-amber-400" />
                         4.8
                     </div>
@@ -98,7 +98,7 @@ const PropertyCard = ({ property }) => {
                     {(property?.amenities?.slice(0, 3) || []).map((amenity, i) => {
                         const Icon = amenityIcons[amenity];
                         return (
-                            <span key={i} className="flex items-center gap-1.5 text-[10px] font-medium bg-white/5 text-slate-300 border border-white/5 px-2.5 py-1 rounded-md">
+                            <span key={i} className="flex items-center gap-1.5 text-[10px] font-medium bg-white/5 text-slate-300 border border-white/20 px-2.5 py-1 rounded-md">
                                 {Icon && <Icon size={9} />}
                                 {amenity}
                             </span>
@@ -107,7 +107,7 @@ const PropertyCard = ({ property }) => {
                 </div>
 
                 {/* Price + CTA */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
+                <div className="flex items-center justify-between pt-4 border-t-2 border-white/10 mt-auto">
                     <div>
                         <div className="flex items-center text-white font-black text-lg" style={{ fontFamily: 'Space Grotesk' }}>
                             <IndianRupee size={16} className="mr-0.5 text-white" />

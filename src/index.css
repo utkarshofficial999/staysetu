@@ -36,7 +36,7 @@
     font-size: 1.1rem;
     line-height: 1.6;
     overflow-x: hidden;
-    text-shadow: 0 0 5px rgba(57, 255, 20, 0.4);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
   }
 
   p,
@@ -48,7 +48,7 @@
   textarea,
   button {
     @apply font-bold text-white;
-    text-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
   }
 
   /* Force white color + neon glow for common utility classes */
@@ -60,7 +60,7 @@
   .text-slate-200 {
     color: #ffffff !important;
     font-weight: 700 !important;
-    text-shadow: 0 0 10px rgba(57, 255, 20, 0.6) !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6) !important;
   }
 
   h1,
@@ -72,12 +72,12 @@
     font-family: 'Space Grotesk', 'Inter', sans-serif;
     @apply font-black tracking-tight;
     color: #ffffff !important;
-    text-shadow: 0 0 12px rgba(57, 255, 20, 0.8), 0 0 24px rgba(57, 255, 20, 0.2) !important;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 24px rgba(255, 255, 255, 0.2) !important;
     line-height: 1.1;
   }
 
   ::selection {
-    background: #39ff14;
+    background: #ffffff;
     color: #000000;
   }
 }
@@ -88,13 +88,13 @@
   /* ── Buttons ── */
   .btn-primary {
     @apply text-black font-black py-3 px-6 rounded-2xl transition-all duration-300 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed;
-    background: #39ff14;
-    box-shadow: 0 0 20px rgba(57, 255, 20, 0.6), 0 0 40px rgba(57, 255, 20, 0.2);
+    background: #ffffff;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.2);
     text-shadow: none;
   }
 
   .btn-primary:hover {
-    box-shadow: 0 0 30px rgba(57, 255, 20, 0.8), 0 0 60px rgba(57, 255, 20, 0.4);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 255, 255, 0.4);
     transform: translateY(-1px);
   }
 
@@ -103,14 +103,14 @@
   }
 
   .btn-secondary {
-    @apply text-white border border-[#39ff14] font-semibold py-3 px-6 rounded-2xl transition-all duration-300 active:scale-[0.97] disabled:opacity-50;
-    background: rgba(57, 255, 20, 0.05);
-    box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+    @apply text-white border border-[#ffffff] font-semibold py-3 px-6 rounded-2xl transition-all duration-300 active:scale-[0.97] disabled:opacity-50;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   }
 
   .btn-secondary:hover {
-    @apply border-[#39ff14]/80 bg-[#39ff14]/10;
-    box-shadow: 0 0 25px rgba(57, 255, 20, 0.4);
+    @apply border-white/80 bg-white/10;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
   }
 
   .btn-whatsapp {
@@ -122,36 +122,36 @@
   .glass-card {
     @apply backdrop-blur-2xl rounded-3xl;
     background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(57, 255, 20, 0.2);
-    box-shadow: 0 0 30px rgba(57, 255, 20, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
   }
 
   .card-elevated {
     @apply rounded-3xl;
     background: #000000;
-    border: 1px solid rgba(57, 255, 20, 0.15);
-    box-shadow: 0 0 20px rgba(57, 255, 20, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
     transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .card-elevated:hover {
-    box-shadow: 0 0 40px rgba(57, 255, 20, 0.4);
+    box-shadow: 0 0 45px rgba(255, 255, 255, 0.3);
     transform: translateY(-4px);
-    border-color: rgba(57, 255, 20, 0.4);
+    border-color: rgba(255, 255, 255, 0.8);
   }
 
   /* ── Form ── */
   .input-field {
-    @apply w-full border border-[#39ff14]/20 rounded-xl py-3 px-4 text-sm font-medium placeholder:text-slate-500 transition-all duration-200;
+    @apply w-full border border-white/40 rounded-xl py-3 px-4 text-sm font-medium placeholder:text-slate-500 transition-all duration-200;
     background: rgba(0, 0, 0, 0.4);
     color: white;
-    box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.05);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
   }
 
   .input-field:focus {
-    @apply outline-none border-[#39ff14];
-    box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
-    background: rgba(57, 255, 20, 0.05);
+    @apply outline-none border-[#ffffff];
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
   }
 
   /* ── Section labels ── */

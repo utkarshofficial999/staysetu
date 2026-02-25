@@ -65,8 +65,8 @@ const Navbar = () => {
         <>
             <nav
                 className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out px-4 py-2 ${scrolled
-                    ? 'top-4 w-[95%] max-w-7xl bg-black/95 rounded-[2rem] border border-[#39ff14]/40 shadow-[0_0_40px_rgba(57,255,20,0.25)]'
-                    : 'top-0 w-full bg-[#151515]/60 backdrop-blur-xl border-b border-[#39ff14]/10'
+                    ? 'top-4 w-[95%] max-w-7xl bg-black/95 rounded-[2rem] border border-white/40 shadow-[0_0_40px_rgba(255,255,255,0.25)]'
+                    : 'top-0 w-full bg-[#151515]/60 backdrop-blur-xl border-b border-white/10'
                     }`}
             >
                 <div className="max-w-7xl mx-auto px-2">
@@ -74,31 +74,31 @@ const Navbar = () => {
 
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-3 group" onClick={() => setIsOpen(false)}>
-                            <div className="w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-500 rotate-0 group-hover:rotate-[360deg] shadow-[0_0_20px_rgba(57,255,20,0.5)]"
-                                style={{ background: '#39ff14' }}>
+                            <div className="w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-500 rotate-0 group-hover:rotate-[360deg] shadow-[0_0_20px_rgba(255,255,255,0.5)]"
+                                style={{ background: '#ffffff' }}>
                                 <span className="text-black font-black text-xl" style={{ fontFamily: 'Space Grotesk' }}>S</span>
                             </div>
                             <span className="text-2xl font-black tracking-tighter text-black"
                                 style={{
                                     fontFamily: 'Space Grotesk',
-                                    textShadow: '0 0 2px #39ff14, 0 0 10px #39ff14, 0 0 20px rgba(57, 255, 20, 0.4)'
+                                    textShadow: '0 0 2px #ffffff, 0 0 10px #ffffff, 0 0 20px rgba(255, 255, 255, 0.4)'
                                 }}>
                                 StaySetu
                             </span>
                         </Link>
 
                         {/* Desktop Nav */}
-                        <div className="hidden md:flex items-center gap-2 bg-black/40 p-1.5 rounded-full border border-[#39ff14]/20 shadow-[inset_0_0_10px_rgba(57,255,20,0.1)]">
+                        <div className="hidden md:flex items-center gap-2 bg-black/40 p-1.5 rounded-full border border-white/20 shadow-[inset_0_0_10px_rgba(255,255,255,0.1)]">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.name}
                                     to={link.path}
                                     className={`relative px-6 py-2 rounded-full text-[13px] font-black uppercase tracking-widest transition-all duration-300 ${isActive(link.path)
-                                        ? 'bg-[#39ff14] text-black shadow-[0_0_15px_rgba(57,255,20,0.6)]'
+                                        ? 'bg-[#ffffff] text-black shadow-[0_0_15px_rgba(255,255,255,0.6)]'
                                         : 'text-black hover:text-black/80'
                                         }`}
                                     style={{
-                                        textShadow: !isActive(link.path) ? '0 0 8px #39ff14, 0 0 15px rgba(57, 255, 20, 0.5)' : 'none'
+                                        textShadow: !isActive(link.path) ? '0 0 8px #ffffff, 0 0 15px rgba(255, 255, 255, 0.5)' : 'none'
                                     }}
                                 >
                                     {link.name}
@@ -112,36 +112,36 @@ const Navbar = () => {
                                 <div className="relative">
                                     <button
                                         onClick={() => setDropdownOpen(!dropdownOpen)}
-                                        className="flex items-center gap-3 bg-black/40 hover:bg-black/60 border border-[#39ff14]/30 pl-2 pr-4 py-1.5 rounded-full transition-all duration-300 group"
+                                        className="flex items-center gap-3 bg-black/40 hover:bg-black/60 border border-white/30 pl-2 pr-4 py-1.5 rounded-full transition-all duration-300 group"
                                     >
-                                        <div className="w-8 h-8 rounded-full bg-[#39ff14] flex items-center justify-center text-black text-xs font-black shadow-[0_0_10px_rgba(57,255,20,0.4)]">
+                                        <div className="w-8 h-8 rounded-full bg-[#ffffff] flex items-center justify-center text-black text-xs font-black shadow-[0_0_10px_rgba(255,255,255,0.4)]">
                                             {(profile?.full_name || 'U').charAt(0).toUpperCase()}
                                         </div>
                                         <span className="text-[13px] font-black text-black uppercase tracking-wider"
-                                            style={{ textShadow: '0 0 8px #39ff14' }}>
+                                            style={{ textShadow: '0 0 8px #ffffff' }}>
                                             {profile?.full_name?.split(' ')[0] || 'User'}
                                         </span>
                                         <ChevronDown size={14} className={`text-black transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : ''}`}
-                                            style={{ filter: 'drop-shadow(0 0 5px #39ff14)' }} />
+                                            style={{ filter: 'drop-shadow(0 0 5px #ffffff)' }} />
                                     </button>
 
                                     {/* Dropdown */}
                                     {dropdownOpen && (
                                         <>
                                             <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
-                                            <div className="absolute right-0 mt-3 w-56 bg-black border border-[#39ff14]/40 rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] z-50 py-3 animate-fade-in origin-top-right overflow-hidden">
+                                            <div className="absolute right-0 mt-3 w-56 bg-black border border-white/40 rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] z-50 py-3 animate-fade-in origin-top-right overflow-hidden">
                                                 {/* User info */}
-                                                <div className="px-5 py-4 border-b border-[#39ff14]/10 bg-[#39ff14]/5">
+                                                <div className="px-5 py-4 border-b border-white/10 bg-white/5">
                                                     <p className="text-sm font-black text-white truncate uppercase tracking-tighter">{profile?.full_name || user.email}</p>
                                                     <p className="text-[10px] text-slate-500 truncate mt-0.5 font-bold uppercase">{user.email}</p>
-                                                    <span className="inline-flex mt-2 px-2 py-0.5 rounded bg-[#39ff14] text-black text-[9px] font-black uppercase tracking-widest">
+                                                    <span className="inline-flex mt-2 px-2 py-0.5 rounded bg-[#ffffff] text-black text-[9px] font-black uppercase tracking-widest">
                                                         {roleBadge.label}
                                                     </span>
                                                 </div>
                                                 <div className="px-2 py-2">
                                                     <Link
                                                         to={dashPath}
-                                                        className="flex items-center gap-3 px-4 py-3 text-[12px] font-black uppercase tracking-widest text-slate-400 hover:bg-[#39ff14] hover:text-black rounded-2xl transition-all"
+                                                        className="flex items-center gap-3 px-4 py-3 text-[12px] font-black uppercase tracking-widest text-slate-400 hover:bg-[#ffffff] hover:text-black rounded-2xl transition-all"
                                                         onClick={() => setDropdownOpen(false)}
                                                     >
                                                         <LayoutDashboard size={14} /> Dashboard
@@ -159,11 +159,11 @@ const Navbar = () => {
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-4">
-                                    <Link to="/login" className="text-[13px] font-black text-black uppercase tracking-widest px-4 py-2 hover:bg-[#39ff14]/10 rounded-full transition-all"
-                                        style={{ textShadow: '0 0 10px #39ff14' }}>
+                                    <Link to="/login" className="text-[13px] font-black text-black uppercase tracking-widest px-4 py-2 hover:bg-white/10 rounded-full transition-all"
+                                        style={{ textShadow: '0 0 10px #ffffff' }}>
                                         Log in
                                     </Link>
-                                    <Link to="/signup" className="bg-[#39ff14] text-black px-7 py-2.5 rounded-full text-[13px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(57,255,20,0.4)] hover:shadow-[0_0_40px_rgba(57,255,20,0.6)] hover:-translate-y-0.5 transition-all">
+                                    <Link to="/signup" className="bg-[#ffffff] text-black px-7 py-2.5 rounded-full text-[13px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.6)] hover:-translate-y-0.5 transition-all">
                                         Get Started
                                     </Link>
                                 </div>
@@ -173,7 +173,7 @@ const Navbar = () => {
                         {/* Mobile hamburger */}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="md:hidden w-11 h-11 flex items-center justify-center rounded-full text-[#39ff14] transition-all bg-black/20 border border-[#39ff14]/20"
+                            className="md:hidden w-11 h-11 flex items-center justify-center rounded-full text-white transition-all bg-black/20 border border-white/20"
                         >
                             {isOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
@@ -182,18 +182,18 @@ const Navbar = () => {
 
                 {/* Mobile dropdown */}
                 {isOpen && (
-                    <div className="md:hidden bg-[#1a1a1a]/98 backdrop-blur-3xl border-t border-[#39ff14]/20 animate-fade-in">
+                    <div className="md:hidden bg-[#1a1a1a]/98 backdrop-blur-3xl border-t border-white/20 animate-fade-in">
                         <div className="px-4 pt-2 pb-8 space-y-1.5">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.name}
                                     to={link.path}
                                     className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-black transition-all ${isActive(link.path)
-                                        ? 'bg-[#39ff14] text-black shadow-[0_0_15px_rgba(57,255,20,0.4)]'
+                                        ? 'bg-[#ffffff] text-black shadow-[0_0_15px_rgba(255,255,255,0.4)]'
                                         : 'text-black'
                                         }`}
                                     style={{
-                                        textShadow: !isActive(link.path) ? '0 0 8px rgba(57, 255, 20, 0.9)' : 'none'
+                                        textShadow: !isActive(link.path) ? '0 0 8px rgba(255, 255, 255, 0.9)' : 'none'
                                     }}
                                     onClick={() => setIsOpen(false)}
                                 >
@@ -201,22 +201,22 @@ const Navbar = () => {
                                 </Link>
                             ))}
 
-                            <div className="pt-3 mt-3 border-t border-[#39ff14]/10 space-y-1.5">
+                            <div className="pt-3 mt-3 border-t border-white/10 space-y-1.5">
                                 {user ? (
                                     <>
                                         {/* User info card */}
-                                        <div className="flex items-center gap-3 px-4 py-4 bg-[#39ff14]/5 rounded-xl mb-3 border border-[#39ff14]/10">
-                                            <div className="w-10 h-10 rounded-full bg-[#39ff14] flex items-center justify-center text-black text-sm font-black">
+                                        <div className="flex items-center gap-3 px-4 py-4 bg-white/5 rounded-xl mb-3 border border-white/10">
+                                            <div className="w-10 h-10 rounded-full bg-[#ffffff] flex items-center justify-center text-black text-sm font-black">
                                                 {(profile?.full_name || 'U').charAt(0).toUpperCase()}
                                             </div>
                                             <div className="min-w-0 flex-1">
                                                 <p className="text-sm font-black text-white truncate">{profile?.full_name || 'User'}</p>
-                                                <span className={`text-[10px] font-black uppercase tracking-wider text-[#39ff14]`}>{roleBadge.label}</span>
+                                                <span className={`text-[10px] font-black uppercase tracking-wider text-white`} style={{ textShadow: '0 0 5px rgba(255,255,255,0.5)' }}>{roleBadge.label}</span>
                                             </div>
                                         </div>
                                         <Link
                                             to={dashPath}
-                                            className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-black text-slate-400 hover:bg-[#39ff14]/10 transition-all"
+                                            className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-black text-slate-400 hover:bg-white/10 transition-all"
                                             onClick={() => setIsOpen(false)}
                                         >
                                             <LayoutDashboard size={18} /> Dashboard
@@ -230,12 +230,12 @@ const Navbar = () => {
                                     </>
                                 ) : (
                                     <div className="space-y-3 pt-2">
-                                        <Link to="/login" className="block text-center py-3.5 text-sm font-black text-black rounded-xl hover:bg-[#39ff14]/10 transition-all"
-                                            style={{ textShadow: '0 0 8px rgba(57, 255, 20, 0.8)' }}
+                                        <Link to="/login" className="block text-center py-3.5 text-sm font-black text-black rounded-xl hover:bg-white/10 transition-all"
+                                            style={{ textShadow: '0 0 8px rgba(255, 255, 255, 0.8)' }}
                                             onClick={() => setIsOpen(false)}>
                                             Log in
                                         </Link>
-                                        <Link to="/signup" className="btn-primary text-center block text-sm py-4 shadow-[0_0_20px_rgba(57,255,20,0.3)]" onClick={() => setIsOpen(false)}>
+                                        <Link to="/signup" className="btn-primary text-center block text-sm py-4 shadow-[0_0_20px_rgba(255,255,255,0.3)]" onClick={() => setIsOpen(false)}>
                                             Get Started
                                         </Link>
                                     </div>

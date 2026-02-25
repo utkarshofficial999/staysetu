@@ -47,7 +47,7 @@ const Categories = () => {
                             Browse accommodation types that fit your lifestyle and budget.
                         </p>
                     </div>
-                    <Link to="/listings" className="hidden md:flex items-center gap-1.5 text-plum-400 font-bold text-sm hover:text-plum-300 transition-colors uppercase tracking-widest">
+                    <Link to="/listings" className="hidden md:flex items-center gap-1.5 text-white/60 font-bold text-sm hover:text-white transition-all uppercase tracking-widest" style={{ textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>
                         View All <ArrowUpRight size={15} />
                     </Link>
                 </div>
@@ -59,12 +59,12 @@ const Categories = () => {
                             to={`/listings?type=${cat.type}${cat.gender ? `&gender=${cat.gender}` : ''}`}
                             className="group card-elevated p-8 flex flex-col !bg-white/5 hover:!bg-white/10"
                         >
-                            <div className={`bg-gradient-to-br ${cat.gradient} w-14 h-14 rounded-2xl flex items-center justify-center text-white mb-7 group-hover:scale-110 transition-transform duration-500 shadow-glow-plum`}>
+                            <div className="bg-white/10 border-2 border-white/40 w-14 h-14 rounded-2xl flex items-center justify-center text-white mb-7 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_20px_rgba(255,255,255,0.15)]">
                                 <cat.icon size={26} />
                             </div>
                             <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk' }}>{cat.name}</h3>
                             <p className="text-slate-400 text-sm font-normal leading-relaxed flex-1">{cat.description}</p>
-                            <div className="mt-6 flex items-center gap-2 text-plum-400 font-bold text-[11px] uppercase tracking-widest opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                            <div className="mt-6 flex items-center gap-2 text-white font-bold text-[11px] uppercase tracking-widest opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300" style={{ textShadow: '0 0 8px #ffffff' }}>
                                 Browse <ArrowUpRight size={14} />
                             </div>
                         </Link>

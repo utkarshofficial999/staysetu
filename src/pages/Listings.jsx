@@ -99,7 +99,7 @@ const Listings = () => {
                             key={type}
                             onClick={() => setPropertyType(type)}
                             className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all text-sm font-medium ${propertyType === type
-                                ? 'border-plum-200 bg-plum-50 text-plum-900'
+                                ? 'border-white/40 bg-white/10 text-white shadow-[0_0_10px_rgba(255,255,255,0.2)]'
                                 : 'border-transparent text-slate-400 hover:bg-[#0a080a]'
                                 }`}
                         >
@@ -119,7 +119,7 @@ const Listings = () => {
                             key={key}
                             onClick={() => setGenderFilter(key)}
                             className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all text-sm font-medium ${genderFilter === key
-                                ? 'border-plum-200 bg-plum-50 text-plum-900'
+                                ? 'border-white/40 bg-white/10 text-white shadow-[0_0_10px_rgba(255,255,255,0.2)]'
                                 : 'border-transparent text-slate-400 hover:bg-[#0a080a]'
                                 }`}
                         >
@@ -144,7 +144,7 @@ const Listings = () => {
                     min="2000"
                     max="100000"
                     step="500"
-                    className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-plum-900"
+                    className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white"
                     value={priceRange}
                     onChange={(e) => setPriceRange(parseInt(e.target.value))}
                 />
@@ -163,11 +163,11 @@ const Listings = () => {
                             <div
                                 onClick={() => toggleAmenity(amenity)}
                                 className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${amenities.includes(amenity)
-                                    ? 'bg-plum-900 border-plum-900'
-                                    : 'border-white/10 group-hover:border-plum-300'
+                                    ? 'bg-white border-white shadow-[0_0_8px_rgba(255,255,255,0.4)]'
+                                    : 'border-white/10 group-hover:border-white/30'
                                     }`}
                             >
-                                {amenities.includes(amenity) && <Check size={12} className="text-white" />}
+                                {amenities.includes(amenity) && <Check size={12} className="text-black" />}
                             </div>
                             <span className={`text-sm font-medium transition-colors ${amenities.includes(amenity) ? 'text-white' : 'text-slate-400'}`}>
                                 {amenity}

@@ -72,7 +72,7 @@ const PropertyDetails = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-[#0a080a]">
-                <div className="w-10 h-10 border-3 border-plum-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-10 h-10 border-3 border-white border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(255,255,255,0.3)]"></div>
             </div>
         );
     }
