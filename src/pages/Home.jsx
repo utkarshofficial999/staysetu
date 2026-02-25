@@ -65,9 +65,9 @@ const Home = () => {
             </section>
 
             {/* Featured Listings */}
-            <section className="py-20 relative z-10">
+            <section className="py-12 relative z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-14">
+                    <div className="text-center mb-10">
                         <span className="section-label mb-4 inline-block">Featured</span>
                         <h2 className="section-title" style={{ fontFamily: 'Space Grotesk' }}>
                             Popular Stays
@@ -113,10 +113,10 @@ const Home = () => {
             <HowItWorks />
 
             {/* Why StaySetu */}
-            <section className="py-24 bg-white relative overflow-hidden">
+            <section className="py-14 bg-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-mesh opacity-30 pointer-events-none" />
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-10">
                         <span className="section-label mb-4 inline-block">Why Us</span>
                         <h2 className="section-title" style={{ fontFamily: 'Space Grotesk' }}>
                             Built for Students, by Students
@@ -141,7 +141,7 @@ const Home = () => {
             </section>
 
             {/* CTA Banner */}
-            <section className="py-20">
+            <section className="py-14">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="relative rounded-[2rem] overflow-hidden p-12 md:p-20 text-center"
                         style={{

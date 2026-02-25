@@ -37,9 +37,9 @@ const categories = [
 
 const Categories = () => {
     return (
-        <section className="relative py-24">
+        <section className="relative py-14">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-end mb-14">
+                <div className="flex justify-between items-end mb-10">
                     <div>
                         <span className="section-label mb-4 block w-fit">Explore</span>
                         <h2 className="section-title" style={{ fontFamily: 'Space Grotesk' }}>Find Your Stay</h2>

@@ -30,12 +30,12 @@ const steps = [
 
 const HowItWorks = () => {
     return (
-        <section className="py-24 bg-white relative overflow-hidden">
+        <section className="py-14 bg-white relative overflow-hidden">
             {/* Subtle background */}
             <div className="absolute inset-0 bg-mesh opacity-50 pointer-events-none" />
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center max-w-2xl mx-auto mb-16">
+                <div className="text-center max-w-2xl mx-auto mb-10">
                     <span className="section-label mb-4 inline-block">How It Works</span>
                     <h2 className="section-title" style={{ fontFamily: 'Space Grotesk' }}>
                         Find your stay in 4 simple steps
