@@ -20,18 +20,7 @@ const Hero = () => {
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 
-                {/* Badge */}
-                <div className="flex justify-center mb-8 animate-fade-in">
-                    <div className="inline-flex items-center gap-2.5 bg-white border border-slate-200/60 px-5 py-2.5 rounded-full text-[13px] font-medium text-slate-600"
-                        style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-                        <span className="flex relative">
-                            <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                        </span>
-                        <Sparkles size={13} className="text-primary-900" />
-                        <span>India's #1 Student Housing Platform</span>
-                    </div>
-                </div>
+
 
                 {/* Headline */}
                 <div className="text-center max-w-4xl mx-auto mb-10 animate-slide-up">
