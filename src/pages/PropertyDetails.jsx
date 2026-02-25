@@ -215,8 +215,8 @@ const PropertyDetails = () => {
                                     {property.amenities?.map((amenity) => {
                                         const Icon = amenityIcons[amenity] || Home;
                                         return (
-                                            <div key={amenity} className="flex items-center gap-3 p-3.5 bg-[#0a080a] rounded-xl border border-white/5/80">
-                                                <div className="w-9 h-9 bg-[#141114] rounded-lg flex items-center justify-center text-plum-500 border border-white/5/60"
+                                            <div key={amenity} className="flex items-center gap-3 p-3.5 bg-[#0a080a] rounded-xl border border-white/10">
+                                                <div className="w-9 h-9 bg-[#141114] rounded-lg flex items-center justify-center text-plum-500 border border-white/5"
                                                     style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
                                                     <Icon size={16} />
                                                 </div>

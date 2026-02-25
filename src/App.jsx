@@ -27,8 +27,9 @@ const ProtectedRoute = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-plum-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black">
+        <div className="w-12 h-12 border-4 border-[#39ff14] border-t-transparent rounded-full animate-spin shadow-glow-green mb-4"></div>
+        <p className="text-[#39ff14] font-black uppercase tracking-widest text-sm animate-pulse">StaySetu is Loading...</p>
       </div>
     );
   }
@@ -46,8 +47,9 @@ const AdminRoute = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-plum-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black">
+        <div className="w-12 h-12 border-4 border-[#39ff14] border-t-transparent rounded-full animate-spin shadow-glow-green mb-4"></div>
+        <p className="text-[#39ff14] font-black uppercase tracking-widest text-sm animate-pulse">Authenticating...</p>
       </div>
     );
   }

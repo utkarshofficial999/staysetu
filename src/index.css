@@ -41,7 +41,6 @@
 
   p,
   span,
-  div,
   a,
   li,
   label,
@@ -49,7 +48,7 @@
   textarea,
   button {
     @apply font-bold text-white;
-    text-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
+    text-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
   }
 
   /* Force white color + neon glow for common utility classes */
@@ -61,7 +60,7 @@
   .text-slate-200 {
     color: #ffffff !important;
     font-weight: 700 !important;
-    text-shadow: 0 0 8px rgba(57, 255, 20, 0.6) !important;
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.6) !important;
   }
 
   h1,
