@@ -110,19 +110,6 @@ const Hero = () => {
                     </a>
                 </div>
 
-                {/* Social proof */}
-                <div className="flex items-center justify-center gap-8 mt-14 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                    {[
-                        { value: '5,000+', label: 'Verified Stays' },
-                        { value: '12k+', label: 'Happy Students' },
-                        { value: '8', label: 'Cities' },
-                    ].map((stat, i) => (
-                        <div key={i} className="text-center">
-                            <p className="text-2xl md:text-3xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>{stat.value}</p>
-                            <p className="text-xs text-slate-400 font-medium mt-1">{stat.label}</p>
-                        </div>
-                    ))}
-                </div>
             </div>
         </div>
     );
