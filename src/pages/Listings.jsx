@@ -12,6 +12,7 @@ const Listings = () => {
 
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
     const [propertyType, setPropertyType] = useState(searchParams.get('type') || 'all');
+    const [genderFilter, setGenderFilter] = useState(searchParams.get('gender') || 'all');
     const [priceRange, setPriceRange] = useState(100000);
     const [amenities, setAmenities] = useState([]);
 
@@ -38,6 +39,11 @@ const Listings = () => {
             query = query.contains('amenities', amenities);
         }
 
+        if (genderFilter !== 'all') {
+            const genderValue = genderFilter === 'male' ? 'boys' : 'girls';
+            query = query.or(`gender_preference.eq.${genderValue},gender_preference.eq.any`);
+        }
+
         const { data, error } = await query.order('created_at', { ascending: false });
 
         if (data) setListings(data);
@@ -53,6 +59,7 @@ const Listings = () => {
         const params = new URLSearchParams();
         if (searchQuery) params.set('q', searchQuery);
         if (propertyType !== 'all') params.set('type', propertyType);
+        if (genderFilter !== 'all') params.set('gender', genderFilter);
         setSearchParams(params);
     };
 
@@ -72,6 +79,7 @@ const Listings = () => {
                     onClick={() => {
                         setSearchQuery('');
                         setPropertyType('all');
+                        setGenderFilter('all');
                         setPriceRange(100000);
                         setAmenities([]);
                         setSearchParams({});
@@ -97,6 +105,26 @@ const Listings = () => {
                         >
                             <span>{type === 'all' ? 'Any Type' : type}</span>
                             {propertyType === type && <Check size={14} />}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Gender Preference */}
+            <div className="mb-8">
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Gender</label>
+                <div className="space-y-1.5">
+                    {[{ key: 'all', label: 'Any' }, { key: 'male', label: 'Boys' }, { key: 'female', label: 'Girls' }].map(({ key, label }) => (
+                        <button
+                            key={key}
+                            onClick={() => setGenderFilter(key)}
+                            className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all text-sm font-medium ${genderFilter === key
+                                ? 'border-indigo-200 bg-indigo-50 text-indigo-600'
+                                : 'border-transparent text-slate-500 hover:bg-slate-50'
+                                }`}
+                        >
+                            <span>{label}</span>
+                            {genderFilter === key && <Check size={14} />}
                         </button>
                     ))}
                 </div>
@@ -225,6 +253,7 @@ const Listings = () => {
                                     onClick={() => {
                                         setSearchQuery('');
                                         setPropertyType('all');
+                                        setGenderFilter('all');
                                         setPriceRange(100000);
                                         setAmenities([]);
                                         setSearchParams({});
