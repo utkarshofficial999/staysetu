@@ -107,11 +107,6 @@ const Hero = ({ featuredProp }) => {
                         initial={shouldAnimate ? "hidden" : "visible"}
                         animate="visible"
                     >
-                        <motion.div variants={text3DVariants} className="mb-6">
-                            <span className="inline-flex items-center gap-2 bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.25em] px-5 py-2.5 rounded-full shadow-[6px_6px_0px_rgba(0,0,0,0.1)]">
-                                <Sparkles size={12} className="text-amber-400" /> StaySetu 2.0 Is Here
-                            </span>
-                        </motion.div>
 
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1] tracking-tight text-slate-900"
                             style={{ fontFamily: 'Bungee, cursive', perspective: '1000px' }}>
