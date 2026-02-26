@@ -68,6 +68,8 @@ const AdminPanel = () => {
         setFormLoading(true);
         const { error } = await supabase.from('listings').insert([{
             ...formData,
+            whatsapp_number: formData.whatsapp, // Map form field to DB column
+            gender_preference: formData.gender, // Map form field to DB column
             images: uploadedImages,
             owner_id: user.id,
             status: 'approved' // Admin uploads are auto-approved

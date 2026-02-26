@@ -7,6 +7,7 @@ const Hero = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [type, setType] = useState('all');
     const [shouldAnimate, setShouldAnimate] = useState(false);
+    const [featuredListing, setFeaturedListing] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -15,6 +16,18 @@ const Hero = () => {
             setShouldAnimate(true);
             sessionStorage.setItem('hero-3d-played-v3', 'true');
         }
+
+        const fetchFeatured = async () => {
+            const { data } = await supabase
+                .from('listings')
+                .select('*')
+                .eq('status', 'approved')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single();
+            if (data) setFeaturedListing(data);
+        };
+        fetchFeatured();
     }, []);
 
     const handleSearch = (e) => {
@@ -121,7 +134,7 @@ const Hero = () => {
                         </motion.div>
                     </motion.div>
 
-                    <div className="lg:col-span-5 relative mt-20 lg:mt-0 flex justify-center lg:block">
+                    <div className="lg:col-span-5 relative mt-20 lg:mt-0 flex justify-center lg:block cursor-pointer" onClick={() => featuredListing && navigate(`/property/${featuredListing.id}`)}>
                         <motion.div
                             initial={{ x: 60, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
@@ -130,20 +143,30 @@ const Hero = () => {
                         >
                             {/* Floating Card Stack */}
                             <div className="relative z-10 p-4 md:p-5 bg-white border-2 border-slate-900 rounded-[2rem] md:rounded-[2.5rem] shadow-[12px_12px_0px_#0f172a] md:shadow-[20px_20px_0px_#0f172a] transform rotate-1 md:rotate-3 scale-95 md:scale-110">
-                                <div className="aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 border-2 border-slate-900 relative">
-                                    <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80" alt="Preview" className="w-full h-full object-cover" />
-                                    <div className="absolute top-4 left-4 bg-white border-2 border-slate-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">Featured PG</div>
+                                <div className="aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 border-2 border-slate-900 relative bg-slate-100">
+                                    <img
+                                        src={featuredListing?.images?.[0] || "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80"}
+                                        alt="Preview"
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute top-4 left-4 bg-white border-2 border-slate-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">
+                                        {featuredListing?.type || 'Featured'} {featuredListing?.type === 'Flat' ? 'Flat' : 'PG'}
+                                    </div>
                                 </div>
                                 <div className="px-2">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>Modern Stay</h3>
-                                        <div className="text-plum-600 font-bold">₹8,500/mo</div>
+                                    <div className="flex justify-between items-center mb-1 gap-2">
+                                        <h3 className="text-xl font-bold text-slate-900 truncate" style={{ fontFamily: 'Bungee' }}>
+                                            {featuredListing?.title || 'Modern Stay'}
+                                        </h3>
+                                        <div className="text-plum-600 font-bold shrink-0">
+                                            ₹{(featuredListing?.price || 8500).toLocaleString()}/mo
+                                        </div>
                                     </div>
                                     <div className="flex items-center gap-1 text-slate-400 text-xs font-medium mb-4">
-                                        <MapPin size={12} /> Near Galgotias University
+                                        <MapPin size={12} /> {featuredListing?.location || 'Near Galgotias University'}
                                     </div>
-                                    <div className="flex gap-2">
-                                        {['WiFi', 'AC', 'Power'].map(tag => (
+                                    <div className="flex flex-wrap gap-2">
+                                        {(featuredListing?.amenities?.slice(0, 3) || ['WiFi', 'AC', 'Power']).map(tag => (
                                             <span key={tag} className="px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-500">{tag}</span>
                                         ))}
                                     </div>

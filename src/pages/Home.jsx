@@ -27,6 +27,7 @@ const Home = () => {
                 .from('listings')
                 .select('*')
                 .eq('status', 'approved')
+                .order('created_at', { ascending: false })
                 .limit(4);
 
             if (data) setFeaturedListings(data);

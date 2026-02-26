@@ -66,6 +66,15 @@ const PropertyCard = ({ property }) => {
                 >
                     <Heart size={14} fill={liked ? 'currentColor' : 'none'} />
                 </button>
+
+                {/* Verified Badge - Floating Bottom Left */}
+                <div className="absolute bottom-4 left-4 z-20 bg-emerald-500 text-white px-3 py-1.5 rounded-xl border-2 border-slate-900 shadow-[4px_4px_0px_#0f172a] transform -rotate-2">
+                    <div className="flex items-center gap-1.5">
+                        <CheckCircle2 size={12} />
+                        <span className="text-[9px] font-black uppercase tracking-widest">100% Verified</span>
+                    </div>
+                </div>
+
                 {/* Floating Price Tag - Placed inside image container with margin to avoid overlap and clipping */}
                 <div className="absolute bottom-4 right-4 z-20 bg-slate-900 text-white px-3.5 py-2 rounded-xl border-2 border-slate-900 shadow-lg">
                     <div className="flex items-center gap-0.5">
