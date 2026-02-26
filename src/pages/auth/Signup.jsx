@@ -68,7 +68,7 @@ const Signup = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-slate-50 relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-white relative overflow-hidden">
             {/* Background mesh */}
             <div className="absolute inset-0 bg-mesh pointer-events-none" />
 

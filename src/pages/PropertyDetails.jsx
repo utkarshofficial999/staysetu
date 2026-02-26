@@ -71,20 +71,20 @@ const PropertyDetails = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#0a080a]">
-                <div className="w-10 h-10 border-3 border-white border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(255,255,255,0.3)]"></div>
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <div className="w-10 h-10 border-3 border-slate-900 border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(0,0,0,0.1)]"></div>
             </div>
         );
     }
 
     if (!property) {
         return (
-            <div className="min-h-screen pt-32 text-center bg-[#0a080a] px-4">
+            <div className="min-h-screen pt-32 text-center bg-white px-4">
                 <div className="card-elevated max-w-md mx-auto p-12 rounded-[2rem]">
                     <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
                         <AlertCircle className="text-red-500" size={28} />
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Bungee' }}>Property not found</h2>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2" style={{ fontFamily: 'Bungee' }}>Property not found</h2>
                     <p className="text-slate-400 text-sm mb-6">This listing may have been removed or is no longer available.</p>
                     <button onClick={() => navigate('/listings')} className="btn-primary text-sm">Back to Listings</button>
                 </div>
@@ -100,7 +100,7 @@ const PropertyDetails = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a080a] pt-20 pb-20">
+        <div className="min-h-screen bg-white pt-20 pb-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Navigation & Actions */}
                 <div className="flex justify-between items-center mb-6 py-2">
@@ -118,12 +118,12 @@ const PropertyDetails = () => {
                             onClick={() => setLiked(!liked)}
                             className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all border ${liked
                                 ? 'bg-red-500 text-white border-red-500'
-                                : 'bg-[#141114] text-slate-400 border-white/10/60 hover:text-red-500'
+                                : 'bg-slate-100 text-slate-500 border-slate-200 hover:text-red-500'
                                 }`}
                         >
                             <Heart size={15} fill={liked ? 'currentColor' : 'none'} />
                         </button>
-                        <button className="w-9 h-9 bg-[#141114] border border-white/10/60 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-300 transition-all">
+                        <button className="w-9 h-9 bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all">
                             <Share2 size={15} />
                         </button>
                     </div>
@@ -148,14 +148,14 @@ const PropertyDetails = () => {
                                 <>
                                     <button
                                         onClick={() => setActiveImage((prev) => (prev > 0 ? prev - 1 : property.images.length - 1))}
-                                        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#141114]/80 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-200 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#141114]"
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white"
                                         style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                                     >
                                         <ChevronLeft size={18} />
                                     </button>
                                     <button
                                         onClick={() => setActiveImage((prev) => (prev < property.images.length - 1 ? prev + 1 : 0))}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#141114]/80 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-200 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#141114]"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white"
                                         style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                                     >
                                         <ChevronRight size={18} />
@@ -166,7 +166,7 @@ const PropertyDetails = () => {
                                             <button
                                                 key={i}
                                                 onClick={() => setActiveImage(i)}
-                                                className={`h-1.5 rounded-full transition-all ${activeImage === i ? 'bg-[#141114] w-6' : 'bg-[#141114]/50 w-1.5'}`}
+                                                className={`h-1.5 rounded-full transition-all ${activeImage === i ? 'bg-slate-900 w-6' : 'bg-slate-900/40 w-1.5'}`}
                                             />
                                         ))}
                                     </div>
@@ -192,10 +192,10 @@ const PropertyDetails = () => {
                                 )}
                             </div>
 
-                            <h1 className="text-2xl md:text-3xl font-bold text-white mb-3" style={{ fontFamily: 'Bungee' }}>
+                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'Bungee' }}>
                                 {property.title}
                             </h1>
-                            <div className="flex items-center text-slate-400 text-sm font-normal mb-6 gap-1.5">
+                            <div className="flex items-center text-slate-500 text-sm font-normal mb-6 gap-1.5">
                                 <MapPin size={14} className="text-plum-400" />
                                 {property.location}
                             </div>
@@ -203,24 +203,24 @@ const PropertyDetails = () => {
                             <div className="h-px bg-slate-100 mb-6" />
 
                             <div className="mb-8">
-                                <h3 className="text-sm font-semibold text-white mb-3 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>About</h3>
-                                <p className="text-slate-400 text-sm leading-relaxed font-normal">
+                                <h3 className="text-sm font-semibold text-slate-900 mb-3 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>About</h3>
+                                <p className="text-slate-600 text-sm leading-relaxed font-normal">
                                     {property.description || "No description provided for this property. Contact the owner for more details."}
                                 </p>
                             </div>
 
                             <div>
-                                <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>Amenities</h3>
+                                <h3 className="text-sm font-semibold text-slate-900 mb-4 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>Amenities</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                     {property.amenities?.map((amenity) => {
                                         const Icon = amenityIcons[amenity] || Home;
                                         return (
-                                            <div key={amenity} className="flex items-center gap-3 p-3.5 bg-[#0a080a] rounded-xl border border-white/10">
-                                                <div className="w-9 h-9 bg-[#141114] rounded-lg flex items-center justify-center text-plum-500 border border-white/5"
+                                            <div key={amenity} className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                                                <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center text-plum-600 border border-slate-200"
                                                     style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
                                                     <Icon size={16} />
                                                 </div>
-                                                <span className="font-medium text-slate-300 text-sm">{amenity}</span>
+                                                <span className="font-medium text-slate-700 text-sm">{amenity}</span>
                                             </div>
                                         );
                                     })}
@@ -234,13 +234,13 @@ const PropertyDetails = () => {
                         <div className="card-elevated p-6 sticky top-24">
                             {/* Price */}
                             <div className="mb-6">
-                                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Starting from</span>
+                                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">Starting from</span>
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-3xl font-black text-white flex items-center" style={{ fontFamily: 'Bungee' }}>
+                                    <span className="text-3xl font-black text-slate-900 flex items-center" style={{ fontFamily: 'Bungee' }}>
                                         <IndianRupee size={22} className="mr-1" />
                                         {property.price?.toLocaleString()}
                                     </span>
-                                    <span className="text-slate-400 font-normal text-sm">/ month</span>
+                                    <span className="text-slate-500 font-normal text-sm">/ month</span>
                                 </div>
                             </div>
 
@@ -252,17 +252,17 @@ const PropertyDetails = () => {
                                 <Phone size={17} />
                                 Connect via WhatsApp
                             </button>
-                            <p className="text-center text-[11px] text-slate-400 font-medium mb-6">⚡ Owner typically replies within 5 mins</p>
+                            <p className="text-center text-[11px] text-slate-500 font-medium mb-6">⚡ Owner typically replies within 5 mins</p>
 
                             <div className="h-px bg-slate-100 mb-6" />
 
                             {/* Owner info */}
                             <div className="flex items-center gap-3 mb-5">
-                                <div className="w-11 h-11 bg-gradient-to-br from-plum-400 to-plum-500 rounded-2xl flex items-center justify-center text-white font-semibold text-sm">
+                                <div className="w-11 h-11 bg-gradient-to-br from-plum-600 to-plum-800 rounded-2xl flex items-center justify-center text-white font-semibold text-sm shadow-sm">
                                     {(property.owner?.name || 'O').charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-white text-sm" style={{ fontFamily: 'Bungee' }}>
+                                    <h4 className="font-semibold text-slate-900 text-sm" style={{ fontFamily: 'Bungee' }}>
                                         {property.owner?.name || 'Property Owner'}
                                     </h4>
                                     <p className="text-emerald-600 text-xs font-medium flex items-center gap-1">
@@ -272,8 +272,8 @@ const PropertyDetails = () => {
                             </div>
 
                             {/* Owner quote */}
-                            <div className="p-4 bg-[#0a080a] rounded-2xl border border-white/5/60 mb-6">
-                                <p className="text-sm text-slate-400 leading-relaxed italic font-normal">
+                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 mb-6">
+                                <p className="text-sm text-slate-600 leading-relaxed italic font-normal">
                                     "Hi, I'm {property.owner?.name || 'the owner'}. Feel free to reach out — I'll help you find the perfect stay!"
                                 </p>
                             </div>
@@ -281,7 +281,7 @@ const PropertyDetails = () => {
                             {/* Trust indicators */}
                             <div className="grid grid-cols-2 gap-2.5">
                                 {['No Brokerage', 'Safe & Verified', 'Direct Contact', 'Easy Move-in'].map((t) => (
-                                    <div key={t} className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400">
+                                    <div key={t} className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600">
                                         <CheckCircle2 size={10} className="text-emerald-500 shrink-0" />{t}
                                     </div>
                                 ))}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Home, ArrowRight, Sparkles } from 'lucide-react';
+import { Search, Home, ArrowRight, Sparkles, MapPin, CheckCircle2, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -10,10 +10,10 @@ const Hero = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const played = sessionStorage.getItem('hero-3d-played-v2');
+        const played = sessionStorage.getItem('hero-3d-played-v3');
         if (!played) {
             setShouldAnimate(true);
-            sessionStorage.setItem('hero-3d-played-v2', 'true');
+            sessionStorage.setItem('hero-3d-played-v3', 'true');
         }
     }, []);
 
@@ -36,9 +36,8 @@ const Hero = () => {
     const text3DVariants = {
         hidden: {
             opacity: 0,
-            y: 80,
+            y: 40,
             rotateX: -90,
-            transformPerspective: 1000
         },
         visible: {
             opacity: 1,
@@ -48,136 +47,135 @@ const Hero = () => {
                 type: "spring",
                 damping: 15,
                 stiffness: 100,
-                duration: 1.2
             }
         }
     };
 
     return (
-        <div className="relative pt-20 pb-8 md:pt-28 md:pb-14 overflow-hidden">
+        <div className="relative min-h-[95vh] flex items-center overflow-hidden bg-white">
+            {/* Background elements */}
+            <div className="absolute top-0 right-0 w-[55%] h-full bg-slate-50 opacity-40 -skew-x-[15deg] translate-x-1/4 -z-0" />
+            <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-plum-100/20 rounded-full blur-[120px] -z-0" />
 
-            {/* Mesh gradient background */}
-            <div className="absolute inset-0 bg-mesh pointer-events-none" />
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-
-
-
-                {/* Headline */}
-                <motion.div
-                    className="text-center max-w-4xl mx-auto mb-10"
-                    variants={containerVariants}
-                    initial={shouldAnimate ? "hidden" : "visible"}
-                    animate="visible"
-                >
-                    <h1 className="text-5xl md:text-[5.5rem] font-bold mb-6 leading-[0.95] tracking-tight"
-                        style={{ fontFamily: 'Bungee, cursive' }}>
-                        <motion.span
-                            variants={text3DVariants}
-                            className="block text-slate-900"
-                        >
-                            Your New
-                        </motion.span>
-                        <motion.span
-                            variants={text3DVariants}
-                            className="block py-1"
-                            style={{
-                                background: 'linear-gradient(135deg, #3A1F3D 0%, #C4949E 40%, #524058 100%)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                backgroundClip: 'text',
-                            }}
-                        >
-                            Home Away
-                        </motion.span>
-                        <motion.span
-                            variants={text3DVariants}
-                            className="block text-slate-900"
-                        >
-                            from Home
-                        </motion.span>
-                    </h1>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1, duration: 0.8 }}
-                        className="text-lg text-slate-400 font-normal max-w-xl mx-auto leading-relaxed"
+                    {/* Left - Content & Search */}
+                    <motion.div
+                        className="lg:col-span-7"
+                        variants={containerVariants}
+                        initial={shouldAnimate ? "hidden" : "visible"}
+                        animate="visible"
                     >
-                        Discover verified PGs, flats & hostels near your college.
-                        Safe, affordable, and just a search away.
-                    </motion.p>
-                </motion.div>
+                        <motion.div variants={text3DVariants} className="mb-6">
+                            <span className="inline-flex items-center gap-2 bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.25em] px-5 py-2.5 rounded-full shadow-[6px_6px_0px_rgba(0,0,0,0.1)]">
+                                <Sparkles size={12} className="text-amber-400" /> StaySetu 2.0 Is Here
+                            </span>
+                        </motion.div>
 
-                {/* Search Bar */}
-                <motion.div
-                    initial={shouldAnimate ? { opacity: 0, y: 40 } : { opacity: 1, y: 0 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.2, duration: 0.8 }}
-                    className="max-w-4xl mx-auto mb-12"
-                >
-                    <form onSubmit={handleSearch} className="search-poda">
-                        <div className="search-glow-effect"></div>
-                        <div className="search-border-premium"></div>
-                        <div className="search-white-blur"></div>
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1] tracking-tight text-slate-900"
+                            style={{ fontFamily: 'Bungee, cursive', perspective: '1000px' }}>
+                            <motion.span variants={text3DVariants} className="block transform-gpu origin-bottom">Better</motion.span>
+                            <motion.span variants={text3DVariants} className="block text-plum-600 transform-gpu origin-bottom">Student</motion.span>
+                            <motion.span variants={text3DVariants} className="block transform-gpu origin-bottom">Living.</motion.span>
+                        </h1>
 
-                        <div className="search-main flex flex-col md:flex-row items-center gap-2 p-1.5 md:p-2 !bg-white">
-                            <div className="flex-1 w-full flex items-center px-4 gap-3 border-b md:border-b-0 md:border-r border-slate-100">
-                                <Search className="text-plum-400 shrink-0" size={20} />
-                                <input
-                                    type="text"
-                                    placeholder="Search area, college, or landmark..."
-                                    className="w-full py-3.5 focus:outline-none text-slate-900 font-medium placeholder:text-slate-400 bg-transparent text-sm md:text-base"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
+                        <motion.p variants={text3DVariants} className="text-lg text-slate-500 font-medium max-w-lg mb-12 leading-relaxed">
+                            Vetted PGs, Hostels, and Flats designed for student life. No brokerage, and verified listings.
+                        </motion.p>
+
+                        <motion.div variants={text3DVariants} className="w-full max-w-2xl mb-12">
+                            <form onSubmit={handleSearch} className="relative group">
+                                <div className="absolute inset-0 bg-slate-900 rounded-[2rem] translate-x-1.5 translate-y-1.5 group-focus-within:translate-x-2.5 group-focus-within:translate-y-2.5 transition-transform" />
+                                <div className="relative flex flex-col md:flex-row items-center gap-2 p-2 bg-white border-2 border-slate-900 rounded-[2rem]">
+                                    <div className="flex-1 w-full flex items-center px-4 gap-3">
+                                        <Search className="text-slate-400 shrink-0" size={20} />
+                                        <input
+                                            type="text"
+                                            placeholder="Where's your college?"
+                                            className="w-full py-3 focus:outline-none text-slate-900 font-bold placeholder:text-slate-400 text-sm"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="w-full md:w-auto bg-slate-900 text-white py-3 px-8 rounded-2xl flex items-center justify-center gap-2 font-black uppercase tracking-widest text-xs hover:bg-slate-800 transition-colors"
+                                    >
+                                        Find <ArrowRight size={16} />
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+
+                        <motion.div variants={text3DVariants} className="flex items-center gap-10">
+                            <div>
+                                <h4 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>12K</h4>
+                                <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Trusted Students</p>
+                            </div>
+                            <div className="w-px h-8 bg-slate-200" />
+                            <div>
+                                <h4 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>500+</h4>
+                                <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Verified Stays</p>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+
+                    <div className="lg:col-span-5 relative mt-20 lg:mt-0 flex justify-center lg:block">
+                        <motion.div
+                            initial={{ x: 60, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
+                            className="relative"
+                        >
+                            {/* Floating Card Stack */}
+                            <div className="relative z-10 p-4 md:p-5 bg-white border-2 border-slate-900 rounded-[2rem] md:rounded-[2.5rem] shadow-[12px_12px_0px_#0f172a] md:shadow-[20px_20px_0px_#0f172a] transform rotate-1 md:rotate-3 scale-95 md:scale-110">
+                                <div className="aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 border-2 border-slate-900 relative">
+                                    <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80" alt="Preview" className="w-full h-full object-cover" />
+                                    <div className="absolute top-4 left-4 bg-white border-2 border-slate-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">Featured PG</div>
+                                </div>
+                                <div className="px-2">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>Modern Stay</h3>
+                                        <div className="text-plum-600 font-bold">₹8,500/mo</div>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-slate-400 text-xs font-medium mb-4">
+                                        <MapPin size={12} /> Near Galgotias University
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {['WiFi', 'AC', 'Power'].map(tag => (
+                                            <span key={tag} className="px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-500">{tag}</span>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="w-full md:w-auto flex items-center gap-2 px-4 py-2">
-                                <Home className="text-plum-300 shrink-0" size={18} />
-                                <select
-                                    className="w-full md:w-36 py-2 focus:outline-none text-slate-900 font-bold bg-transparent cursor-pointer text-sm"
-                                    value={type}
-                                    onChange={(e) => setType(e.target.value)}
-                                >
-                                    <option value="all" className="bg-white">Any Type</option>
-                                    <option value="PG" className="bg-white">PG</option>
-                                    <option value="Flat" className="bg-white">Flat</option>
-                                    <option value="Hostel" className="bg-white">Hostel</option>
-                                </select>
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="w-full md:w-auto btn-primary py-3.5 px-10 flex items-center justify-center gap-2 group text-sm md:text-base font-bold"
+                            {/* Decorative badge */}
+                            <motion.div
+                                animate={{ y: [0, -15, 0] }}
+                                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                                className="absolute -top-4 -right-2 md:-top-6 md:-right-10 z-20 bg-emerald-500 text-white border-2 border-slate-900 px-3 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl shadow-[6px_6px_0px_#0f172a] md:shadow-[8px_8px_0px_#0f172a]"
                             >
-                                Search
-                                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                            </button>
-                        </div>
-                    </form>
-                </motion.div>
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle2 size={20} />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">100% Verified</span>
+                                </div>
+                            </motion.div>
 
-                {/* CTA buttons */}
-                <motion.div
-                    initial={shouldAnimate ? { opacity: 0 } : { opacity: 1 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.5, duration: 0.8 }}
-                    className="flex flex-col sm:flex-row justify-center gap-3"
-                >
-                    <a
-                        href="/listings"
-                        className="btn-secondary flex items-center justify-center gap-2 py-3 px-7 text-sm"
-                    >
-                        Browse All Stays <ArrowRight size={15} />
-                    </a>
-                    <a
-                        href="/signup"
-                        className="flex items-center justify-center gap-2 text-slate-400 font-medium py-3 px-7 rounded-2xl hover:bg-slate-50 hover:text-plum-900 transition-all text-sm"
-                    >
-                        List Your Property
-                    </a>
-                </motion.div>
+                            <motion.div
+                                animate={{ y: [0, 15, 0] }}
+                                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                                className="absolute -bottom-6 -left-2 md:-bottom-8 md:-left-12 z-20 bg-amber-400 text-slate-900 border-2 border-slate-900 px-3 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl shadow-[6px_6px_0px_#0f172a] md:shadow-[8px_8px_0px_#0f172a]"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Sparkles size={20} />
+                                    <span className="text-[10px] font-black uppercase tracking-widest leading-none">AI Smart<br />Match</span>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    </div>
 
+                </div>
             </div>
         </div>
     );

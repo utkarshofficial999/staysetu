@@ -28,99 +28,80 @@ const PropertyCard = ({ property }) => {
     const ts = typeStyles[property?.type] || typeStyles.PG;
 
     return (
-        <div className="group card-elevated overflow-hidden flex flex-col">
-            {/* Image */}
-            <div className="relative overflow-hidden" style={{ aspectRatio: '16/10' }}>
+        <div className="group relative flex flex-col bg-white rounded-[2rem] border-2 border-slate-900 overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)]">
+            {/* Image Container */}
+            <div className="relative aspect-[16/11] overflow-hidden">
                 {!imgLoaded && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800 animate-pulse flex items-center justify-center">
-                        <ImageOff size={24} className="text-slate-700" />
+                    <div className="absolute inset-0 bg-slate-100 animate-pulse flex items-center justify-center">
+                        <ImageOff size={24} className="text-slate-300" />
                     </div>
                 )}
-
                 <img
                     src={imgSrc}
                     alt={property?.title || 'Property'}
-                    className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => setImgLoaded(true)}
                     onError={() => { setImgError(true); setImgLoaded(true); }}
                 />
 
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                {/* Type badge */}
-                <div className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${ts.bg} ${ts.text} border ${ts.border} shadow-sm backdrop-blur-md`}>
+                {/* Type Tag - Floating Top Left */}
+                <div className={`absolute top-4 left-4 z-10 px-4 py-1.5 rounded-full border-2 border-slate-900 bg-white text-slate-900 text-[10px] font-black uppercase tracking-widest shadow-[4px_4px_0px_#0f172a]`}>
                     {property?.type || 'PG'}
                 </div>
 
-                {/* Verified badge */}
-                <div className="absolute top-3 right-12 bg-emerald-500 text-white text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
-                    <CheckCircle2 size={9} /> Verified
-                </div>
-
-                {/* Wishlist */}
+                {/* Like Button */}
                 <button
                     onClick={(e) => { e.preventDefault(); setLiked(!liked); }}
-                    className={`absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${liked
-                        ? 'bg-red-500 text-white shadow-glow-red'
-                        : 'bg-black/40 backdrop-blur-md text-slate-300 hover:text-white hover:bg-black/60 border border-white/10'
+                    className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full border-2 border-slate-900 flex items-center justify-center transition-all duration-300 ${liked
+                        ? 'bg-red-500 text-white'
+                        : 'bg-white text-slate-900 hover:bg-slate-900 hover:text-white'
                         }`}
                 >
-                    <Heart size={14} fill={liked ? 'currentColor' : 'none'} />
+                    <Heart size={16} fill={liked ? 'currentColor' : 'none'} />
                 </button>
 
-                {/* Rating on hover */}
-                <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-black/60 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 border border-white/5">
-                    <Star size={11} fill="currentColor" className="text-amber-400" />
-                    <span>4.8</span>
+                {/* Floating Price Tag - Overlaps Image and Content */}
+                <div className="absolute bottom-0 right-6 translate-y-1/2 z-20 bg-slate-900 text-white px-5 py-3 rounded-2xl border-2 border-slate-900 shadow-[6px_6px_0px_rgba(0,0,0,0.2)]">
+                    <div className="flex items-center gap-0.5">
+                        <IndianRupee size={16} className="text-white" />
+                        <span className="text-xl font-bold" style={{ fontFamily: 'Bungee' }}>{property?.price?.toLocaleString() || '8,500'}</span>
+                    </div>
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="p-4 flex flex-col flex-1">
-                <div className="flex justify-between items-start mb-2 gap-2">
-                    <h3 className="font-bold text-slate-900 line-clamp-1 text-sm group-hover:text-plum-600 transition-colors" style={{ fontFamily: 'Bungee' }}>
-                        {property?.title || 'Comfortable Stay'}
-                    </h3>
-                    <div className="flex items-center text-slate-900 font-black text-[10px] shrink-0 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 shadow-sm">
-                        <Star size={9} fill="#fbbf24" className="mr-0.5 text-amber-400" />
+            {/* Content Area */}
+            <div className="p-6 pt-10 flex flex-col flex-1">
+                <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center text-amber-500 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg text-[10px] font-bold">
+                        <Star size={10} fill="currentColor" className="mr-1" />
                         4.8
                     </div>
-                </div>
-
-                <div className="flex items-center text-slate-400 text-xs font-normal mb-4 gap-1">
-                    <MapPin size={11} className="text-plum-400 shrink-0" />
-                    <span className="line-clamp-1 group-hover:text-slate-300 transition-colors">{property?.location || 'Greater Noida'}</span>
-                </div>
-
-                {/* Amenity chips */}
-                <div className="flex flex-wrap gap-1.5 mb-5">
-                    {(property?.amenities?.slice(0, 3) || []).map((amenity, i) => {
-                        const Icon = amenityIcons[amenity];
-                        return (
-                            <span key={i} className="flex items-center gap-1.5 text-[10px] font-medium bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-md">
-                                {Icon && <Icon size={9} />}
-                                {amenity}
-                            </span>
-                        );
-                    })}
-                </div>
-
-                {/* Price + CTA */}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
-                    <div>
-                        <div className="flex items-center text-slate-900 font-black text-lg" style={{ fontFamily: 'Bungee' }}>
-                            <IndianRupee size={16} className="mr-0.5 text-slate-900" />
-                            {property?.price?.toLocaleString() || '8,500'}
+                    {property?.gender && (
+                        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 uppercase`}>
+                            {property.gender} only
                         </div>
-                        <span className="text-slate-500 text-[10px] font-medium">/month</span>
-                    </div>
+                    )}
+                </div>
+
+                <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-1 group-hover:text-plum-600 transition-colors" style={{ fontFamily: 'Bungee' }}>
+                    {property?.title || 'Comfortable Stay'}
+                </h3>
+
+                <div className="flex items-center text-slate-500 text-sm font-medium mb-6">
+                    <MapPin size={14} className="text-slate-400 mr-1.5 shrink-0" />
+                    <span className="truncate">{property?.location || 'Greater Noida'}</span>
+                </div>
+
+                <div className="mt-auto grid grid-cols-2 gap-3">
                     <Link
                         to={`/property/${property?.id || '123'}`}
-                        className="btn-primary py-2 px-5 text-[11px] font-bold"
+                        className="bg-slate-900 text-white py-3 px-4 rounded-xl text-center text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-colors"
                     >
-                        View Details
+                        View More
                     </Link>
+                    <button className="border-2 border-slate-900 text-slate-900 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-colors">
+                        Book Now
+                    </button>
                 </div>
             </div>
         </div>

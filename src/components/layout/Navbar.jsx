@@ -158,11 +158,10 @@ const Navbar = () => {
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-4">
-                                    <Link to="/login" className="text-[13px] font-black text-black uppercase tracking-widest px-4 py-2 hover:bg-white/10 rounded-full transition-all"
-                                        style={{ textShadow: 'none' }}>
+                                    <Link to="/login" className="text-[13px] font-black text-slate-900 uppercase tracking-widest px-4 py-2 hover:bg-slate-100 rounded-full transition-all">
                                         Log in
                                     </Link>
-                                    <Link to="/signup" className="bg-[#ffffff] text-black px-7 py-2.5 rounded-full text-[13px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.6)] hover:-translate-y-0.5 transition-all">
+                                    <Link to="/signup" className="bg-slate-900 text-white px-7 py-2.5 rounded-full text-[13px] font-black uppercase tracking-widest shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all">
                                         Get Started
                                     </Link>
                                 </div>
@@ -188,12 +187,9 @@ const Navbar = () => {
                                     key={link.name}
                                     to={link.path}
                                     className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-black transition-all ${isActive(link.path)
-                                        ? 'bg-[#ffffff] text-black shadow-[0_0_15px_rgba(255,255,255,0.4)]'
-                                        : 'text-black'
+                                        ? 'bg-slate-100 text-slate-900 shadow-sm'
+                                        : 'text-slate-900'
                                         }`}
-                                    style={{
-                                        textShadow: !isActive(link.path) ? '0 0 8px rgba(255, 255, 255, 0.9)' : 'none'
-                                    }}
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <link.icon size={18} /> {link.name}

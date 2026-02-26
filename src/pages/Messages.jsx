@@ -275,17 +275,17 @@ const Messages = () => {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-[#0a080a] pt-20 flex flex-col" style={{ height: '100vh' }}>
+        <div className="min-h-screen bg-slate-50 pt-20 flex flex-col" style={{ height: '100vh' }}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col overflow-hidden py-4" style={{ height: 'calc(100vh - 80px)' }}>
-                <div className="bg-[#141114] rounded-3xl shadow-lg flex-1 flex overflow-hidden border border-white/5">
+                <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 flex-1 flex overflow-hidden border border-slate-200">
 
                     {/* ── Sidebar ─────────────────────────────────────────── */}
-                    <div className={`w-full md:w-80 lg:w-96 border-r border-white/5 flex flex-col ${activeChat ? 'hidden md:flex' : 'flex'}`}>
+                    <div className={`w-full md:w-80 lg:w-96 border-r border-slate-100 flex flex-col ${activeChat ? 'hidden md:flex' : 'flex'}`}>
 
                         {/* Sidebar Header */}
-                        <div className="p-5 border-b border-white/5 bg-[#141114]">
+                        <div className="p-5 border-b border-slate-100 bg-white">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-xl font-black text-white">Messages</h2>
+                                <h2 className="text-xl font-black text-slate-900" style={{ fontFamily: 'Bungee' }}>Messages</h2>
                                 <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
                                     {conversations.length}
                                 </span>
@@ -297,7 +297,7 @@ const Messages = () => {
                                     placeholder="Search conversations..."
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
-                                    className="w-full bg-[#0a080a] border border-white/5 rounded-xl py-2.5 pl-9 pr-4 text-sm font-medium text-slate-200 focus:outline-none focus:ring-2 focus:ring-plum-300"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-9 pr-4 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-plum-300"
                                 />
                             </div>
                         </div>
@@ -315,23 +315,23 @@ const Messages = () => {
                                         key={conv.id}
                                         onClick={() => setActiveChat(conv)}
                                         className={`w-full flex items-center p-4 transition-all duration-200 border-b border-slate-50 ${activeChat?.id === conv.id
-                                                ? 'bg-plum-50 border-l-4 border-l-plum-500'
-                                                : 'hover:bg-[#0a080a]'
+                                            ? 'bg-plum-50 border-l-4 border-l-plum-500'
+                                            : 'hover:bg-slate-50'
                                             }`}
                                     >
                                         {/* Avatar */}
                                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0 mr-3 ${conv.role === 'owner'
-                                                ? 'bg-amber-100 text-amber-600'
-                                                : 'bg-plum-100 text-plum-600'
+                                            ? 'bg-amber-100 text-amber-600'
+                                            : 'bg-plum-100 text-plum-600'
                                             }`}>
                                             {conv.name.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 text-left min-w-0">
                                             <div className="flex justify-between items-center">
-                                                <h4 className="font-bold text-slate-100 truncate text-sm">{conv.name}</h4>
+                                                <h4 className="font-bold text-slate-900 truncate text-sm" style={{ fontFamily: 'Bungee' }}>{conv.name}</h4>
                                                 <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-2 shrink-0 ${conv.role === 'owner'
-                                                        ? 'bg-amber-100 text-amber-600'
-                                                        : 'bg-plum-100 text-plum-600'
+                                                    ? 'bg-amber-100 text-amber-600'
+                                                    : 'bg-plum-100 text-plum-600'
                                                     }`}>
                                                     {conv.role === 'owner' ? 'Owner' : 'Student'}
                                                 </span>
@@ -357,7 +357,7 @@ const Messages = () => {
                         {activeChat ? (
                             <>
                                 {/* Chat Header */}
-                                <div className="bg-[#141114] px-6 py-4 border-b border-white/5 flex items-center justify-between shrink-0">
+                                <div className="bg-white px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
                                     <div className="flex items-center">
                                         <button
                                             onClick={() => setActiveChat(null)}
@@ -366,13 +366,13 @@ const Messages = () => {
                                             <ChevronLeft size={20} />
                                         </button>
                                         <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-lg mr-3 ${activeChat.role === 'owner'
-                                                ? 'bg-amber-100 text-amber-600'
-                                                : 'bg-plum-100 text-plum-600'
+                                            ? 'bg-amber-100 text-amber-600'
+                                            : 'bg-plum-100 text-plum-600'
                                             }`}>
                                             {activeChat.name.charAt(0).toUpperCase()}
                                         </div>
                                         <div>
-                                            <h3 className="font-bold text-white text-sm">{activeChat.name}</h3>
+                                            <h3 className="font-bold text-slate-900 text-sm" style={{ fontFamily: 'Bungee' }}>{activeChat.name}</h3>
                                             <div className="flex items-center mt-0.5">
                                                 <span className="w-2 h-2 bg-green-400 rounded-full mr-1.5"></span>
                                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -393,7 +393,7 @@ const Messages = () => {
                                 </div>
 
                                 {/* Messages Area */}
-                                <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-[#0a080a]/60">
+                                <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-slate-50/30">
                                     {loadingMsgs ? (
                                         <div className="flex items-center justify-center py-16 text-slate-400">
                                             <Loader2 size={24} className="animate-spin mr-2" />
@@ -404,7 +404,7 @@ const Messages = () => {
                                             <div className="w-16 h-16 bg-plum-50 rounded-3xl flex items-center justify-center text-plum-400 mb-4">
                                                 <MessageSquare size={32} />
                                             </div>
-                                            <p className="font-bold text-slate-300">Start the conversation!</p>
+                                            <p className="font-bold text-slate-900">Start the conversation!</p>
                                             <p className="text-sm text-slate-400 mt-1">Send a message to {activeChat.name}</p>
                                         </div>
                                     ) : (
@@ -419,8 +419,8 @@ const Messages = () => {
                                                     className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}
                                                 >
                                                     <div className={`max-w-[70%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${isMine
-                                                            ? 'bg-plum-500 text-white rounded-br-sm'
-                                                            : 'bg-[#141114] text-slate-200 rounded-bl-sm border border-white/5'
+                                                        ? 'bg-plum-500 text-white rounded-br-sm'
+                                                        : 'bg-white text-slate-700 rounded-bl-sm border border-slate-200'
                                                         }`}>
                                                         {msg.content}
                                                     </div>
@@ -442,7 +442,7 @@ const Messages = () => {
                                 </div>
 
                                 {/* Message Input */}
-                                <div className="p-4 bg-[#141114] border-t border-white/5 shrink-0">
+                                <div className="p-4 bg-white border-t border-slate-100 shrink-0">
                                     <form onSubmit={handleSend} className="flex items-center space-x-3">
                                         <input
                                             ref={inputRef}
@@ -451,7 +451,7 @@ const Messages = () => {
                                             value={newMessage}
                                             onChange={e => setNewMessage(e.target.value)}
                                             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend(e)}
-                                            className="flex-1 bg-[#0a080a] border border-white/5 rounded-2xl py-3.5 px-5 text-sm font-medium text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-plum-300 focus:border-transparent"
+                                            className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-plum-300 focus:border-transparent"
                                             autoFocus
                                         />
                                         <button
@@ -473,7 +473,7 @@ const Messages = () => {
                                 <div className="w-24 h-24 bg-gradient-to-br from-plum-100 to-plum-100 rounded-[2rem] flex items-center justify-center text-plum-500 mb-6 shadow-lg shadow-plum-50">
                                     <MessageSquare size={44} />
                                 </div>
-                                <h3 className="text-2xl font-black text-white mb-2">Your Inbox</h3>
+                                <h3 className="text-2xl font-black text-slate-900 mb-2" style={{ fontFamily: 'Bungee' }}>Your Inbox</h3>
                                 <p className="text-slate-400 font-medium max-w-xs">
                                     Select a conversation or go to a property listing and click "Message Owner" to start chatting.
                                 </p>
@@ -482,7 +482,7 @@ const Messages = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
