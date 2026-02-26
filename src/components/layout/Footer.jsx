@@ -74,19 +74,19 @@ const Footer = () => {
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-100">
                                     <Mail size={14} className="text-plum-600" />
                                 </div>
-                                <span className="text-slate-600">support@staysetu.com</span>
+                                <span className="text-slate-600">sudhanshupandey7393@gmail.com</span>
                             </li>
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-100">
                                     <Phone size={14} className="text-plum-600" />
                                 </div>
-                                <span className="text-slate-600">+91 98765 43210</span>
+                                <span className="text-slate-600">+91 7393 011 350</span>
                             </li>
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border border-slate-100">
                                     <MapPin size={14} className="text-plum-600" />
                                 </div>
-                                <span className="text-slate-600">Knowledge Park, Greater Noida, UP</span>
+                                <span className="text-slate-600">ABES Engineering College, Ghaziabad</span>
                             </li>
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-100">
