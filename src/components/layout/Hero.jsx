@@ -200,17 +200,6 @@ const Hero = ({ featuredProp }) => {
                                 </div>
                             </div>
 
-                            {/* Decorative badge */}
-                            <motion.div
-                                animate={{ y: [0, -15, 0] }}
-                                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                                className="absolute -top-4 -right-2 md:-top-6 md:-right-10 z-20 bg-emerald-500 text-white border-2 border-slate-900 px-3 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl shadow-[6px_6px_0px_#0f172a] md:shadow-[8px_8px_0px_#0f172a]"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <CheckCircle2 size={20} />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">100% Verified</span>
-                                </div>
-                            </motion.div>
 
                             <motion.div
                                 animate={{ y: [0, 15, 0] }}
