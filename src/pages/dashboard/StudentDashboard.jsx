@@ -182,7 +182,7 @@ const StudentDashboard = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#0a080a]">
+            <div className="min-h-screen flex items-center justify-center bg-white">
                 <div className="text-center">
                     <div className="w-16 h-16 border-4 border-plum-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-slate-400 font-medium">Loading your dashboard...</p>
@@ -192,7 +192,7 @@ const StudentDashboard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#0a080a] pt-20 pb-12">
+        <div className="min-h-screen bg-white pt-20 pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Welcome Header */}
@@ -204,7 +204,7 @@ const StudentDashboard = () => {
                                     {profile?.name?.charAt(0)?.toUpperCase() || 'S'}
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl md:text-3xl font-black text-white">
+                                    <h1 className="text-2xl md:text-3xl font-black text-slate-900">
                                         Hey, {profile?.name?.split(' ')[0] || 'Student'} 👋
                                     </h1>
                                     <p className="text-slate-400 font-medium text-sm">Find your perfect home away from home.</p>
@@ -218,12 +218,12 @@ const StudentDashboard = () => {
                                 { label: 'Saved', value: stats.saved, icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50' },
                                 { label: 'Available', value: listings.length, icon: Home, color: 'text-emerald-500', bg: 'bg-emerald-50' },
                             ].map((stat, i) => (
-                                <div key={i} className="bg-[#141114] px-4 py-3 rounded-2xl border border-white/5 shadow-sm flex items-center gap-3">
+                                <div key={i} className="bg-white px-4 py-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
                                     <div className={`${stat.bg} ${stat.color} w-10 h-10 rounded-xl flex items-center justify-center`}>
                                         <stat.icon size={18} />
                                     </div>
                                     <div>
-                                        <p className="text-lg font-black text-white">{stat.value}</p>
+                                        <p className="text-lg font-black text-slate-900">{stat.value}</p>
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</span>
                                     </div>
                                 </div>
@@ -233,20 +233,20 @@ const StudentDashboard = () => {
                 </div>
 
                 {/* Tab Navigation */}
-                <div className="bg-[#141114] rounded-2xl p-1.5 border border-white/5 shadow-sm mb-8 flex gap-1 overflow-x-auto">
+                <div className="bg-slate-100 rounded-2xl p-1.5 border border-slate-200 shadow-sm mb-8 flex gap-1 overflow-x-auto">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all duration-300 whitespace-nowrap ${activeTab === tab.id
                                 ? 'bg-plum-500 text-white shadow-lg shadow-plum-200'
-                                : 'text-slate-400 hover:bg-[#0a080a] hover:text-slate-200'
+                                : 'text-slate-500 hover:bg-white hover:text-slate-900'
                                 }`}
                         >
                             <tab.icon size={16} />
                             <span>{tab.label}</span>
                             {tab.count !== undefined && (
-                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${activeTab === tab.id ? 'bg-[#141114]/20 text-white' : 'bg-slate-100 text-slate-400'
+                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-500'
                                     }`}>
                                     {tab.count}
                                 </span>
@@ -259,14 +259,14 @@ const StudentDashboard = () => {
                 {activeTab === 'browse' && (
                     <div className="animate-fade-in">
                         {/* Search & Filter Bar */}
-                        <div className="bg-[#141114] rounded-3xl p-6 border border-white/5 shadow-sm mb-8">
+                        <div className="bg-slate-50 rounded-3xl p-6 border border-slate-200 shadow-sm mb-8">
                             <div className="flex flex-col md:flex-row gap-4">
                                 <div className="relative flex-1">
                                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                     <input
                                         type="text"
                                         placeholder="Search by location, property name, or college..."
-                                        className="w-full bg-[#0a080a] border border-white/5 rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-plum-500/20 focus:border-plum-400 transition-all font-medium text-sm"
+                                        className="w-full bg-white border border-slate-200 rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-plum-500/20 focus:border-plum-400 transition-all font-medium text-sm text-slate-900"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
@@ -279,7 +279,7 @@ const StudentDashboard = () => {
                                             onClick={() => setPropertyType(type)}
                                             className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${propertyType === type
                                                 ? 'bg-plum-500 text-white shadow-md shadow-plum-200'
-                                                : 'bg-[#0a080a] text-slate-400 hover:bg-slate-100 border border-white/5'
+                                                : 'bg-white text-slate-500 hover:bg-slate-100 border border-slate-200'
                                                 }`}
                                         >
                                             {type === 'all' ? 'All' : type}
@@ -294,7 +294,7 @@ const StudentDashboard = () => {
                                             onClick={() => setGenderFilter(key)}
                                             className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${genderFilter === key
                                                 ? 'bg-plum-500 text-white shadow-md shadow-plum-200'
-                                                : 'bg-[#0a080a] text-slate-400 hover:bg-slate-100 border border-white/5'
+                                                : 'bg-white text-slate-500 hover:bg-slate-100 border border-slate-200'
                                                 }`}
                                         >
                                             {label}
@@ -325,7 +325,7 @@ const StudentDashboard = () => {
                         {/* Results */}
                         <div className="flex items-center justify-between mb-6">
                             <p className="text-slate-400 font-medium">
-                                <span className="text-white font-black">{filteredListings.length}</span> properties found
+                                <span className="text-slate-900 font-black">{filteredListings.length}</span> properties found
                             </p>
                         </div>
 
@@ -338,7 +338,7 @@ const StudentDashboard = () => {
                                             onClick={() => toggleSave(listing.id)}
                                             className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-sm ${savedListings.some(l => l.id === listing.id)
                                                 ? 'bg-rose-500 text-white'
-                                                : 'bg-[#141114]/90 backdrop-blur-md text-slate-400 hover:text-rose-500'
+                                                : 'bg-white/90 backdrop-blur-md text-slate-400 hover:text-rose-500 border border-slate-100'
                                                 }`}
                                         >
                                             <Heart size={18} fill={savedListings.some(l => l.id === listing.id) ? 'currentColor' : 'none'} />
@@ -347,11 +347,11 @@ const StudentDashboard = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="bg-[#141114] rounded-[2.5rem] p-20 text-center border border-dashed border-white/10">
-                                <div className="w-20 h-20 bg-[#0a080a] rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+                            <div className="bg-slate-50 rounded-[2.5rem] p-20 text-center border border-dashed border-slate-200">
+                                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300 border border-slate-100">
                                     <Home size={40} />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white mb-2">No properties found</h3>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-2">No properties found</h3>
                                 <p className="text-slate-400 font-medium mb-6">Try adjusting your filters or search.</p>
                                 <button
                                     onClick={() => { setSearchQuery(''); setPropertyType('all'); setPriceRange(100000); }}
@@ -370,7 +370,7 @@ const StudentDashboard = () => {
                         {/* Header */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                             <div>
-                                <h2 className="text-2xl font-black text-white">Find a Roommate</h2>
+                                <h2 className="text-2xl font-black text-slate-900">Find a Roommate</h2>
                                 <p className="text-slate-400 font-medium text-sm">Post your requirement and connect with compatible students.</p>
                             </div>
                             <button
@@ -384,8 +384,8 @@ const StudentDashboard = () => {
 
                         {/* Post Form */}
                         {showRoommateForm && (
-                            <div className="bg-[#141114] rounded-3xl border border-white/5 shadow-sm p-8 mb-8">
-                                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 mb-8">
+                                <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                                     <UserCheck size={20} className="text-plum-500" />
                                     Tell others what you're looking for
                                 </h3>
@@ -394,7 +394,7 @@ const StudentDashboard = () => {
                                         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-500 mb-4">
                                             <CheckCircle size={32} />
                                         </div>
-                                        <p className="font-bold text-white text-lg">Submitted for Review!</p>
+                                        <p className="font-bold text-slate-900 text-lg">Submitted for Review!</p>
                                         <p className="text-slate-400 text-sm mt-1">Your requirement is pending admin verification. It will go live once approved.</p>
                                     </div>
                                 ) : (
@@ -485,15 +485,15 @@ const StudentDashboard = () => {
                         ) : roommateRequests.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {roommateRequests.map((req) => (
-                                    <div key={req.id} className="bg-[#141114] rounded-3xl border border-white/5 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+                                    <div key={req.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
                                         {/* Card Header */}
-                                        <div className="bg-gradient-to-br from-plum-50 to-plum-50 p-5 border-b border-white/5">
+                                        <div className="bg-slate-50 p-5 border-b border-slate-100">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-12 h-12 bg-gradient-to-br from-plum-400 to-plum-500 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-md">
                                                     {(req.name || req.student?.full_name || 'S').charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-bold text-white">{req.name || req.student?.full_name || 'Student'}</h4>
+                                                    <h4 className="font-bold text-slate-900">{req.name || req.student?.full_name || 'Student'}</h4>
                                                     {req.college && (
                                                         <p className="text-xs text-slate-400 font-medium">{req.college}</p>
                                                     )}
@@ -515,20 +515,20 @@ const StudentDashboard = () => {
 
                                         {/* Card Body */}
                                         <div className="p-5 space-y-3">
-                                            <div className="flex items-center gap-2 text-sm font-medium text-slate-300">
+                                            <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
                                                 <MapPin size={14} className="text-plum-400 shrink-0" />
                                                 <span className="truncate">{req.location}</span>
                                             </div>
                                             {req.budget && (
-                                                <div className="flex items-center gap-2 text-sm font-medium text-slate-300">
-                                                    <IndianRupee size={14} className="text-emerald-400 shrink-0" />
-                                                    <span>Budget: <span className="font-bold text-slate-100">₹{Number(req.budget).toLocaleString()}/mo</span></span>
+                                                <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
+                                                    <IndianRupee size={14} className="text-emerald-500 shrink-0" />
+                                                    <span>Budget: <span className="font-bold text-slate-900">₹{Number(req.budget).toLocaleString()}/mo</span></span>
                                                 </div>
                                             )}
                                             {req.move_in_date && (
-                                                <div className="flex items-center gap-2 text-sm font-medium text-slate-300">
-                                                    <Calendar size={14} className="text-amber-400 shrink-0" />
-                                                    <span>Move-in: <span className="font-bold text-slate-100">{new Date(req.move_in_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span></span>
+                                                <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
+                                                    <Calendar size={14} className="text-amber-500 shrink-0" />
+                                                    <span>Move-in: <span className="font-bold text-slate-900">{new Date(req.move_in_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span></span>
                                                 </div>
                                             )}
                                             {req.description && (
@@ -563,11 +563,11 @@ const StudentDashboard = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="bg-[#141114] rounded-[2.5rem] p-20 text-center border border-dashed border-white/10">
-                                <div className="w-20 h-20 bg-plum-50 rounded-full flex items-center justify-center mx-auto mb-6 text-plum-300">
+                            <div className="bg-slate-50 rounded-[2.5rem] p-20 text-center border border-dashed border-slate-200">
+                                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-plum-300 border border-slate-100">
                                     <Users size={40} />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white mb-2">No roommate posts yet</h3>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-2">No roommate posts yet</h3>
                                 <p className="text-slate-400 font-medium mb-6">Be the first to post your requirement!</p>
                                 <button onClick={() => setShowRoommateForm(true)} className="btn-primary">
                                     Post My Requirement
@@ -581,7 +581,7 @@ const StudentDashboard = () => {
                     <div className="animate-fade-in">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h2 className="text-2xl font-black text-white">Saved Properties</h2>
+                                <h2 className="text-2xl font-black text-slate-900">Saved Properties</h2>
                                 <p className="text-slate-400 font-medium text-sm">Your bookmarked stays for easy access.</p>
                             </div>
                             <div className="flex items-center gap-2 bg-rose-50 text-rose-600 px-4 py-2 rounded-xl">
@@ -605,11 +605,11 @@ const StudentDashboard = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="bg-[#141114] rounded-[2.5rem] p-20 text-center border border-dashed border-white/10">
-                                <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-300">
+                            <div className="bg-slate-50 rounded-[2.5rem] p-20 text-center border border-dashed border-slate-200">
+                                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-rose-300 border border-slate-100">
                                     <Heart size={40} />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white mb-2">No saved stays yet</h3>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-2">No saved stays yet</h3>
                                 <p className="text-slate-400 font-medium mb-6">Browse listings and tap the heart to save them here.</p>
                                 <button onClick={() => setActiveTab('browse')} className="btn-primary">
                                     Browse Stays
@@ -623,21 +623,21 @@ const StudentDashboard = () => {
                 {/* Profile Tab */}
                 {activeTab === 'profile' && (
                     <div className="animate-fade-in max-w-2xl">
-                        <h2 className="text-2xl font-black text-white mb-6">My Profile</h2>
+                        <h2 className="text-2xl font-black text-slate-900 mb-6">My Profile</h2>
 
-                        <div className="bg-[#141114] rounded-3xl border border-white/5 shadow-sm overflow-hidden">
+                        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                             {/* Profile Header */}
                             <div className="bg-gradient-to-r from-plum-500 to-plum-600 p-8 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-40 h-40 bg-[#141114]/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                                <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#141114]/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+                                <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
                                 <div className="relative flex items-center gap-5">
-                                    <div className="w-20 h-20 bg-[#141114]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white text-3xl font-black border-2 border-white/30">
+                                    <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white text-3xl font-black border-2 border-white/30">
                                         {profile?.name?.charAt(0)?.toUpperCase() || 'S'}
                                     </div>
                                     <div>
                                         <h3 className="text-2xl font-black text-white">{profile?.name || 'Student'}</h3>
                                         <p className="text-white/70 font-medium">{user?.email}</p>
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#141114]/20 backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-widest text-white mt-2">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-widest text-white mt-2">
                                             <Shield size={10} />
                                             Student Account
                                         </span>
@@ -648,47 +648,47 @@ const StudentDashboard = () => {
                             {/* Profile Details */}
                             <div className="p-8 space-y-6">
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-[#0a080a] rounded-2xl p-5">
+                                    <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Saved Stays</span>
-                                        <p className="text-2xl font-black text-white mt-1">{stats.saved}</p>
+                                        <p className="text-2xl font-black text-slate-900 mt-1">{stats.saved}</p>
                                     </div>
-                                    <div className="bg-[#0a080a] rounded-2xl p-5">
+                                    <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Conversations</span>
-                                        <p className="text-2xl font-black text-white mt-1">{stats.messages}</p>
+                                        <p className="text-2xl font-black text-slate-900 mt-1">{stats.messages}</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-4 pt-4 border-t border-slate-50">
                                     <div className="flex items-center justify-between py-3">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-[#0a080a] rounded-xl flex items-center justify-center text-slate-400">
+                                            <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400">
                                                 <User size={18} />
                                             </div>
                                             <div>
                                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Full Name</span>
-                                                <p className="text-white font-bold">{profile?.name || 'Not set'}</p>
+                                                <p className="text-slate-900 font-bold">{profile?.name || 'Not set'}</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between py-3">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-[#0a080a] rounded-xl flex items-center justify-center text-slate-400">
+                                            <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400">
                                                 <MapPin size={18} />
                                             </div>
                                             <div>
                                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email</span>
-                                                <p className="text-white font-bold">{user?.email || 'Not set'}</p>
+                                                <p className="text-slate-900 font-bold">{user?.email || 'Not set'}</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between py-3">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-[#0a080a] rounded-xl flex items-center justify-center text-slate-400">
+                                            <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400">
                                                 <Clock size={18} />
                                             </div>
                                             <div>
                                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Member Since</span>
-                                                <p className="text-white font-bold">
+                                                <p className="text-slate-900 font-bold">
                                                     {user?.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : 'N/A'}
                                                 </p>
                                             </div>
