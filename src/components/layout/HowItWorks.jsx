@@ -53,8 +53,8 @@ const HowItWorks = () => {
                         <div key={index} className="relative z-10 flex flex-col items-center text-center group">
                             {/* Step number + icon */}
                             <div className="relative mb-8">
-                                <div className={`bg-slate-50 border border-slate-200 w-[72px] h-[72px] rounded-[22px] flex items-center justify-center text-slate-900 group-hover:scale-110 transition-transform duration-500 shadow-[0_4px_12px_rgba(0,0,0,0.05)]`}>
-                                    <step.icon size={30} strokeWidth={1.8} />
+                                <div className={`bg-white border-2 border-slate-900 w-[72px] h-[72px] rounded-[22px] flex items-center justify-center text-slate-900 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 shadow-[6px_6px_0px_rgba(0,0,0,0.1)]`}>
+                                    <step.icon size={30} strokeWidth={2} />
                                 </div>
                                 <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center border border-slate-100 text-xs font-bold text-slate-900 shadow-lg">
                                     {index + 1}
@@ -62,9 +62,9 @@ const HowItWorks = () => {
                             </div>
 
                             {/* Card */}
-                            <div className="card-elevated p-8 flex-1 w-full hover:!bg-slate-50 !bg-white">
-                                <h3 className="text-lg font-bold text-slate-900 mb-3" style={{ fontFamily: 'Bungee' }}>{step.title}</h3>
-                                <p className="text-slate-500 text-sm leading-relaxed font-normal">{step.description}</p>
+                            <div className={`card-elevated p-8 flex-1 w-full transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br ${step.gradient} group-hover:shadow-[0_20px_40px_-15px_rgba(58,31,61,0.2)]`}>
+                                <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Bungee' }}>{step.title}</h3>
+                                <p className="text-white/80 text-sm leading-relaxed font-normal">{step.description}</p>
                             </div>
                         </div>
                     ))}

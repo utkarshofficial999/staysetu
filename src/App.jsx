@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -20,6 +20,7 @@ import OwnerDashboard from './pages/dashboard/OwnerDashboard';
 import AddListing from './pages/dashboard/AddListing';
 import EditListing from './pages/dashboard/EditListing';
 import AdminPanel from './pages/admin/AdminPanel';
+import ScrollToTop from './components/common/ScrollToTop';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -62,42 +63,54 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+// Helper component to manage layout and provide routing context
+const AppContent = () => {
+  const location = useLocation();
+  const hideOn = ['/login', '/signup'];
+  const shouldHide = hideOn.includes(location.pathname);
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <ScrollToTop />
+      {!shouldHide && <Navbar />}
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/listings" element={<Listings />} />
+          <Route path="/property/:id" element={<PropertyDetails />} />
+          <Route path="/roommates" element={<Roommates />} />
+          <Route path="/messages" element={
+            <ProtectedRoute><Messages /></ProtectedRoute>
+          } />
+          <Route path="/dashboard" element={
+            <ProtectedRoute><Dashboard /></ProtectedRoute>
+          } />
+          <Route path="/owner-dashboard" element={
+            <ProtectedRoute><OwnerDashboard /></ProtectedRoute>
+          } />
+          <Route path="/dashboard/add-listing" element={
+            <ProtectedRoute><AddListing /></ProtectedRoute>
+          } />
+          <Route path="/dashboard/edit-listing/:id" element={
+            <ProtectedRoute><EditListing /></ProtectedRoute>
+          } />
+          <Route path="/admin" element={
+            <AdminRoute><AdminPanel /></AdminRoute>
+          } />
+        </Routes>
+      </main>
+      {!shouldHide && <Footer />}
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/listings" element={<Listings />} />
-              <Route path="/property/:id" element={<PropertyDetails />} />
-              <Route path="/roommates" element={<Roommates />} />
-              <Route path="/messages" element={
-                <ProtectedRoute><Messages /></ProtectedRoute>
-              } />
-              <Route path="/dashboard" element={
-                <ProtectedRoute><Dashboard /></ProtectedRoute>
-              } />
-              <Route path="/owner-dashboard" element={
-                <ProtectedRoute><OwnerDashboard /></ProtectedRoute>
-              } />
-              <Route path="/dashboard/add-listing" element={
-                <ProtectedRoute><AddListing /></ProtectedRoute>
-              } />
-              <Route path="/dashboard/edit-listing/:id" element={
-                <ProtectedRoute><EditListing /></ProtectedRoute>
-              } />
-              <Route path="/admin" element={
-                <AdminRoute><AdminPanel /></AdminRoute>
-              } />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <AppContent />
       </AuthProvider>
     </Router>
   );

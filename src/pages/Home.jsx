@@ -11,10 +11,10 @@ import {
 import { Link } from 'react-router-dom';
 
 const whys = [
-    { icon: Shield, title: 'Every Listing Verified', desc: 'Our team personally reviews each property. Zero fake listings, guaranteed.' },
-    { icon: Zap, title: 'Direct Owner Connect', desc: 'Chat directly with owners via WhatsApp. No brokerage fees, no delays.' },
-    { icon: Star, title: 'Student-First Pricing', desc: 'All stays are budget-friendly and tailored for student lifestyles.' },
-    { icon: Users, title: 'Thriving Community', desc: '12,000+ students have found their perfect stay through StaySetu.' },
+    { icon: Shield, title: 'Every Listing Verified', desc: 'Our team personally reviews each property. Zero fake listings, guaranteed.', gradient: 'from-emerald-500 to-teal-600' },
+    { icon: Zap, title: 'Direct Owner Connect', desc: 'Chat directly with owners via WhatsApp. No brokerage fees, no delays.', gradient: 'from-plum-600 to-indigo-700' },
+    { icon: Star, title: 'Student-First Pricing', desc: 'All stays are budget-friendly and tailored for student lifestyles.', gradient: 'from-amber-400 to-orange-500' },
+    { icon: Users, title: 'Thriving Community', desc: '12,000+ students have found their perfect stay through StaySetu.', gradient: 'from-rose-500 to-pink-600' },
 ];
 
 const Home = () => {
@@ -126,14 +126,13 @@ const Home = () => {
                         </p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {whys.map(({ icon: Icon, title, desc }, i) => (
-                            <div key={i} className="card-elevated p-8 group !bg-white hover:!bg-slate-50">
-                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
-                                    style={{ background: 'linear-gradient(135deg, #3A1F3D, #524058)', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.3)' }}>
+                        {whys.map(({ icon: Icon, title, desc, gradient }, i) => (
+                            <div key={i} className={`card-elevated p-8 group transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br ${gradient}`}>
+                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 bg-white/20 backdrop-blur-md border border-white/30 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                                     <Icon size={22} className="text-white" />
                                 </div>
-                                <h3 className="font-bold text-slate-900 mb-3 text-lg" style={{ fontFamily: 'Bungee' }}>{title}</h3>
-                                <p className="text-slate-400 text-sm leading-relaxed font-normal">{desc}</p>
+                                <h3 className="font-bold text-white mb-3 text-lg" style={{ fontFamily: 'Bungee' }}>{title}</h3>
+                                <p className="text-white/80 text-sm leading-relaxed font-normal">{desc}</p>
                             </div>
                         ))}
                     </div>
