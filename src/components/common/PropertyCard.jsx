@@ -99,8 +99,15 @@ const PropertyCard = ({ property }) => {
                     >
                         View More
                     </Link>
-                    <button className="border-2 border-slate-900 text-slate-900 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-colors">
-                        Book Now
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const message = encodeURIComponent(`Hi, I found your listing "${property?.title}" on StaySetu. Is it available?`);
+                            window.open(`https://wa.me/${property?.whatsapp_number || property?.phone_number || property?.owner_phone}?text=${message}`, '_blank');
+                        }}
+                        className="border-2 border-slate-900 text-slate-900 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-colors"
+                    >
+                        Contact Us
                     </button>
                 </div>
             </div>
