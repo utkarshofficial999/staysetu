@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Home, ArrowRight, Sparkles, MapPin, CheckCircle2, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { supabase } from '../../lib/supabase';
 
 const Hero = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -17,31 +18,34 @@ const Hero = () => {
             sessionStorage.setItem('hero-3d-played-v3', 'true');
         }
 
-        const fetchFeatured = async () => {
-            const { data } = await supabase
-                .from('listings')
-                .select('*')
-                .eq('status', 'approved')
-                .eq('featured', true) // Only show Admin-uploaded "Modern Stays"
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .single();
-
-            // If No featured listings found, fallback to latest approved
-            if (!data) {
-                const { data: latest } = await supabase
+        const fetchFeaturedData = async () => {
+            try {
+                // Try to get Admin-tagged "Modern Stays" first
+                let { data } = await supabase
                     .from('listings')
                     .select('*')
                     .eq('status', 'approved')
+                    .eq('featured', true)
                     .order('created_at', { ascending: false })
-                    .limit(1)
-                    .single();
-                if (latest) setFeaturedListing(latest);
-            } else {
-                setFeaturedListing(data);
+                    .limit(1);
+
+                if (data && data.length > 0) {
+                    setFeaturedListing(data[0]);
+                } else {
+                    // Fallback to any latest approved listing
+                    const { data: latest } = await supabase
+                        .from('listings')
+                        .select('*')
+                        .eq('status', 'approved')
+                        .order('created_at', { ascending: false })
+                        .limit(1);
+                    if (latest && latest.length > 0) setFeaturedListing(latest[0]);
+                }
+            } catch (err) {
+                console.error('Fetch error:', err);
             }
         };
-        fetchFeatured();
+        fetchFeaturedData();
     }, []);
 
     const handleSearch = (e) => {
