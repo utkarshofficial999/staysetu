@@ -41,28 +41,7 @@ const Home = () => {
             {/* Hero Section */}
             <Hero />
 
-            {/* Quick Category Pills */}
-            <section className="pb-4 relative z-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-center gap-2 flex-wrap">
-                        {[
-                            { label: 'Boys PG', emoji: '🏠', type: 'PG' },
-                            { label: 'Girls PG', emoji: '🏡', type: 'PG' },
-                            { label: 'Flat', emoji: '🏢', type: 'Flat' },
-                            { label: 'Hostel', emoji: '🏨', type: 'Hostel' },
-                        ].map(({ label, emoji, type }) => (
-                            <Link
-                                key={label}
-                                to={`/listings?type=${type}`}
-                                className="px-5 py-2.5 bg-slate-50 border border-slate-200 text-slate-600 rounded-2xl text-[13px] font-medium transition-all duration-300 hover:border-plum-400/50 hover:text-plum-900 hover:bg-white hover:-translate-y-0.5"
-                                style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
-                            >
-                                {emoji} {label}
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section>
+
 
             {/* Featured Listings */}
             <section className="py-16 relative z-10">
