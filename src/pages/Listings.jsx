@@ -13,8 +13,8 @@ const Listings = () => {
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
     const [propertyType, setPropertyType] = useState(searchParams.get('type') || 'all');
     const [genderFilter, setGenderFilter] = useState(searchParams.get('gender') || 'all');
-    const [priceRange, setPriceRange] = useState(100000);
-    const [amenities, setAmenities] = useState([]);
+    const [priceRange, setPriceRange] = useState(parseInt(searchParams.get('price')) || 100000);
+    const [amenities, setAmenities] = useState(searchParams.get('amenities')?.split(',') || []);
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry'];
 
@@ -50,25 +50,29 @@ const Listings = () => {
         setLoading(false);
     };
 
+    // Re-fetch when search params or internal state changes
     useEffect(() => {
         fetchListings();
-    }, [searchParams]);
-
-    const handleSearch = (e) => {
-        e.preventDefault();
+        // Sync URL (de-bounced manually via useEffect)
         const params = new URLSearchParams();
         if (searchQuery) params.set('q', searchQuery);
         if (propertyType !== 'all') params.set('type', propertyType);
         if (genderFilter !== 'all') params.set('gender', genderFilter);
-        setSearchParams(params);
+        if (priceRange < 100000) params.set('price', priceRange);
+        if (amenities.length > 0) params.set('amenities', amenities.join(','));
+        setSearchParams(params, { replace: true });
+    }, [searchQuery, propertyType, genderFilter, priceRange, amenities]);
+
+    const handleSearch = (e) => {
+        if (e) e.preventDefault();
+        fetchListings();
     };
 
     const toggleAmenity = (amenity) => {
-        if (amenities.includes(amenity)) {
-            setAmenities(amenities.filter(a => a !== amenity));
-        } else {
-            setAmenities([...amenities, amenity]);
-        }
+        const newAmenities = amenities.includes(amenity)
+            ? amenities.filter(a => a !== amenity)
+            : [...amenities, amenity];
+        setAmenities(newAmenities);
     };
 
     const FilterPanel = ({ className = '' }) => (

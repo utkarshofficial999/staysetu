@@ -91,9 +91,9 @@ const PropertyCard = ({ property }) => {
                         <Star size={10} fill="currentColor" className="mr-1" />
                         4.8
                     </div>
-                    {property?.gender && (
+                    {(property?.gender_preference || property?.gender) && (
                         <div className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 uppercase`}>
-                            {property.gender} only
+                            {property.gender_preference || property.gender} only
                         </div>
                     )}
                 </div>

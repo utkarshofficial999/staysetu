@@ -20,6 +20,7 @@ const AddListing = () => {
         price: '',
         location: '',
         type: 'PG',
+        gender_preference: 'any',
         phone_number: '',
         whatsapp_number: '',
         amenities: [],
@@ -148,6 +149,19 @@ const AddListing = () => {
                                         <option value="PG">PG (Paying Guest)</option>
                                         <option value="Flat">Flat / Apartment</option>
                                         <option value="Hostel">Hostel</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Gender Preference</label>
+                                    <select
+                                        name="gender_preference"
+                                        className="input-field cursor-pointer"
+                                        value={formData.gender_preference}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="any">Any (Co-living)</option>
+                                        <option value="boys">Boys Only</option>
+                                        <option value="girls">Girls Only</option>
                                     </select>
                                 </div>
                                 <div>
