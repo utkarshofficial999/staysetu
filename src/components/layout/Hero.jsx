@@ -22,10 +22,24 @@ const Hero = () => {
                 .from('listings')
                 .select('*')
                 .eq('status', 'approved')
+                .eq('featured', true) // Only show Admin-uploaded "Modern Stays"
                 .order('created_at', { ascending: false })
                 .limit(1)
                 .single();
-            if (data) setFeaturedListing(data);
+
+            // If No featured listings found, fallback to latest approved
+            if (!data) {
+                const { data: latest } = await supabase
+                    .from('listings')
+                    .select('*')
+                    .eq('status', 'approved')
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .single();
+                if (latest) setFeaturedListing(latest);
+            } else {
+                setFeaturedListing(data);
+            }
         };
         fetchFeatured();
     }, []);

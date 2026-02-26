@@ -68,11 +68,12 @@ const AdminPanel = () => {
         setFormLoading(true);
         const { error } = await supabase.from('listings').insert([{
             ...formData,
-            whatsapp_number: formData.whatsapp, // Map form field to DB column
-            gender_preference: formData.gender, // Map form field to DB column
+            whatsapp_number: formData.whatsapp,
+            gender_preference: formData.gender,
             images: uploadedImages,
             owner_id: user.id,
-            status: 'approved' // Admin uploads are auto-approved
+            status: 'approved',
+            featured: true // Admin uploads are always "Modern Stays" (Featured)
         }]);
 
         if (!error) {
