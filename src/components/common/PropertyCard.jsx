@@ -66,18 +66,17 @@ const PropertyCard = ({ property }) => {
                 >
                     <Heart size={14} fill={liked ? 'currentColor' : 'none'} />
                 </button>
-            </div>
-
-            {/* Floating Price Tag - Moved outside overflow-hidden container to prevent clipping */}
-            <div className="absolute top-[calc(75%-20px)] right-6 z-30 bg-slate-900 text-white px-4 py-2.5 rounded-2xl border-2 border-slate-900 shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
-                <div className="flex items-center gap-0.5">
-                    <IndianRupee size={14} className="text-white" />
-                    <span className="text-lg font-bold" style={{ fontFamily: 'Bungee' }}>{property?.price?.toLocaleString() || '8,500'}</span>
+                {/* Floating Price Tag - Placed inside image container with margin to avoid overlap and clipping */}
+                <div className="absolute bottom-4 right-4 z-20 bg-slate-900 text-white px-3.5 py-2 rounded-xl border-2 border-slate-900 shadow-lg">
+                    <div className="flex items-center gap-0.5">
+                        <IndianRupee size={12} className="text-white" />
+                        <span className="text-base font-bold" style={{ fontFamily: 'Bungee' }}>{property?.price?.toLocaleString() || '8,500'}</span>
+                    </div>
                 </div>
             </div>
 
             {/* Content Area */}
-            <div className="p-6 pt-8 flex flex-col flex-1">
+            <div className="p-6 pt-6 flex flex-col flex-1">
                 <div className="flex items-center gap-2 mb-3">
                     <div className="flex items-center text-amber-500 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg text-[10px] font-bold">
                         <Star size={10} fill="currentColor" className="mr-1" />
@@ -118,7 +117,7 @@ const PropertyCard = ({ property }) => {
                     </button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
