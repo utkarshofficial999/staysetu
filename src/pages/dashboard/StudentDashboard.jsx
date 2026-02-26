@@ -221,7 +221,7 @@ const StudentDashboard = () => {
                                     {profile?.name?.charAt(0)?.toUpperCase() || 'S'}
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl md:text-3xl font-black text-slate-900">
+                                    <h1 className="text-2xl md:text-3xl font-black text-slate-900" style={{ fontFamily: 'Bungee' }}>
                                         Hey, {profile?.name?.split(' ')[0] || 'Student'} 👋
                                     </h1>
                                     <p className="text-slate-400 font-medium text-sm">Find your perfect home away from home.</p>
@@ -387,7 +387,7 @@ const StudentDashboard = () => {
                         {/* Header */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                             <div>
-                                <h2 className="text-2xl font-black text-slate-900">Find a Roommate</h2>
+                                <h2 className="text-2xl font-black text-slate-900" style={{ fontFamily: 'Bungee' }}>Find a Roommate</h2>
                                 <p className="text-slate-400 font-medium text-sm">Post your requirement and connect with compatible students.</p>
                             </div>
                             <button
