@@ -37,18 +37,25 @@ const Footer = () => {
                     {/* Explore */}
                     <div>
                         <h3 className="text-slate-900 font-semibold text-sm mb-6" style={{ fontFamily: 'Bungee' }}>Explore</h3>
-                        <ul className="space-y-3.5">
+                        <ul className="space-y-4">
                             {[
-                                { label: 'Boys PG', to: '/listings?type=PG&gender=male' },
-                                { label: 'Girls PG', to: '/listings?type=PG&gender=female' },
-                                { label: 'Flats', to: '/listings?type=Flat' },
-                                { label: 'Hostels', to: '/listings?type=Hostel' },
-                                { label: 'List Property', to: '/signup' },
+                                { label: 'Boys PG', to: '/listings?type=PG&gender=male', desc: 'Secure and safe stays for students.' },
+                                { label: 'Girls PG', to: '/listings?type=PG&gender=female', desc: 'Vetted and verified girls only spaces.' },
+                                { label: 'Flats', to: '/listings?type=Flat', desc: 'Independent 1/2/3 BHK student flats.' },
+                                { label: 'Hostels', to: '/listings?type=Hostel', desc: 'Premium hostel with mess facilities.' },
+                                { label: 'List Property', to: '/signup', desc: 'Earn by listing your vacant property.' },
                             ].map((link) => (
-                                <li key={link.label}>
-                                    <Link to={link.to} className="text-sm font-normal text-slate-500 hover:text-plum-900 transition-colors flex items-center gap-1 group">
-                                        {link.label}
-                                        <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <li key={link.label} className="group">
+                                    <Link to={link.to} className="block">
+                                        <div className="flex items-center gap-1">
+                                            <span className="text-sm font-bold text-slate-700 group-hover:text-plum-900 transition-colors">
+                                                {link.label}
+                                            </span>
+                                            <ArrowUpRight size={10} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-medium leading-relaxed mt-0.5">
+                                            {link.desc}
+                                        </p>
                                     </Link>
                                 </li>
                             ))}
@@ -58,11 +65,22 @@ const Footer = () => {
                     {/* Support */}
                     <div>
                         <h3 className="text-slate-900 font-semibold text-sm mb-6" style={{ fontFamily: 'Bungee' }}>Support</h3>
-                        <ul className="space-y-3.5">
-                            {['How it Works', 'About Us', 'Contact', 'Terms of Service', 'Privacy Policy'].map((link) => (
-                                <li key={link}>
-                                    <a href="#" className="text-sm font-normal text-slate-500 hover:text-plum-900 transition-colors">
-                                        {link}
+                        <ul className="space-y-4">
+                            {[
+                                { label: 'How it Works', desc: 'A quick guide on finding your perfect stay.' },
+                                { label: 'About Us', desc: 'Our mission to bridge the student housing gap.' },
+                                { label: 'Contact', desc: 'Get in touch for support or partnership.' },
+                                { label: 'Terms of Service', desc: 'The rules and guidelines for our community.' },
+                                { label: 'Privacy Policy', desc: 'How we keep your data safe and secure.' }
+                            ].map((item) => (
+                                <li key={item.label} className="group">
+                                    <a href="#" className="block">
+                                        <span className="text-sm font-bold text-slate-700 group-hover:text-plum-900 transition-colors">
+                                            {item.label}
+                                        </span>
+                                        <p className="text-[10px] text-slate-400 font-medium leading-relaxed mt-0.5">
+                                            {item.desc}
+                                        </p>
                                     </a>
                                 </li>
                             ))}
