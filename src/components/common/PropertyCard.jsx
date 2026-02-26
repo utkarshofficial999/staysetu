@@ -12,9 +12,9 @@ const FALLBACKS = [
 const amenityIcons = { WiFi: Wifi, AC: Wind, Food: UtensilsCrossed, Parking: Car };
 
 const typeStyles = {
-    PG: { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/20' },
-    Flat: { bg: 'bg-plum-500/10', text: 'text-plum-300', border: 'border-plum-500/20' },
-    Hostel: { bg: 'bg-plum-400/10', text: 'text-plum-200', border: 'border-plum-400/20' },
+    PG: { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-200' },
+    Flat: { bg: 'bg-plum-50', text: 'text-plum-600', border: 'border-plum-200' },
+    Hostel: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-200' },
 };
 
 const PropertyCard = ({ property }) => {
@@ -49,12 +49,12 @@ const PropertyCard = ({ property }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 {/* Type badge */}
-                <div className={`absolute top-3 left-3 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg ${ts.bg} ${ts.text} border ${ts.border} backdrop-blur-md`}>
+                <div className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${ts.bg} ${ts.text} border ${ts.border} shadow-sm backdrop-blur-md`}>
                     {property?.type || 'PG'}
                 </div>
 
                 {/* Verified badge */}
-                <div className="absolute top-3 right-12 bg-emerald-500/80 backdrop-blur-md text-white text-[9px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg flex items-center gap-1 border border-emerald-500/20">
+                <div className="absolute top-3 right-12 bg-emerald-500 text-white text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
                     <CheckCircle2 size={9} /> Verified
                 </div>
 
@@ -79,10 +79,10 @@ const PropertyCard = ({ property }) => {
             {/* Content */}
             <div className="p-4 flex flex-col flex-1">
                 <div className="flex justify-between items-start mb-2 gap-2">
-                    <h3 className="font-semibold text-white line-clamp-1 text-sm group-hover:text-plum-300 transition-colors" style={{ fontFamily: 'Space Grotesk' }}>
+                    <h3 className="font-bold text-slate-900 line-clamp-1 text-sm group-hover:text-plum-600 transition-colors" style={{ fontFamily: 'Bungee' }}>
                         {property?.title || 'Comfortable Stay'}
                     </h3>
-                    <div className="flex items-center text-white font-black text-[10px] shrink-0 bg-white/10 px-2 py-0.5 rounded-md border border-white/40 shadow-[0_0_5px_rgba(255,255,255,0.1)]">
+                    <div className="flex items-center text-slate-900 font-black text-[10px] shrink-0 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 shadow-sm">
                         <Star size={9} fill="#fbbf24" className="mr-0.5 text-amber-400" />
                         4.8
                     </div>
@@ -98,7 +98,7 @@ const PropertyCard = ({ property }) => {
                     {(property?.amenities?.slice(0, 3) || []).map((amenity, i) => {
                         const Icon = amenityIcons[amenity];
                         return (
-                            <span key={i} className="flex items-center gap-1.5 text-[10px] font-medium bg-white/5 text-slate-300 border border-white/20 px-2.5 py-1 rounded-md">
+                            <span key={i} className="flex items-center gap-1.5 text-[10px] font-medium bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-md">
                                 {Icon && <Icon size={9} />}
                                 {amenity}
                             </span>
@@ -107,10 +107,10 @@ const PropertyCard = ({ property }) => {
                 </div>
 
                 {/* Price + CTA */}
-                <div className="flex items-center justify-between pt-4 border-t-2 border-white/10 mt-auto">
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
                     <div>
-                        <div className="flex items-center text-white font-black text-lg" style={{ fontFamily: 'Space Grotesk' }}>
-                            <IndianRupee size={16} className="mr-0.5 text-white" />
+                        <div className="flex items-center text-slate-900 font-black text-lg" style={{ fontFamily: 'Bungee' }}>
+                            <IndianRupee size={16} className="mr-0.5 text-slate-900" />
                             {property?.price?.toLocaleString() || '8,500'}
                         </div>
                         <span className="text-slate-500 text-[10px] font-medium">/month</span>

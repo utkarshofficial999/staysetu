@@ -84,7 +84,7 @@ const PropertyDetails = () => {
                     <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
                         <AlertCircle className="text-red-500" size={28} />
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk' }}>Property not found</h2>
+                    <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Bungee' }}>Property not found</h2>
                     <p className="text-slate-400 text-sm mb-6">This listing may have been removed or is no longer available.</p>
                     <button onClick={() => navigate('/listings')} className="btn-primary text-sm">Back to Listings</button>
                 </div>
@@ -192,7 +192,7 @@ const PropertyDetails = () => {
                                 )}
                             </div>
 
-                            <h1 className="text-2xl md:text-3xl font-bold text-white mb-3" style={{ fontFamily: 'Space Grotesk' }}>
+                            <h1 className="text-2xl md:text-3xl font-bold text-white mb-3" style={{ fontFamily: 'Bungee' }}>
                                 {property.title}
                             </h1>
                             <div className="flex items-center text-slate-400 text-sm font-normal mb-6 gap-1.5">
@@ -203,14 +203,14 @@ const PropertyDetails = () => {
                             <div className="h-px bg-slate-100 mb-6" />
 
                             <div className="mb-8">
-                                <h3 className="text-sm font-semibold text-white mb-3 uppercase tracking-wider" style={{ fontFamily: 'Space Grotesk' }}>About</h3>
+                                <h3 className="text-sm font-semibold text-white mb-3 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>About</h3>
                                 <p className="text-slate-400 text-sm leading-relaxed font-normal">
                                     {property.description || "No description provided for this property. Contact the owner for more details."}
                                 </p>
                             </div>
 
                             <div>
-                                <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider" style={{ fontFamily: 'Space Grotesk' }}>Amenities</h3>
+                                <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>Amenities</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                     {property.amenities?.map((amenity) => {
                                         const Icon = amenityIcons[amenity] || Home;
@@ -236,7 +236,7 @@ const PropertyDetails = () => {
                             <div className="mb-6">
                                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Starting from</span>
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-3xl font-black text-white flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <span className="text-3xl font-black text-white flex items-center" style={{ fontFamily: 'Bungee' }}>
                                         <IndianRupee size={22} className="mr-1" />
                                         {property.price?.toLocaleString()}
                                     </span>
@@ -262,7 +262,7 @@ const PropertyDetails = () => {
                                     {(property.owner?.name || 'O').charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-white text-sm" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h4 className="font-semibold text-white text-sm" style={{ fontFamily: 'Bungee' }}>
                                         {property.owner?.name || 'Property Owner'}
                                     </h4>
                                     <p className="text-emerald-600 text-xs font-medium flex items-center gap-1">

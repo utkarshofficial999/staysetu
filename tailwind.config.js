@@ -60,6 +60,8 @@ export default {
                     pink: '#ff00ff',
                     white: '#ffffff',
                 },
+                surface: '#ffffff',
+                'surface-2': '#faf7f5',
             },
             borderRadius: {
                 '2xl': '1rem',
@@ -109,7 +111,7 @@ export default {
             },
             fontFamily: {
                 sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                display: ['Space Grotesk', 'Inter', 'sans-serif'],
+                display: ['Bungee', 'cursive'],
             },
         },
     },

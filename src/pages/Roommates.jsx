@@ -86,7 +86,7 @@ const Roommates = () => {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div>
                         <span className="section-label mb-4 block w-fit">Community</span>
-                        <h1 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>
+                        <h1 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: 'Bungee' }}>
                             Find Roommates
                         </h1>
                         <p className="text-slate-400 font-normal mt-2 max-w-md text-sm">
@@ -108,7 +108,7 @@ const Roommates = () => {
                 {showForm && (
                     <div className="card-elevated p-8 mb-10 animate-slide-up">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>Post Your Requirement</h2>
+                            <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Bungee' }}>Post Your Requirement</h2>
                             <button onClick={() => setShowForm(false)} className="w-8 h-8 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition-colors">
                                 <X size={16} />
                             </button>
@@ -209,7 +209,7 @@ const Roommates = () => {
                                             {(req.name || 'U').charAt(0).toUpperCase()}
                                         </div>
                                         <div>
-                                            <h3 className="font-semibold text-white text-sm" style={{ fontFamily: 'Space Grotesk' }}>{req.name}</h3>
+                                            <h3 className="font-semibold text-white text-sm" style={{ fontFamily: 'Bungee' }}>{req.name}</h3>
                                             {req.college && (
                                                 <p className="text-slate-400 text-xs flex items-center gap-1 mt-0.5">
                                                     <GraduationCap size={10} /> {req.college}
@@ -268,7 +268,7 @@ const Roommates = () => {
                         <div className="w-16 h-16 bg-[#0a080a] rounded-2xl flex items-center justify-center mx-auto mb-5 text-slate-300">
                             <Users size={32} />
                         </div>
-                        <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk' }}>No roommate requests yet</h3>
+                        <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Bungee' }}>No roommate requests yet</h3>
                         <p className="text-slate-400 font-normal mb-6 text-sm">Be the first to post your requirement!</p>
                         {user && (
                             <button onClick={() => setShowForm(true)} className="btn-primary text-sm">

@@ -54,8 +54,8 @@ const Home = () => {
                             <Link
                                 key={label}
                                 to={`/listings?type=${type}`}
-                                className="px-5 py-2.5 bg-white/5 border border-white/10 text-slate-300 rounded-2xl text-[13px] font-medium transition-all duration-300 hover:border-plum-400/50 hover:text-white hover:bg-white/10 hover:-translate-y-0.5"
-                                style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+                                className="px-5 py-2.5 bg-slate-50 border border-slate-200 text-slate-600 rounded-2xl text-[13px] font-medium transition-all duration-300 hover:border-plum-400/50 hover:text-plum-900 hover:bg-white hover:-translate-y-0.5"
+                                style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
                             >
                                 {emoji} {label}
                             </Link>
@@ -69,7 +69,7 @@ const Home = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
                         <span className="section-label mb-4 inline-block">Featured</span>
-                        <h2 className="section-title text-white" style={{ fontFamily: 'Space Grotesk' }}>
+                        <h2 className="section-title text-slate-900" style={{ fontFamily: 'Bungee' }}>
                             Popular Stays
                         </h2>
                         <p className="text-slate-400 font-normal text-base mt-3 max-w-lg mx-auto">
@@ -113,12 +113,12 @@ const Home = () => {
             <HowItWorks />
 
             {/* Why StaySetu */}
-            <section className="py-16 relative overflow-hidden bg-[#0c0a0c]">
+            <section className="py-16 relative overflow-hidden bg-slate-50 border-y border-slate-100">
                 <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
                         <span className="section-label mb-4 inline-block">Why Us</span>
-                        <h2 className="section-title text-white" style={{ fontFamily: 'Space Grotesk' }}>
+                        <h2 className="section-title text-slate-900" style={{ fontFamily: 'Bungee' }}>
                             Built for Students, by Students
                         </h2>
                         <p className="text-slate-400 font-normal text-base mt-3 max-w-lg mx-auto">
@@ -127,12 +127,12 @@ const Home = () => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {whys.map(({ icon: Icon, title, desc }, i) => (
-                            <div key={i} className="card-elevated p-8 group !bg-white/5 hover:!bg-white/[0.08]">
+                            <div key={i} className="card-elevated p-8 group !bg-white hover:!bg-slate-50">
                                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
                                     style={{ background: 'linear-gradient(135deg, #3A1F3D, #524058)', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.3)' }}>
                                     <Icon size={22} className="text-white" />
                                 </div>
-                                <h3 className="font-bold text-white mb-3 text-lg" style={{ fontFamily: 'Space Grotesk' }}>{title}</h3>
+                                <h3 className="font-bold text-slate-900 mb-3 text-lg" style={{ fontFamily: 'Bungee' }}>{title}</h3>
                                 <p className="text-slate-400 text-sm leading-relaxed font-normal">{desc}</p>
                             </div>
                         ))}
@@ -157,7 +157,7 @@ const Home = () => {
                             <span className="inline-flex items-center gap-2 bg-white/10 border border-white/10 text-white/80 text-xs font-medium px-4 py-2 rounded-full mb-6">
                                 🏠 5,000+ Verified Stays
                             </span>
-                            <h2 className="text-3xl md:text-5xl font-bold text-white mb-5 leading-tight" style={{ fontFamily: 'Space Grotesk' }}>
+                            <h2 className="text-3xl md:text-5xl font-bold text-white mb-5 leading-tight" style={{ fontFamily: 'Bungee' }}>
                                 Ready to Find Your<br className="hidden md:block" /> Perfect Stay?
                             </h2>
                             <p className="text-white/60 text-lg font-normal mb-10 max-w-2xl mx-auto">

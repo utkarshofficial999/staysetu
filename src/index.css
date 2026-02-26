@@ -1,20 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --primary: #EDD9C4;
-  --primary-light: #f5eaef;
+  --primary: #3A1F3D;
+  --primary-light: #524058;
   --accent: #C4949E;
-  --warm: #3A1F3D;
+  --warm: #EDD9C4;
   --hot: #c4949e;
-  --surface: #0a080a;
-  --surface-2: #0f0d0f;
-  --border: rgba(237, 217, 196, 0.1);
-  --text-primary: #ffffff;
-  --text-secondary: #ddb5c5;
+  --surface: #ffffff;
+  --surface-2: #faf7f5;
+  --border: rgba(58, 31, 61, 0.1);
+  --text-primary: #1a1a1a;
+  --text-secondary: #524058;
   --gradient-brand: linear-gradient(135deg, #3A1F3D 0%, #524058 50%, #6e3f52 100%);
   --gradient-warm: linear-gradient(135deg, #C4949E 0%, #EDD9C4 100%);
   --radius: 16px;
@@ -30,13 +30,12 @@
 
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: #000000;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 1.1rem;
+    background: #ffffff;
+    color: #1a1a1a;
+    font-weight: 500;
+    font-size: 1rem;
     line-height: 1.6;
     overflow-x: hidden;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
   }
 
   p,
@@ -47,8 +46,7 @@
   input,
   textarea,
   button {
-    @apply font-bold text-white;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    @apply font-medium text-slate-800;
   }
 
   /* Force white color + neon glow for common utility classes */
@@ -58,9 +56,7 @@
   .text-slate-700,
   .text-slate-300,
   .text-slate-200 {
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6) !important;
+    font-weight: 500 !important;
   }
 
   h1,
@@ -69,10 +65,9 @@
   h4,
   h5,
   h6 {
-    font-family: 'Space Grotesk', 'Inter', sans-serif;
-    @apply font-black tracking-tight;
-    color: #ffffff !important;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 24px rgba(255, 255, 255, 0.2) !important;
+    font-family: 'Bungee', cursive;
+    @apply font-normal tracking-tight;
+    color: #1a1a1a !important;
     line-height: 1.1;
   }
 
@@ -121,37 +116,37 @@
   /* ── Cards ── */
   .glass-card {
     @apply backdrop-blur-2xl rounded-3xl;
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid #000000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
   }
 
   .card-elevated {
     @apply rounded-3xl;
-    background: #000000;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+    background: #ffffff;
+    border: 2px solid #000000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .card-elevated:hover {
-    box-shadow: 0 0 45px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 12px 40px rgba(58, 31, 61, 0.08);
     transform: translateY(-4px);
-    border-color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(58, 31, 61, 0.2);
   }
 
   /* ── Form ── */
   .input-field {
-    @apply w-full border border-white/40 rounded-xl py-3 px-4 text-sm font-medium placeholder:text-slate-500 transition-all duration-200;
-    background: rgba(0, 0, 0, 0.4);
-    color: white;
-    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
+    @apply w-full border border-slate-200 rounded-xl py-3 px-4 text-sm font-medium placeholder:text-slate-400 transition-all duration-200;
+    background: #ffffff;
+    color: #1a1a1a;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
   }
 
   .input-field:focus {
-    @apply outline-none border-[#ffffff];
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.05);
+    @apply outline-none border-plum-400;
+    box-shadow: 0 0 0 4px rgba(196, 148, 158, 0.1);
+    background: #ffffff;
   }
 
   /* ── Section labels ── */
@@ -283,6 +278,35 @@
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+@keyframes text3DReveal {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(-40deg) translateY(60px) translateZ(-100px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(0deg) translateY(0) translateZ(0);
+  }
+}
+
+.animate-text-3d {
+  opacity: 0;
+  animation: text3DReveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.animate-text-3d-1 {
+  animation-delay: 0s;
+}
+
+.animate-text-3d-2 {
+  animation-delay: 0.15s;
+}
+
+.animate-text-3d-3 {
+  animation-delay: 0.3s;
 }
 
 /* ── Brand gradient utility ── */

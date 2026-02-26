@@ -77,9 +77,9 @@ const Signup = () => {
                     <div className="text-center mb-8">
                         <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5"
                             style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 8px 24px -6px rgba(99,102,241,0.35)' }}>
-                            <span className="text-white font-bold text-xl" style={{ fontFamily: 'Space Grotesk' }}>S</span>
+                            <span className="text-white font-bold text-xl" style={{ fontFamily: 'Bungee' }}>S</span>
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-900 mb-1.5" style={{ fontFamily: 'Space Grotesk' }}>Create account</h1>
+                        <h1 className="text-2xl font-bold text-slate-900 mb-1.5" style={{ fontFamily: 'Bungee' }}>Create account</h1>
                         <p className="text-slate-500 text-sm font-normal">Join StaySetu and find your perfect stay</p>
                     </div>
 

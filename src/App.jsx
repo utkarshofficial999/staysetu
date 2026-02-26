@@ -27,9 +27,9 @@ const ProtectedRoute = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-black">
-        <div className="w-12 h-12 border-4 border-[#ffffff] border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(255,255,255,0.5)] mb-4"></div>
-        <p className="text-white font-black uppercase tracking-widest text-sm animate-pulse" style={{ textShadow: '0 0 10px rgba(255,255,255,0.8)' }}>StaySetu is Loading...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+        <div className="w-12 h-12 border-4 border-plum-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-900 font-black uppercase tracking-widest text-sm animate-pulse">StaySetu is Loading...</p>
       </div>
     );
   }
@@ -47,9 +47,9 @@ const AdminRoute = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-black">
-        <div className="w-12 h-12 border-4 border-[#ffffff] border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(255,255,255,0.5)] mb-4"></div>
-        <p className="text-white font-black uppercase tracking-widest text-sm animate-pulse" style={{ textShadow: '0 0 10px rgba(255,255,255,0.8)' }}>Authenticating...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+        <div className="w-12 h-12 border-4 border-plum-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-900 font-black uppercase tracking-widest text-sm animate-pulse">Authenticating...</p>
       </div>
     );
   }

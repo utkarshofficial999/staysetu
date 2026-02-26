@@ -242,7 +242,7 @@ const OwnerDashboard = () => {
                                     <Building2 size={22} />
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl md:text-3xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h1 className="text-2xl md:text-3xl font-bold text-white" style={{ fontFamily: 'Bungee' }}>
                                         Owner Dashboard
                                     </h1>
                                     <p className="text-slate-400 font-normal text-sm">
@@ -275,7 +275,7 @@ const OwnerDashboard = () => {
                                 style={{ boxShadow: '0 4px 12px -2px rgba(0,0,0,0.15)' }}>
                                 <stat.icon size={18} />
                             </div>
-                            <p className="text-2xl font-black text-white" style={{ fontFamily: 'Space Grotesk' }}>{stat.value}</p>
+                            <p className="text-2xl font-black text-white" style={{ fontFamily: 'Bungee' }}>{stat.value}</p>
                             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</span>
                         </div>
                     ))}
@@ -311,7 +311,7 @@ const OwnerDashboard = () => {
                         <div className="card-elevated overflow-hidden">
                             <div className="p-6 md:p-8 border-b border-slate-50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                                 <div>
-                                    <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>Your Properties</h3>
+                                    <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Bungee' }}>Your Properties</h3>
                                     <p className="text-slate-400 text-sm font-normal">Manage and track all your listed stays.</p>
                                 </div>
                                 <button
@@ -349,7 +349,7 @@ const OwnerDashboard = () => {
                                                             />
                                                         </div>
                                                         <div className="min-w-0">
-                                                            <h4 className="font-semibold text-white truncate max-w-[200px]" style={{ fontFamily: 'Space Grotesk' }}>{listing.title}</h4>
+                                                            <h4 className="font-semibold text-white truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>{listing.title}</h4>
                                                             <span className="text-xs font-normal text-slate-400 flex items-center gap-1 mt-0.5">
                                                                 <MapPin size={10} className="text-plum-400 shrink-0" />
                                                                 <span className="truncate max-w-[180px]">{listing.location}</span>
@@ -361,7 +361,7 @@ const OwnerDashboard = () => {
                                                     <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#0a080a] px-2.5 py-1 rounded-md text-slate-400 border border-white/5/60">{listing.type}</span>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <div className="flex items-center font-bold text-plum-600" style={{ fontFamily: 'Space Grotesk' }}>
+                                                    <div className="flex items-center font-bold text-plum-600" style={{ fontFamily: 'Bungee' }}>
                                                         <IndianRupee size={13} className="mr-0.5" />
                                                         {listing.price?.toLocaleString()}
                                                     </div>
@@ -481,7 +481,7 @@ const OwnerDashboard = () => {
                                         <Plus size={24} />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>Add New Property</h2>
+                                        <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Bungee' }}>Add New Property</h2>
                                         <p className="text-slate-400 font-normal text-sm">Provide details to attract students to your stay.</p>
                                     </div>
                                 </div>
@@ -504,7 +504,7 @@ const OwnerDashboard = () => {
 
                                 {/* Step 1 - Basic Info */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Bungee' }}>
                                         <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">1</span>
                                         Basic Information
                                     </h3>
@@ -564,7 +564,7 @@ const OwnerDashboard = () => {
 
                                 {/* Step 2 - Amenities */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Bungee' }}>
                                         <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">2</span>
                                         Amenities & Facilities
                                     </h3>
@@ -588,7 +588,7 @@ const OwnerDashboard = () => {
 
                                 {/* Step 3 - Photos */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Bungee' }}>
                                         <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">3</span>
                                         Property Photos
                                     </h3>
@@ -656,7 +656,7 @@ const OwnerDashboard = () => {
 
                                 {/* Step 4 - Contact */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center" style={{ fontFamily: 'Bungee' }}>
                                         <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">4</span>
                                         Contact Information
                                     </h3>
@@ -707,7 +707,7 @@ const OwnerDashboard = () => {
                 {/* ===== PROFILE TAB ===== */}
                 {activeTab === 'profile' && (
                     <div className="animate-fade-in max-w-2xl">
-                        <h2 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: 'Space Grotesk' }}>Owner Profile</h2>
+                        <h2 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: 'Bungee' }}>Owner Profile</h2>
 
                         <div className="card-elevated overflow-hidden">
                             {/* Profile Header */}
@@ -719,7 +719,7 @@ const OwnerDashboard = () => {
                                         {profile?.name?.charAt(0)?.toUpperCase() || 'O'}
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>{profile?.name || 'Owner'}</h3>
+                                        <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Bungee' }}>{profile?.name || 'Owner'}</h3>
                                         <p className="text-white/70 font-medium">{user?.email}</p>
                                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#141114]/20 backdrop-blur-sm rounded-lg text-[10px] font-semibold uppercase tracking-wider text-white mt-2">
                                             <Briefcase size={10} />
@@ -738,7 +738,7 @@ const OwnerDashboard = () => {
                                         { label: 'Total Views', value: stats.views },
                                     ].map((stat, i) => (
                                         <div key={i} className="bg-[#0a080a] rounded-2xl p-4 text-center">
-                                            <p className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>{stat.value}</p>
+                                            <p className="text-xl font-bold text-white" style={{ fontFamily: 'Bungee' }}>{stat.value}</p>
                                             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</span>
                                         </div>
                                     ))}

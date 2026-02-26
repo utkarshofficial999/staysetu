@@ -88,7 +88,7 @@ const AdminPanel = () => {
                                 style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 8px 20px -4px rgba(99,102,241,0.3)' }}>
                                 <ShieldCheck size={20} />
                             </div>
-                            <h1 className="text-3xl font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>Admin Panel</h1>
+                            <h1 className="text-3xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>Admin Panel</h1>
                         </div>
                         <p className="text-slate-400 font-normal text-sm">
                             Logged in as <span className="font-semibold text-slate-700">{profile?.full_name || profile?.name || user?.email}</span>
@@ -117,7 +117,7 @@ const AdminPanel = () => {
                                 style={{ boxShadow: '0 4px 12px -2px rgba(0,0,0,0.15)' }}>
                                 <s.icon size={18} />
                             </div>
-                            <p className="text-2xl font-bold text-slate-900 leading-none" style={{ fontFamily: 'Space Grotesk' }}>{s.value}</p>
+                            <p className="text-2xl font-bold text-slate-900 leading-none" style={{ fontFamily: 'Bungee' }}>{s.value}</p>
                             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{s.label}</span>
                         </div>
                     ))}
@@ -149,7 +149,7 @@ const AdminPanel = () => {
 
                     {/* Filter Bar */}
                     <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Space Grotesk' }}>
+                        <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>
                             {activeTab === 'listings' ? 'Listing Verification' : 'Student Requirements'}
                         </h3>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100/60">
@@ -213,7 +213,7 @@ const AdminPanel = () => {
                                                     </div>
                                                 )}
                                                 <div className="min-w-0">
-                                                    <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Space Grotesk' }}>
+                                                    <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>
                                                         {activeTab === 'listings' ? item.title : (item.name || 'Student')}
                                                     </h4>
                                                     <span className="text-[10px] font-medium text-slate-400 block">
@@ -226,7 +226,7 @@ const AdminPanel = () => {
                                             <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-50 px-2 py-0.5 rounded-md text-slate-500 block mb-1 w-fit border border-slate-100/60">
                                                 {activeTab === 'listings' ? item.type : (item.college || 'N/A')}
                                             </span>
-                                            <span className="text-sm font-bold text-slate-900 flex items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                                            <span className="text-sm font-bold text-slate-900 flex items-center" style={{ fontFamily: 'Bungee' }}>
                                                 <IndianRupee size={12} className="mr-0.5" />{item.budget || item.price?.toLocaleString()}/mo
                                             </span>
                                         </td>
