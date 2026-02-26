@@ -4,12 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 
-const Hero = () => {
+const Hero = ({ featuredProp }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [type, setType] = useState('all');
     const [shouldAnimate, setShouldAnimate] = useState(false);
-    const [featuredListing, setFeaturedListing] = useState(null);
+    const [featuredListing, setFeaturedListing] = useState(featuredProp || null);
     const navigate = useNavigate();
+
+    // Sync with prop changes
+    useEffect(() => {
+        if (featuredProp) {
+            setFeaturedListing(featuredProp);
+        }
+    }, [featuredProp]);
 
     useEffect(() => {
         const played = sessionStorage.getItem('hero-3d-played-v3');
@@ -18,35 +25,37 @@ const Hero = () => {
             sessionStorage.setItem('hero-3d-played-v3', 'true');
         }
 
-        const fetchFeaturedData = async () => {
-            try {
-                // Try to get Admin-tagged "Modern Stays" first
-                let { data } = await supabase
-                    .from('listings')
-                    .select('*')
-                    .eq('status', 'approved')
-                    .eq('featured', true)
-                    .order('created_at', { ascending: false })
-                    .limit(1);
-
-                if (data && data.length > 0) {
-                    setFeaturedListing(data[0]);
-                } else {
-                    // Fallback to any latest approved listing
-                    const { data: latest } = await supabase
+        if (!featuredProp) {
+            const fetchFeaturedData = async () => {
+                try {
+                    // Try to get Admin-tagged "Modern Stays" first
+                    let { data } = await supabase
                         .from('listings')
                         .select('*')
                         .eq('status', 'approved')
+                        .eq('featured', true)
                         .order('created_at', { ascending: false })
                         .limit(1);
-                    if (latest && latest.length > 0) setFeaturedListing(latest[0]);
+
+                    if (data && data.length > 0) {
+                        setFeaturedListing(data[0]);
+                    } else {
+                        // Fallback to any latest approved listing
+                        const { data: latest } = await supabase
+                            .from('listings')
+                            .select('*')
+                            .eq('status', 'approved')
+                            .order('created_at', { ascending: false })
+                            .limit(1);
+                        if (latest && latest.length > 0) setFeaturedListing(latest[0]);
+                    }
+                } catch (err) {
+                    console.error('Fetch error:', err);
                 }
-            } catch (err) {
-                console.error('Fetch error:', err);
-            }
-        };
-        fetchFeaturedData();
-    }, []);
+            };
+            fetchFeaturedData();
+        }
+    }, [featuredProp]);
 
     const handleSearch = (e) => {
         e.preventDefault();

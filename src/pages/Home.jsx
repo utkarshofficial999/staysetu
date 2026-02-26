@@ -18,29 +18,67 @@ const whys = [
 ];
 
 const Home = () => {
+    const [heroListing, setHeroListing] = useState(null);
     const [featuredListings, setFeaturedListings] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchFeatured = async () => {
-            const { data } = await supabase
-                .from('listings')
-                .select('*')
-                .eq('status', 'approved')
-                .order('created_at', { ascending: false })
-                .limit(4);
+        const fetchAllHomeData = async () => {
+            setLoading(true);
+            try {
+                // 1. Fetch the Hero (Modern Stay) listing first
+                let { data: heroData } = await supabase
+                    .from('listings')
+                    .select('*')
+                    .eq('status', 'approved')
+                    .eq('featured', true)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
 
-            if (data) setFeaturedListings(data);
-            setLoading(false);
+                let heroItem = null;
+                if (heroData && heroData.length > 0) {
+                    heroItem = heroData[0];
+                } else {
+                    // Fallback to latest if no featured
+                    const { data: latest } = await supabase
+                        .from('listings')
+                        .select('*')
+                        .eq('status', 'approved')
+                        .order('created_at', { ascending: false })
+                        .limit(1);
+                    if (latest && latest.length > 0) heroItem = latest[0];
+                }
+                setHeroListing(heroItem);
+
+                // 2. Fetch Featured Stays (Popular), EXCLUDING the hero listing
+                let popularQuery = supabase
+                    .from('listings')
+                    .select('*')
+                    .eq('status', 'approved')
+                    .order('created_at', { ascending: false });
+
+                if (heroItem) {
+                    popularQuery = popularQuery.neq('id', heroItem.id);
+                }
+
+                const { data: popularData } = await popularQuery.limit(4);
+                if (popularData) setFeaturedListings(popularData);
+
+            } catch (err) {
+                console.error('Home Page Fetch Error:', err);
+            } finally {
+                setLoading(false);
+            }
         };
-        fetchFeatured();
+
+        fetchAllHomeData();
     }, []);
 
     return (
         <div className="relative min-h-screen overflow-x-hidden bg-surface">
 
             {/* Hero Section */}
-            <Hero />
+            <Hero featuredProp={heroListing} />
 
 
 
