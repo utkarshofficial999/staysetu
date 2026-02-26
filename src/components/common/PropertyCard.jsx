@@ -28,9 +28,9 @@ const PropertyCard = ({ property }) => {
     const ts = typeStyles[property?.type] || typeStyles.PG;
 
     return (
-        <div className="group relative flex flex-col bg-white rounded-[2rem] border-2 border-slate-900 overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)]">
+        <div className="group relative flex flex-col bg-white rounded-[2.5rem] border-2 border-slate-900 overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)]">
             {/* Image Container */}
-            <div className="relative aspect-[16/11] overflow-hidden">
+            <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
                 {!imgLoaded && (
                     <div className="absolute inset-0 bg-slate-100 animate-pulse flex items-center justify-center">
                         <ImageOff size={24} className="text-slate-300" />
@@ -39,32 +39,35 @@ const PropertyCard = ({ property }) => {
                 <img
                     src={imgSrc}
                     alt={property?.title || 'Property'}
-                    className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    className={`w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-110 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => setImgLoaded(true)}
                     onError={() => { setImgError(true); setImgLoaded(true); }}
                 />
 
+                {/* Subtle Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
+
                 {/* Type Tag - Floating Top Left */}
-                <div className={`absolute top-4 left-4 z-10 px-4 py-1.5 rounded-full border-2 border-slate-900 bg-white text-slate-900 text-[10px] font-black uppercase tracking-widest shadow-[4px_4px_0px_#0f172a]`}>
+                <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full border-2 border-slate-900 bg-white text-slate-900 text-[9px] font-black uppercase tracking-widest shadow-[3px_3px_0px_#0f172a]`}>
                     {property?.type || 'PG'}
                 </div>
 
                 {/* Like Button */}
                 <button
                     onClick={(e) => { e.preventDefault(); setLiked(!liked); }}
-                    className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full border-2 border-slate-900 flex items-center justify-center transition-all duration-300 ${liked
+                    className={`absolute top-4 right-4 z-10 w-9 h-9 rounded-full border-2 border-slate-900 flex items-center justify-center transition-all duration-300 ${liked
                         ? 'bg-red-500 text-white'
                         : 'bg-white text-slate-900 hover:bg-slate-900 hover:text-white'
                         }`}
                 >
-                    <Heart size={16} fill={liked ? 'currentColor' : 'none'} />
+                    <Heart size={14} fill={liked ? 'currentColor' : 'none'} />
                 </button>
 
                 {/* Floating Price Tag - Overlaps Image and Content */}
-                <div className="absolute bottom-0 right-6 translate-y-1/2 z-20 bg-slate-900 text-white px-5 py-3 rounded-2xl border-2 border-slate-900 shadow-[6px_6px_0px_rgba(0,0,0,0.2)]">
+                <div className="absolute bottom-0 right-6 translate-y-1/2 z-20 bg-slate-900 text-white px-4 py-2.5 rounded-2xl border-2 border-slate-900 shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
                     <div className="flex items-center gap-0.5">
-                        <IndianRupee size={16} className="text-white" />
-                        <span className="text-xl font-bold" style={{ fontFamily: 'Bungee' }}>{property?.price?.toLocaleString() || '8,500'}</span>
+                        <IndianRupee size={14} className="text-white" />
+                        <span className="text-lg font-bold" style={{ fontFamily: 'Bungee' }}>{property?.price?.toLocaleString() || '8,500'}</span>
                     </div>
                 </div>
             </div>
