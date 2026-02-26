@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Mail, Lock, Chrome, ArrowRight, AlertCircle } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
+
+// Reusable Google Icon component for aesthetic consistency
+const GoogleIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 18 18">
+        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4" />
+        <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853" />
+        <path d="M3.964 10.712A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.712V4.956H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.044l3.007-2.332z" fill="#FBBC05" />
+        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.483 0 2.443 2.043.957 4.956l3.007 2.332C4.672 5.164 6.656 3.58 9 3.58z" fill="#EA4335" />
+    </svg>
+);
 
 const Login = () => {
+    const { signInWithGoogle } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -47,8 +59,14 @@ const Login = () => {
     };
 
     const handleGoogleLogin = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-        if (error) setError(error.message);
+        try {
+            setLoading(true);
+            await signInWithGoogle();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -60,7 +78,7 @@ const Login = () => {
                 <div className="card-elevated p-8 animate-slide-up">
                     <div className="text-center mb-8">
                         <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5"
-                            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 8px 24px -6px rgba(99,102,241,0.35)' }}>
+                            style={{ background: 'linear-gradient(135deg, #2D1B2E, #524058)', boxShadow: '0 8px 24px -6px rgba(45,27,46,0.35)' }}>
                             <span className="text-white font-bold text-xl" style={{ fontFamily: 'Bungee' }}>S</span>
                         </div>
                         <h1 className="text-2xl font-bold text-slate-900 mb-1.5" style={{ fontFamily: 'Bungee' }}>Welcome back</h1>
@@ -133,10 +151,11 @@ const Login = () => {
                         </div>
                         <button
                             onClick={handleGoogleLogin}
-                            className="w-full btn-secondary flex items-center justify-center space-x-3 py-3"
+                            type="button"
+                            className="w-full flex items-center justify-center space-x-3 py-3 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all font-semibold shadow-sm hover:shadow-md active:scale-[0.98]"
                         >
-                            <Chrome size={16} />
-                            <span className="text-sm">Continue with Google</span>
+                            <GoogleIcon />
+                            <span className="text-sm font-bold text-slate-700">Continue with Google</span>
                         </button>
                     </div>
                 </div>
