@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ArrowUpRight, Instagram, Twitter, Youtube } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowUpRight, Instagram, Youtube } from 'lucide-react';
 
 const Footer = () => {
     return (
@@ -23,11 +23,14 @@ const Footer = () => {
                             Your bridge to better living. We connect students with safe, verified, and affordable housing options.
                         </p>
                         <div className="flex space-x-3">
-                            {[Twitter, Instagram].map((Icon, i) => (
-                                <a key={i} href="#" className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-plum-900 hover:bg-slate-100 transition-all duration-300 border border-slate-100">
-                                    <Icon size={16} />
-                                </a>
-                            ))}
+                            <a
+                                href="https://www.instagram.com/sudhanshu.pandey_/?igsh=MWEwZ3NqcDdoc2FuNQ%3D%3D"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-plum-900 hover:bg-slate-100 transition-all duration-300 border border-slate-100"
+                            >
+                                <Instagram size={16} />
+                            </a>
                         </div>
                     </div>
 
