@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import {
     CheckCircle, Users, Home, MapPin, IndianRupee,
-    Clock, Trash2, ShieldCheck, LogOut, Loader2
+    Clock, Trash2, ShieldCheck, LogOut, Loader2, Plus,
+    Upload, X, Image as ImageIcon, Save
 } from 'lucide-react';
+import { useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminPanel = () => {
@@ -15,6 +17,73 @@ const AdminPanel = () => {
     const [filter, setFilter] = useState('pending');
     const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, total: 0, roommate_pending: 0 });
     const [actionLoading, setActionLoading] = useState(null);
+    const fileInputRef = useRef(null);
+
+    // Add Listing Form State
+    const [formData, setFormData] = useState({
+        title: '', price: '', location: '', type: 'PG',
+        whatsapp: '', description: '', gender: 'any',
+        amenities: []
+    });
+    const [uploadedImages, setUploadedImages] = useState([]);
+    const [uploading, setUploading] = useState(false);
+    const [formLoading, setFormLoading] = useState(false);
+
+    const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry', 'Security'];
+
+    const handleFormChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const toggleAmenity = (amenity) => {
+        setFormData(prev => ({
+            ...prev,
+            amenities: prev.amenities.includes(amenity)
+                ? prev.amenities.filter(a => a !== amenity)
+                : [...prev.amenities, amenity]
+        }));
+    };
+
+    const handleImageUpload = async (e) => {
+        const files = Array.from(e.target.files);
+        if (!files.length) return;
+        setUploading(true);
+
+        for (const file of files) {
+            const fileName = `admin/${Date.now()}_${file.name}`;
+            const { error: uploadError } = await supabase.storage
+                .from('listing')
+                .upload(fileName, file);
+
+            if (!uploadError) {
+                const { data: { publicUrl } } = supabase.storage.from('listing').getPublicUrl(fileName);
+                setUploadedImages(prev => [...prev, publicUrl]);
+            }
+        }
+        setUploading(false);
+    };
+
+    const submitListing = async (e) => {
+        e.preventDefault();
+        setFormLoading(true);
+        const { error } = await supabase.from('listings').insert([{
+            ...formData,
+            images: uploadedImages,
+            owner_id: user.id,
+            status: 'approved' // Admin uploads are auto-approved
+        }]);
+
+        if (!error) {
+            alert('Property listed successfully!');
+            setFormData({ title: '', price: '', location: '', type: 'PG', whatsapp: '', description: '', gender: 'any', amenities: [] });
+            setUploadedImages([]);
+            setActiveTab('listings');
+            fetchData();
+        } else {
+            alert('Error: ' + error.message);
+        }
+        setFormLoading(false);
+    };
 
     useEffect(() => { fetchData(); }, [filter, activeTab]);
 
@@ -145,137 +214,249 @@ const AdminPanel = () => {
                         >
                             Roommate Req ({stats.roommate_pending})
                         </button>
+                        <button
+                            onClick={() => setActiveTab('add')}
+                            className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === 'add'
+                                ? 'text-plum-600 border-b-2 border-plum-500 bg-plum-50/30'
+                                : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            + Add Property
+                        </button>
                     </div>
 
                     {/* Filter Bar */}
-                    <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>
-                            {activeTab === 'listings' ? 'Listing Verification' : 'Student Requirements'}
-                        </h3>
-                        <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100/60">
-                            {[
-                                { key: 'pending', label: 'Pending' },
-                                { key: 'approved', label: 'Approved' },
-                                { key: 'all', label: 'All' },
-                            ].map(({ key, label }) => (
-                                <button
-                                    key={key}
-                                    onClick={() => setFilter(key)}
-                                    className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${filter === key
-                                        ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-400 hover:text-slate-600'
-                                        }`}
-                                >
-                                    {label}
-                                </button>
-                            ))}
+                    {activeTab !== 'add' && (
+                        <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>
+                                {activeTab === 'listings' ? 'Listing Verification' : 'Student Requirements'}
+                            </h3>
+                            <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100/60">
+                                {[
+                                    { key: 'pending', label: 'Pending' },
+                                    { key: 'approved', label: 'Approved' },
+                                    { key: 'all', label: 'All' },
+                                ].map(({ key, label }) => (
+                                    <button
+                                        key={key}
+                                        onClick={() => setFilter(key)}
+                                        className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${filter === key
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-400 hover:text-slate-600'
+                                            }`}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="bg-slate-50/50">
-                                    <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                                        {activeTab === 'listings' ? 'Property' : 'Student'}
-                                    </th>
-                                    <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                                        {activeTab === 'listings' ? 'Type / Rent' : 'College / Budget'}
-                                    </th>
-                                    <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Location</th>
-                                    <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50">
-                                {loading ? (
-                                    Array(4).fill(0).map((_, i) => (
-                                        <tr key={i} className="animate-pulse">
-                                            <td colSpan={5} className="px-6 py-5">
-                                                <div className="h-8 bg-slate-50 rounded-xl w-full" />
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (activeTab === 'listings' ? listings : roommates).length > 0 ? (activeTab === 'listings' ? listings : roommates).map((item) => (
-                                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors text-sm">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                {activeTab === 'listings' ? (
-                                                    <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100/60">
-                                                        <img
-                                                            src={item.images?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=200&q=80'}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    <div className="w-10 h-10 bg-gradient-to-br from-plum-400 to-plum-500 rounded-xl flex items-center justify-center shrink-0 text-white text-sm font-semibold">
-                                                        {(item.name || 'U').charAt(0).toUpperCase()}
-                                                    </div>
-                                                )}
-                                                <div className="min-w-0">
-                                                    <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>
-                                                        {activeTab === 'listings' ? item.title : (item.name || 'Student')}
-                                                    </h4>
-                                                    <span className="text-[10px] font-medium text-slate-400 block">
-                                                        {activeTab === 'listings' ? `Owner: ${item.owner?.full_name || 'User'}` : `WA: ${item.whatsapp || '-'}`}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-50 px-2 py-0.5 rounded-md text-slate-500 block mb-1 w-fit border border-slate-100/60">
-                                                {activeTab === 'listings' ? item.type : (item.college || 'N/A')}
-                                            </span>
-                                            <span className="text-sm font-bold text-slate-900 flex items-center" style={{ fontFamily: 'Bungee' }}>
-                                                <IndianRupee size={12} className="mr-0.5" />{item.budget || item.price?.toLocaleString()}/mo
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center text-slate-500 font-normal max-w-[180px] gap-1.5">
-                                                <MapPin size={12} className="text-plum-400 shrink-0" />
-                                                <span className="truncate text-sm">{item.location}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={item.status === 'approved' ? 'chip-approved' : 'chip-pending'}>
-                                                {item.status === 'approved' ? 'Live' : 'Pending'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center justify-end gap-2">
-                                                {item.status !== 'approved' && (
-                                                    <button
-                                                        onClick={() => approve(item.id)}
-                                                        disabled={actionLoading === item.id + '_approve'}
-                                                        className="w-8 h-8 bg-gradient-to-br from-plum-500 to-plum-600 hover:from-plum-600 hover:to-plum-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
-                                                        style={{ boxShadow: '0 2px 8px -2px rgba(99,102,241,0.4)' }}
-                                                    >
-                                                        {actionLoading === item.id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
-                                                    </button>
-                                                )}
+                    {activeTab === 'add' ? (
+                        <div className="p-8 max-w-4xl mx-auto">
+                            <form onSubmit={submitListing} className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">Title</label>
+                                        <input name="title" required value={formData.title} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none" placeholder="e.g. Modern PG Near Campus" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">Monthly Price</label>
+                                        <input name="price" type="number" required value={formData.price} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none" placeholder="e.g. 8500" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">Location</label>
+                                        <input name="location" required value={formData.location} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none" placeholder="e.g. Knowledge Park 2" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">WhatsApp Number</label>
+                                        <input name="whatsapp" required value={formData.whatsapp} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none" placeholder="+91 XXXX XXXX" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">Property Type</label>
+                                        <select name="type" value={formData.type} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none">
+                                            <option>PG</option>
+                                            <option>Flat</option>
+                                            <option>Hostel</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">Gender Preference</label>
+                                        <select name="gender" value={formData.gender} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none">
+                                            <option value="any">Any</option>
+                                            <option value="boys">Boys Only</option>
+                                            <option value="girls">Girls Only</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase">Description</label>
+                                    <textarea name="description" value={formData.description} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none h-24" placeholder="Describe the property, rules, etc." />
+                                </div>
+
+                                <div className="space-y-4">
+                                    <label className="text-xs font-bold text-slate-400 uppercase">Amenities</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {amenityOptions.map(opt => (
+                                            <button
+                                                key={opt} type="button"
+                                                onClick={() => toggleAmenity(opt)}
+                                                className={`px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all ${formData.amenities.includes(opt)
+                                                    ? 'bg-plum-600 border-plum-600 text-white'
+                                                    : 'border-slate-100 text-slate-400 hover:border-slate-200'
+                                                    }`}
+                                            >
+                                                {opt}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <label className="text-xs font-bold text-slate-400 uppercase">Photos (Required)</label>
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                        {uploadedImages.map((url, i) => (
+                                            <div key={i} className="aspect-square rounded-2xl overflow-hidden border-2 border-slate-100 relative group">
+                                                <img src={url} className="w-full h-full object-cover" />
                                                 <button
-                                                    onClick={() => reject(item.id)}
-                                                    disabled={actionLoading === item.id + '_reject'}
-                                                    className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50 border border-red-100/60"
+                                                    type="button"
+                                                    onClick={() => setUploadedImages(prev => prev.filter((_, idx) => idx !== i))}
+                                                    className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                                 >
-                                                    {actionLoading === item.id + '_reject' ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                                    <X size={12} />
                                                 </button>
                                             </div>
-                                        </td>
+                                        ))}
+                                        <button
+                                            type="button"
+                                            onClick={() => fileInputRef.current.click()}
+                                            disabled={uploading}
+                                            className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-plum-300 hover:text-plum-500 transition-all bg-slate-50/50"
+                                        >
+                                            {uploading ? <Loader2 size={24} className="animate-spin" /> : <Upload size={24} />}
+                                            <span className="text-[10px] font-bold mt-2 uppercase tracking-wider">{uploading ? 'Uploading...' : 'Add Photos'}</span>
+                                        </button>
+                                    </div>
+                                    <input type="file" multiple ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={formLoading || uploadedImages.length === 0}
+                                    className="w-full btn-primary py-4 rounded-2xl flex items-center justify-center gap-2 text-sm"
+                                >
+                                    {formLoading ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+                                    {formLoading ? 'Publishing...' : 'Publish Verified Stay'}
+                                </button>
+                            </form>
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="bg-slate-50/50">
+                                        <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                                            {activeTab === 'listings' ? 'Property' : 'Student'}
+                                        </th>
+                                        <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                                            {activeTab === 'listings' ? 'Type / Rent' : 'College / Budget'}
+                                        </th>
+                                        <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Location</th>
+                                        <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                                        <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                                     </tr>
-                                )) : (
-                                    <tr>
-                                        <td colSpan={5} className="px-8 py-20 text-center">
-                                            <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-300">
-                                                {activeTab === 'listings' ? <Home size={24} /> : <Users size={24} />}
-                                            </div>
-                                            <p className="text-slate-400 font-medium">No {filter} items found.</p>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody className="divide-y divide-slate-50">
+                                    {loading ? (
+                                        Array(4).fill(0).map((_, i) => (
+                                            <tr key={i} className="animate-pulse">
+                                                <td colSpan={5} className="px-6 py-5">
+                                                    <div className="h-8 bg-slate-50 rounded-xl w-full" />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (activeTab === 'listings' ? listings : roommates).length > 0 ? (activeTab === 'listings' ? listings : roommates).map((item) => (
+                                        <tr key={item.id} className="hover:bg-slate-50/50 transition-colors text-sm">
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    {activeTab === 'listings' ? (
+                                                        <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100/60">
+                                                            <img
+                                                                src={item.images?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=200&q=80'}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-10 h-10 bg-gradient-to-br from-plum-400 to-plum-500 rounded-xl flex items-center justify-center shrink-0 text-white text-sm font-semibold">
+                                                            {(item.name || 'U').charAt(0).toUpperCase()}
+                                                        </div>
+                                                    )}
+                                                    <div className="min-w-0">
+                                                        <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>
+                                                            {activeTab === 'listings' ? item.title : (item.name || 'Student')}
+                                                        </h4>
+                                                        <span className="text-[10px] font-medium text-slate-400 block">
+                                                            {activeTab === 'listings' ? `Owner: ${item.owner?.full_name || 'User'}` : `WA: ${item.whatsapp || '-'}`}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-50 px-2 py-0.5 rounded-md text-slate-500 block mb-1 w-fit border border-slate-100/60">
+                                                    {activeTab === 'listings' ? item.type : (item.college || 'N/A')}
+                                                </span>
+                                                <span className="text-sm font-bold text-slate-900 flex items-center" style={{ fontFamily: 'Bungee' }}>
+                                                    <IndianRupee size={12} className="mr-0.5" />{item.budget || (item.price || 0).toLocaleString()}/mo
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center text-slate-500 font-normal max-w-[180px] gap-1.5">
+                                                    <MapPin size={12} className="text-plum-400 shrink-0" />
+                                                    <span className="truncate text-sm">{item.location}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={item.status === 'approved' ? 'chip-approved' : 'chip-pending'}>
+                                                    {item.status === 'approved' ? 'Live' : 'Pending'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    {item.status !== 'approved' && (
+                                                        <button
+                                                            onClick={() => approve(item.id)}
+                                                            disabled={actionLoading === item.id + '_approve'}
+                                                            className="w-8 h-8 bg-gradient-to-br from-plum-500 to-plum-600 hover:from-plum-600 hover:to-plum-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
+                                                            style={{ boxShadow: '0 2px 8px -2px rgba(99,102,241,0.4)' }}
+                                                        >
+                                                            {actionLoading === item.id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        onClick={() => reject(item.id)}
+                                                        disabled={actionLoading === item.id + '_reject'}
+                                                        className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50 border border-red-100/60"
+                                                    >
+                                                        {actionLoading === item.id + '_reject' ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )) : (
+                                        <tr>
+                                            <td colSpan={5} className="px-8 py-20 text-center">
+                                                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-300">
+                                                    {activeTab === 'listings' ? <Home size={24} /> : <Users size={24} />}
+                                                </div>
+                                                <p className="text-slate-400 font-medium">No {filter} items found.</p>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
