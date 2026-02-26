@@ -49,7 +49,7 @@ const PropertyCard = ({ property }) => {
                 />
 
                 {/* Subtle Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40"></div>
 
                 {/* Type Tag - Floating Top Left */}
                 <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full border-2 border-slate-900 bg-white text-slate-900 text-[9px] font-black uppercase tracking-widest shadow-[3px_3px_0px_#0f172a]`}>
@@ -66,18 +66,18 @@ const PropertyCard = ({ property }) => {
                 >
                     <Heart size={14} fill={liked ? 'currentColor' : 'none'} />
                 </button>
+            </div>
 
-                {/* Floating Price Tag - Overlaps Image and Content */}
-                <div className="absolute bottom-0 right-6 translate-y-1/2 z-20 bg-slate-900 text-white px-4 py-2.5 rounded-2xl border-2 border-slate-900 shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
-                    <div className="flex items-center gap-0.5">
-                        <IndianRupee size={14} className="text-white" />
-                        <span className="text-lg font-bold" style={{ fontFamily: 'Bungee' }}>{property?.price?.toLocaleString() || '8,500'}</span>
-                    </div>
+            {/* Floating Price Tag - Moved outside overflow-hidden container to prevent clipping */}
+            <div className="absolute top-[calc(75%-20px)] right-6 z-30 bg-slate-900 text-white px-4 py-2.5 rounded-2xl border-2 border-slate-900 shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
+                <div className="flex items-center gap-0.5">
+                    <IndianRupee size={14} className="text-white" />
+                    <span className="text-lg font-bold" style={{ fontFamily: 'Bungee' }}>{property?.price?.toLocaleString() || '8,500'}</span>
                 </div>
             </div>
 
             {/* Content Area */}
-            <div className="p-6 pt-10 flex flex-col flex-1">
+            <div className="p-6 pt-8 flex flex-col flex-1">
                 <div className="flex items-center gap-2 mb-3">
                     <div className="flex items-center text-amber-500 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg text-[10px] font-bold">
                         <Star size={10} fill="currentColor" className="mr-1" />
