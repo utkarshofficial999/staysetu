@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ArrowUpRight, Instagram, Twitter } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowUpRight, Instagram, Twitter, Youtube } from 'lucide-react';
 
 const Footer = () => {
     return (
@@ -82,11 +82,19 @@ const Footer = () => {
                                 </div>
                                 <span className="text-slate-600">+91 98765 43210</span>
                             </li>
-                            <li className="flex items-start space-x-3 text-sm">
+                            <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border border-slate-100">
                                     <MapPin size={14} className="text-plum-600" />
                                 </div>
                                 <span className="text-slate-600">Knowledge Park, Greater Noida, UP</span>
+                            </li>
+                            <li className="flex items-center space-x-3 text-sm">
+                                <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-100">
+                                    <Youtube size={14} className="text-red-500" />
+                                </div>
+                                <a href="https://youtube.com/@Sudhanshu_vision" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-red-500 font-medium transition-colors">
+                                    @Sudhanshu_vision
+                                </a>
                             </li>
                         </ul>
                     </div>
