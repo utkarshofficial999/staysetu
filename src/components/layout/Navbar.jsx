@@ -74,9 +74,8 @@ const Navbar = () => {
 
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-3 group" onClick={() => setIsOpen(false)}>
-                            <div className="w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-500 rotate-0 group-hover:rotate-[360deg] shadow-[0_0_20px_rgba(255,255,255,0.5)]"
-                                style={{ background: '#ffffff' }}>
-                                <span className="text-black font-black text-xl" style={{ fontFamily: 'Bungee, cursive' }}>S</span>
+                            <div className="w-10 h-10 flex items-center justify-center rounded-xl overflow-hidden shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <img src="/logo.png" alt="StaySetu Logo" className="w-full h-full object-cover" />
                             </div>
                             <span className="text-2xl font-black tracking-tighter text-black"
                                 style={{

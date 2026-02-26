@@ -14,9 +14,8 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="col-span-1 lg:col-span-1">
                         <Link to="/" className="flex items-center space-x-2.5 mb-6 group">
-                            <div className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
-                                style={{ background: 'linear-gradient(135deg, #3A1F3D, #524058)' }}>
-                                <span className="text-white font-bold text-lg" style={{ fontFamily: 'Bungee' }}>S</span>
+                            <div className="w-9 h-9 flex items-center justify-center rounded-xl overflow-hidden shadow-md group-hover:scale-110 transition-transform">
+                                <img src="/logo.png" alt="StaySetu Logo" className="w-full h-full object-cover" />
                             </div>
                             <span className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>StaySetu</span>
                         </Link>
