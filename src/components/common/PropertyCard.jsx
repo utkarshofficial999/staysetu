@@ -36,10 +36,14 @@ const PropertyCard = ({ property }) => {
                         <ImageOff size={24} className="text-slate-300" />
                     </div>
                 )}
+                <div
+                    className="absolute inset-0 bg-cover bg-center blur-xl opacity-20 scale-110"
+                    style={{ backgroundImage: `url(${imgSrc})` }}
+                ></div>
                 <img
                     src={imgSrc}
                     alt={property?.title || 'Property'}
-                    className={`w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-110 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    className={`relative w-full h-full object-contain z-10 transition-transform duration-700 ease-out group-hover:scale-105 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => setImgLoaded(true)}
                     onError={() => { setImgError(true); setImgLoaded(true); }}
                 />

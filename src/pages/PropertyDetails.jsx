@@ -133,11 +133,17 @@ const PropertyDetails = () => {
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Image Gallery */}
-                        <div className="relative rounded-3xl overflow-hidden bg-slate-100 group" style={{ aspectRatio: '16/9' }}>
+                        <div className="relative rounded-3xl overflow-hidden bg-slate-100 group shadow-sm border border-slate-100" style={{ height: '500px' }}>
+                            {/* Blurred Background Layer to fill empty space */}
+                            <div
+                                className="absolute inset-0 bg-cover bg-center blur-2xl opacity-30 scale-110"
+                                style={{ backgroundImage: `url(${property.images?.[activeImage] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80'})` }}
+                            ></div>
+
                             <img
                                 src={property.images?.[activeImage] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80'}
                                 alt={property.title}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                                className="relative w-full h-full object-contain z-10"
                                 onError={(e) => {
                                     e.target.onerror = null;
                                     e.target.src = 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80';
