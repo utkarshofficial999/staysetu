@@ -91,14 +91,31 @@ const StudentDashboard = () => {
 
     // ── Roommate functions ───────────────────────────────────────────────────
     const fetchRoommateRequests = async () => {
+        if (!user) return;
         setRoommateLoading(true);
-        const { data, error } = await supabase
-            .from('roommate_requests')
-            .select('*, student:user_id(full_name)')
-            .or(`status.eq.approved,user_id.eq.${user.id}`)
-            .order('created_at', { ascending: false });
-        if (data) setRoommateRequests(data);
-        setRoommateLoading(false);
+        try {
+            const { data, error } = await supabase
+                .from('roommate_requests')
+                .select('*')
+                .or(`status.eq.approved,user_id.eq.${user.id}`)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching roommates:', error);
+                // Fallback to only approved if OR fails
+                const { data: approvedData } = await supabase
+                    .from('roommate_requests')
+                    .select('*')
+                    .eq('status', 'approved');
+                if (approvedData) setRoommateRequests(approvedData);
+            } else if (data) {
+                setRoommateRequests(data);
+            }
+        } catch (err) {
+            console.error('Roommate fetch error:', err);
+        } finally {
+            setRoommateLoading(false);
+        }
     };
 
     const handleRoommateSubmit = async (e) => {
@@ -175,7 +192,7 @@ const StudentDashboard = () => {
 
     const tabs = [
         { id: 'browse', label: 'Browse Stays', icon: Search, count: listings.length },
-        { id: 'roommate', label: 'Find Roommate', icon: Users },
+        { id: 'roommate', label: 'Find Roommate', icon: Users, count: roommateRequests.length },
         { id: 'saved', label: 'Saved', icon: Heart, count: stats.saved },
         { id: 'profile', label: 'My Profile', icon: User },
     ];
