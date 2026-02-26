@@ -3,6 +3,15 @@ import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, ArrowUpRight, Instagram, Youtube } from 'lucide-react';
 
 const Footer = () => {
+    const [openId, setOpenId] = React.useState(null);
+
+    const toggleDesc = (e, id) => {
+        // If it's a link to a page, we might want to prevent navigation if we just want the desc
+        // But usually users want to see the desc. Let's make it toggle on click.
+        e.preventDefault();
+        setOpenId(openId === id ? null : id);
+    };
+
     return (
         <footer className="relative z-10 bg-white text-slate-600 pt-20 pb-8 overflow-hidden border-t border-slate-100">
             {/* Subtle gradient accent at top */}
@@ -39,24 +48,31 @@ const Footer = () => {
                         <h3 className="text-slate-900 font-semibold text-sm mb-6" style={{ fontFamily: 'Bungee' }}>Explore</h3>
                         <ul className="space-y-4">
                             {[
-                                { label: 'Boys PG', to: '/listings?type=PG&gender=male', desc: 'Secure and safe stays for students.' },
-                                { label: 'Girls PG', to: '/listings?type=PG&gender=female', desc: 'Vetted and verified girls only spaces.' },
-                                { label: 'Flats', to: '/listings?type=Flat', desc: 'Independent 1/2/3 BHK student flats.' },
-                                { label: 'Hostels', to: '/listings?type=Hostel', desc: 'Premium hostel with mess facilities.' },
-                                { label: 'List Property', to: '/signup', desc: 'Earn by listing your vacant property.' },
+                                { id: 'e1', label: 'Boys PG', to: '/listings?type=PG&gender=male', desc: 'Secure and safe stays for students.' },
+                                { id: 'e2', label: 'Girls PG', to: '/listings?type=PG&gender=female', desc: 'Vetted and verified girls only spaces.' },
+                                { id: 'e3', label: 'Flats', to: '/listings?type=Flat', desc: 'Independent 1/2/3 BHK student flats.' },
+                                { id: 'e4', label: 'Hostels', to: '/listings?type=Hostel', desc: 'Premium hostel with mess facilities.' },
+                                { id: 'e5', label: 'List Property', to: '/signup', desc: 'Earn by listing your vacant property.' },
                             ].map((link) => (
                                 <li key={link.label} className="group">
-                                    <Link to={link.to} className="block">
-                                        <div className="flex items-center gap-1">
+                                    <button onClick={(e) => toggleDesc(e, link.id)} className="block w-full text-left focus:outline-none">
+                                        <div className="flex items-center justify-between">
                                             <span className="text-sm font-bold text-slate-700 group-hover:text-plum-900 transition-colors">
                                                 {link.label}
                                             </span>
-                                            <ArrowUpRight size={10} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                            <div className={`transition-transform duration-300 ${openId === link.id ? 'rotate-90' : ''}`}>
+                                                <ArrowUpRight size={10} className="text-slate-300" />
+                                            </div>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 font-medium leading-relaxed mt-0.5">
-                                            {link.desc}
-                                        </p>
-                                    </Link>
+                                        <div className={`overflow-hidden transition-all duration-300 ${openId === link.id ? 'max-h-20 mt-2 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                            <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
+                                                {link.desc}
+                                            </p>
+                                            <Link to={link.to} className="inline-block mt-2 text-[10px] font-black uppercase tracking-widest text-plum-600 hover:underline">
+                                                Go to Page →
+                                            </Link>
+                                        </div>
+                                    </button>
                                 </li>
                             ))}
                         </ul>
@@ -67,21 +83,23 @@ const Footer = () => {
                         <h3 className="text-slate-900 font-semibold text-sm mb-6" style={{ fontFamily: 'Bungee' }}>Support</h3>
                         <ul className="space-y-4">
                             {[
-                                { label: 'How it Works', desc: 'A quick guide on finding your perfect stay.' },
-                                { label: 'About Us', desc: 'Our mission to bridge the student housing gap.' },
-                                { label: 'Contact', desc: 'Get in touch for support or partnership.' },
-                                { label: 'Terms of Service', desc: 'The rules and guidelines for our community.' },
-                                { label: 'Privacy Policy', desc: 'How we keep your data safe and secure.' }
+                                { id: 's1', label: 'How it Works', desc: 'A quick guide on finding your perfect stay.' },
+                                { id: 's2', label: 'About Us', desc: 'Our mission to bridge the student housing gap.' },
+                                { id: 's3', label: 'Contact', desc: 'Get in touch for support or partnership.' },
+                                { id: 's4', label: 'Terms of Service', desc: 'The rules and guidelines for our community.' },
+                                { id: 's5', label: 'Privacy Policy', desc: 'How we keep your data safe and secure.' }
                             ].map((item) => (
                                 <li key={item.label} className="group">
-                                    <a href="#" className="block">
+                                    <button onClick={(e) => toggleDesc(e, item.id)} className="block w-full text-left focus:outline-none">
                                         <span className="text-sm font-bold text-slate-700 group-hover:text-plum-900 transition-colors">
                                             {item.label}
                                         </span>
-                                        <p className="text-[10px] text-slate-400 font-medium leading-relaxed mt-0.5">
-                                            {item.desc}
-                                        </p>
-                                    </a>
+                                        <div className={`overflow-hidden transition-all duration-300 ${openId === item.id ? 'max-h-20 mt-2 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                            <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
+                                                {item.desc}
+                                            </p>
+                                        </div>
+                                    </button>
                                 </li>
                             ))}
                         </ul>
