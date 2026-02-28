@@ -184,7 +184,7 @@ const Hero = ({ featuredProp }) => {
                             <div className="relative z-10 p-4 md:p-5 bg-white border-2 border-slate-900 rounded-[2rem] md:rounded-[2.5rem] shadow-[12px_12px_0px_#0f172a] md:shadow-[20px_20px_0px_#0f172a] transform rotate-1 md:rotate-3 scale-95 md:scale-110">
                                 <div className="aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 border-2 border-slate-900 relative bg-slate-100">
                                     <img
-                                        src={parseJsonField(featuredListing?.images)[0] || "/hero-brand.png?v=4"}
+                                        src={parseJsonField(featuredListing?.images)[0] || "/hero-brand.png?v=6"}
                                         alt="StaySetu Banner"
                                         className="w-full h-full object-contain p-8 md:p-12 bg-black/5"
                                     />

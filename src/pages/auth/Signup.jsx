@@ -93,7 +93,7 @@ const Signup = () => {
                 <div className="card-elevated p-8 animate-slide-up">
                     <div className="text-center mb-8">
                         <div className="w-32 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 p-2 bg-black/5 shadow-sm border border-slate-100">
-                            <img src="/logo.png?v=4" alt="StaySetu Logo" className="w-full h-full object-contain" />
+                            <img src="/logo.png?v=6" alt="StaySetu Logo" className="w-full h-full object-contain" />
                         </div>
                         <h1 className="text-2xl font-bold text-slate-900 mb-1.5" style={{ fontFamily: 'Bungee' }}>Create account</h1>
                         <p className="text-slate-500 text-sm font-normal">Join StaySetu and find your perfect stay</p>

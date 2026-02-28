@@ -24,7 +24,7 @@ const Footer = () => {
                     <div className="col-span-1 lg:col-span-1">
                         <Link to="/" className="flex items-center mb-6 group">
                             <div className="w-36 h-16 flex items-center justify-center rounded-xl overflow-hidden group-hover:rotate-1 transition-transform">
-                                <img src="/logo.png?v=4" alt="StaySetu Logo" className="w-full h-full object-contain" />
+                                <img src="/logo.png?v=6" alt="StaySetu Logo" className="w-full h-full object-contain" />
                             </div>
                         </Link>
                         <p className="text-slate-500 mb-8 leading-relaxed text-sm font-normal">
