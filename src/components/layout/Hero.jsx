@@ -186,7 +186,7 @@ const Hero = ({ featuredProp }) => {
                                     <img
                                         src={parseJsonField(featuredListing?.images)[0] || "/hero-brand.png?v=6"}
                                         alt="StaySetu Banner"
-                                        className="w-full h-full object-contain p-8 md:p-12 bg-black/5"
+                                        className="w-full h-full object-cover"
                                     />
                                     <div className="absolute top-4 left-4 bg-white border-2 border-slate-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">
                                         {featuredListing?.type || 'Featured'} {featuredListing?.type === 'Flat' ? 'Flat' : 'PG'}
