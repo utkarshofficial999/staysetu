@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
+import MobileBottomNav from './components/layout/MobileBottomNav';
 import Footer from './components/layout/Footer';
 
 // Superadmin whitelist — works even if DB role update is pending
@@ -83,7 +84,7 @@ const AppContent = () => {
     <div className="flex flex-col min-h-screen">
       <ScrollToTop />
       {!shouldHide && <Navbar />}
-      <main className="flex-grow">
+      <main className={`flex-grow ${!shouldHide ? 'pb-24 md:pb-0' : ''}`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -111,6 +112,7 @@ const AppContent = () => {
           } />
         </Routes>
       </main>
+      {!shouldHide && <MobileBottomNav />}
       {!shouldHide && <Footer />}
     </div>
   );
