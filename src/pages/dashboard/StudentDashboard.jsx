@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { databases, DATABASE_ID, COLLECTION, Query, ID } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import PropertyCard from '../../components/common/PropertyCard';
@@ -57,34 +57,37 @@ const StudentDashboard = () => {
     };
 
     const fetchListings = async () => {
-        let query = supabase
-            .from('listings')
-            .select('*')
-            .eq('status', 'approved')
-            .order('created_at', { ascending: false });
-
-        const { data } = await query;
-        if (data) setListings(data);
+        try {
+            const res = await databases.listDocuments(DATABASE_ID, COLLECTION.listings, [
+                Query.equal('status', 'approved'),
+                Query.orderDesc('$createdAt'),
+                Query.limit(100),
+            ]);
+            setListings(res.documents);
+        } catch (err) {
+            console.error('Fetch listings error:', err);
+        }
     };
 
     const fetchSavedListings = async () => {
         if (!user) return;
-        const { data: favData } = await supabase
-            .from('favorites')
-            .select('listing_id')
-            .eq('user_id', user.id);
-
-        if (favData && favData.length > 0) {
-            const listingIds = favData.map(f => f.listing_id);
-            const { data: listingsData } = await supabase
-                .from('listings')
-                .select('*')
-                .in('id', listingIds);
-
-            if (listingsData) {
-                setSavedListings(listingsData);
-                setStats(prev => ({ ...prev, saved: listingsData.length }));
+        try {
+            const favRes = await databases.listDocuments(DATABASE_ID, COLLECTION.favorites, [
+                Query.equal('userId', user.$id),
+            ]);
+            if (favRes.documents.length > 0) {
+                const listingsArr = [];
+                for (const fav of favRes.documents) {
+                    try {
+                        const doc = await databases.getDocument(DATABASE_ID, COLLECTION.listings, fav.listingId);
+                        listingsArr.push(doc);
+                    } catch (e) { }
+                }
+                setSavedListings(listingsArr);
+                setStats(prev => ({ ...prev, saved: listingsArr.length }));
             }
+        } catch (err) {
+            console.error('Fetch saved error:', err);
         }
     };
 
@@ -94,23 +97,15 @@ const StudentDashboard = () => {
         if (!user) return;
         setRoommateLoading(true);
         try {
-            const { data, error } = await supabase
-                .from('roommate_requests')
-                .select('*')
-                .or(`status.eq.approved,user_id.eq.${user.id}`)
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                console.error('Error fetching roommates:', error);
-                // Fallback to only approved if OR fails
-                const { data: approvedData } = await supabase
-                    .from('roommate_requests')
-                    .select('*')
-                    .eq('status', 'approved');
-                if (approvedData) setRoommateRequests(approvedData);
-            } else if (data) {
-                setRoommateRequests(data);
-            }
+            const approvedRes = await databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, [
+                Query.equal('status', 'approved'), Query.orderDesc('$createdAt'),
+            ]);
+            const myRes = await databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, [
+                Query.equal('userId', user.$id), Query.orderDesc('$createdAt'),
+            ]);
+            const allDocs = [...approvedRes.documents, ...myRes.documents];
+            const unique = Array.from(new Map(allDocs.map(d => [d.$id, d])).values());
+            setRoommateRequests(unique);
         } catch (err) {
             console.error('Roommate fetch error:', err);
         } finally {
@@ -122,19 +117,19 @@ const StudentDashboard = () => {
         e.preventDefault();
         setRoommateSubmitting(true);
         try {
-            const { error } = await supabase.from('roommate_requests').insert([{
-                user_id: user.id,
-                name: profile?.name || user.email,
+            await databases.createDocument(DATABASE_ID, COLLECTION.roommateRequests, ID.unique(), {
+                userId: user.$id,
+                name: profile?.fullName || profile?.name || user.email,
                 location: roommateForm.location,
                 budget: parseFloat(roommateForm.budget) || null,
-                gender_preference: roommateForm.gender_preference,
-                move_in_date: roommateForm.move_in_date || null,
+                genderPreference: roommateForm.gender_preference,
+                moveInDate: roommateForm.move_in_date || null,
                 description: roommateForm.description,
                 whatsapp: roommateForm.whatsapp,
                 college: roommateForm.college,
-                status: 'pending'
-            }]);
-            if (error) throw error;
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+            });
             setRoommateSuccess(true);
             setRoommateForm({ location: '', budget: '', gender_preference: 'any', move_in_date: '', description: '', whatsapp: '', college: '' });
             await fetchRoommateRequests();
@@ -148,17 +143,21 @@ const StudentDashboard = () => {
 
     const toggleSave = async (listingId) => {
         if (!user) return navigate('/login');
-
-        const isSaved = savedListings.some(l => l.id === listingId);
+        const isSaved = savedListings.some(l => l.$id === listingId);
         if (isSaved) {
-            await supabase.from('favorites').delete()
-                .eq('user_id', user.id)
-                .eq('listing_id', listingId);
-            setSavedListings(prev => prev.filter(l => l.id !== listingId));
+            const favRes = await databases.listDocuments(DATABASE_ID, COLLECTION.favorites, [
+                Query.equal('userId', user.$id), Query.equal('listingId', listingId),
+            ]);
+            for (const fav of favRes.documents) {
+                await databases.deleteDocument(DATABASE_ID, COLLECTION.favorites, fav.$id);
+            }
+            setSavedListings(prev => prev.filter(l => l.$id !== listingId));
             setStats(prev => ({ ...prev, saved: prev.saved - 1 }));
         } else {
-            await supabase.from('favorites').insert([{ user_id: user.id, listing_id: listingId }]);
-            const listing = listings.find(l => l.id === listingId);
+            await databases.createDocument(DATABASE_ID, COLLECTION.favorites, ID.unique(), {
+                userId: user.$id, listingId: listingId, createdAt: new Date().toISOString(),
+            });
+            const listing = listings.find(l => l.$id === listingId);
             if (listing) {
                 setSavedListings(prev => [...prev, listing]);
                 setStats(prev => ({ ...prev, saved: prev.saved + 1 }));
@@ -349,16 +348,16 @@ const StudentDashboard = () => {
                         {filteredListings.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {filteredListings.map((listing) => (
-                                    <div key={listing.id} className="relative">
+                                    <div key={listing.$id} className="relative">
                                         <PropertyCard property={listing} />
                                         <button
-                                            onClick={() => toggleSave(listing.id)}
-                                            className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-sm ${savedListings.some(l => l.id === listing.id)
+                                            onClick={() => toggleSave(listing.$id)}
+                                            className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-sm ${savedListings.some(l => l.$id === listing.$id)
                                                 ? 'bg-rose-500 text-white'
                                                 : 'bg-white/90 backdrop-blur-md text-slate-400 hover:text-rose-500 border border-slate-100'
                                                 }`}
                                         >
-                                            <Heart size={18} fill={savedListings.some(l => l.id === listing.id) ? 'currentColor' : 'none'} />
+                                            <Heart size={18} fill={savedListings.some(l => l.$id === listing.$id) ? 'currentColor' : 'none'} />
                                         </button>
                                     </div>
                                 ))}
@@ -502,7 +501,7 @@ const StudentDashboard = () => {
                         ) : roommateRequests.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {roommateRequests.map((req) => (
-                                    <div key={req.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+                                    <div key={req.$id} className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
                                         {/* Card Header */}
                                         <div className="bg-slate-50 p-5 border-b border-slate-100">
                                             <div className="flex items-center gap-3">
@@ -515,14 +514,14 @@ const StudentDashboard = () => {
                                                         <p className="text-xs text-slate-400 font-medium">{req.college}</p>
                                                     )}
                                                 </div>
-                                                <span className={`ml-auto text-[9px] font-black px-2 py-1 rounded-full uppercase ${req.gender_preference === 'female' ? 'bg-pink-100 text-pink-600'
-                                                    : req.gender_preference === 'male' ? 'bg-blue-100 text-blue-600'
+                                                <span className={`ml-auto text-[9px] font-black px-2 py-1 rounded-full uppercase ${req.genderPreference === 'female' ? 'bg-pink-100 text-pink-600'
+                                                    : req.genderPreference === 'male' ? 'bg-blue-100 text-blue-600'
                                                         : 'bg-slate-100 text-slate-400'
                                                     }`}>
-                                                    {req.gender_preference === 'any' ? 'Any Gender' : req.gender_preference + ' only'}
+                                                    {req.genderPreference === 'any' ? 'Any Gender' : req.genderPreference + ' only'}
                                                 </span>
                                             </div>
-                                            {req.status === 'pending' && req.user_id === user.id && (
+                                            {req.status === 'pending' && req.userId === user.$id && (
                                                 <div className="mt-3 flex items-center gap-1.5 text-amber-600 bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-100">
                                                     <Clock size={12} />
                                                     <span className="text-[10px] font-black uppercase tracking-widest">Awaiting Admin Verification</span>
@@ -556,7 +555,7 @@ const StudentDashboard = () => {
                                         </div>
 
                                         {/* Connect Button */}
-                                        {req.whatsapp && req.user_id !== user.id && (
+                                        {req.whatsapp && req.userId !== user.$id && (
                                             <div className="px-5 pb-5">
                                                 <a
                                                     href={`https://wa.me/${req.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi! I saw your roommate requirement on StaySetu. I'm also looking in ${req.location}. Let's connect!`)}`}
@@ -569,7 +568,7 @@ const StudentDashboard = () => {
                                                 </a>
                                             </div>
                                         )}
-                                        {req.user_id === user.id && (
+                                        {req.userId === user.$id && (
                                             <div className="px-5 pb-5">
                                                 <span className="w-full flex items-center justify-center gap-2 bg-plum-50 text-plum-600 font-bold py-3 rounded-2xl text-sm">
                                                     <CheckCircle size={16} /> Your Post
@@ -610,10 +609,10 @@ const StudentDashboard = () => {
                         {savedListings.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {savedListings.map((listing) => (
-                                    <div key={listing.id} className="relative">
+                                    <div key={listing.$id} className="relative">
                                         <PropertyCard property={listing} />
                                         <button
-                                            onClick={() => toggleSave(listing.id)}
+                                            onClick={() => toggleSave(listing.$id)}
                                             className="absolute top-4 right-4 z-10 w-10 h-10 bg-rose-500 text-white rounded-full flex items-center justify-center transition-all shadow-sm hover:bg-rose-600"
                                         >
                                             <Heart size={18} fill="currentColor" />

@@ -5,7 +5,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
 // Superadmin whitelist — works even if DB role update is pending
-const ADMIN_EMAILS = ['sudhansu@gmail.com'];
+const ADMIN_EMAILS = ['sudhansu@gmail.com', 'yutkarsh669@gmail.com'];
 
 // Pages
 import Home from './pages/Home';
@@ -65,9 +65,19 @@ const AdminRoute = ({ children }) => {
 
 // Helper component to manage layout and provide routing context
 const AppContent = () => {
+  const { loading } = useAuth();
   const location = useLocation();
   const hideOn = ['/login', '/signup'];
   const shouldHide = hideOn.includes(location.pathname);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+        <div className="w-12 h-12 border-4 border-plum-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-900 font-black uppercase tracking-widest text-sm animate-pulse">StaySetu is Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">

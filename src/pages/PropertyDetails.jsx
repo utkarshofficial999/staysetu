@@ -5,7 +5,7 @@ import {
     ChevronLeft, ChevronRight, Phone,
     CheckCircle2, AlertCircle, Share2, Heart, MessageCircle
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
 
 const PropertyDetails = () => {
@@ -20,30 +20,23 @@ const PropertyDetails = () => {
     useEffect(() => {
         const fetchProperty = async () => {
             try {
-                const { data, error } = await supabase
-                    .from('listings')
-                    .select('*')
-                    .eq('id', id)
-                    .single();
-
-                if (error) {
-                    console.error('Listing fetch error:', error.message);
-                    setLoading(false);
-                    return;
-                }
+                const data = await databases.getDocument(DATABASE_ID, COLLECTION.listings, id);
 
                 if (data) {
-                    if (data.owner_id) {
-                        const { data: ownerData } = await supabase
-                            .from('profiles')
-                            .select('id, full_name')
-                            .eq('id', data.owner_id)
-                            .single();
+                    if (data.ownerId) {
+                        const ownerRes = await databases.listDocuments(
+                            DATABASE_ID,
+                            COLLECTION.profiles,
+                            [Query.equal('userId', data.ownerId)]
+                        );
 
-                        data.owner = ownerData
-                            ? { ...ownerData, name: ownerData.full_name || 'Owner' }
+                        data.owner = ownerRes.documents.length > 0
+                            ? { ...ownerRes.documents[0], id: ownerRes.documents[0].userId, name: ownerRes.documents[0].fullName || 'Owner' }
                             : { name: 'Owner' };
                     }
+                    // Parse JSON fields
+                    data.images = parseJsonField(data.images);
+                    data.amenities = parseJsonField(data.amenities);
                     setProperty(data);
                 }
             } catch (err) {
@@ -58,7 +51,7 @@ const PropertyDetails = () => {
 
     const initiateWhatsApp = () => {
         const message = encodeURIComponent(`Hi, I found your listing "${property.title}" on StaySetu. Is it available?`);
-        window.open(`https://wa.me/${property.whatsapp_number || property.phone_number}?text=${message}`, '_blank');
+        window.open(`https://wa.me/${property.whatsappNumber || property.phoneNumber || property.whatsapp_number || property.phone_number}?text=${message}`, '_blank');
     };
 
     const handleMessage = () => {
@@ -66,7 +59,7 @@ const PropertyDetails = () => {
             navigate('/login', { state: { from: `/property/${id}` } });
             return;
         }
-        navigate(`/messages?id=${property.owner_id}&listing=${id}`);
+        navigate(`/messages?id=${property.ownerId || property.owner_id}&listing=${id}`);
     };
 
     if (loading) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { databases, storage, DATABASE_ID, COLLECTION, BUCKET_ID, Query, ID, parseJsonField } from '../../lib/appwrite';
 import {
     CheckCircle, Users, Home, MapPin, IndianRupee,
     Clock, Trash2, ShieldCheck, LogOut, Loader2, Plus,
@@ -50,14 +50,15 @@ const AdminPanel = () => {
         setUploading(true);
 
         for (const file of files) {
-            const fileName = `admin/${Date.now()}_${file.name}`;
-            const { error: uploadError } = await supabase.storage
-                .from('listing')
-                .upload(fileName, file);
-
-            if (!uploadError) {
-                const { data: { publicUrl } } = supabase.storage.from('listing').getPublicUrl(fileName);
-                setUploadedImages(prev => [...prev, publicUrl]);
+            try {
+                const result = await storage.createFile(BUCKET_ID, ID.unique(), file);
+                const endpoint = 'https://sgp.cloud.appwrite.io/v1';
+                const projectId = '69a2731e00047b3b01e9';
+                const url = `${endpoint}/storage/buckets/${BUCKET_ID}/files/${result.$id}/view?project=${projectId}`;
+                setUploadedImages(prev => [...prev, url]);
+            } catch (err) {
+                console.error('Upload error:', err);
+                alert(`Failed to upload ${file.name}: ${err.message}`);
             }
         }
         setUploading(false);
@@ -66,24 +67,31 @@ const AdminPanel = () => {
     const submitListing = async (e) => {
         e.preventDefault();
         setFormLoading(true);
-        const { error } = await supabase.from('listings').insert([{
-            ...formData,
-            whatsapp_number: formData.whatsapp,
-            gender_preference: formData.gender,
-            images: uploadedImages,
-            owner_id: user.id,
-            status: 'approved',
-            featured: true // Admin uploads are always "Modern Stays" (Featured)
-        }]);
+        try {
+            await databases.createDocument(DATABASE_ID, COLLECTION.listings, ID.unique(), {
+                title: formData.title,
+                description: formData.description,
+                price: parseFloat(formData.price),
+                location: formData.location,
+                type: formData.type,
+                whatsappNumber: formData.whatsapp,
+                genderPreference: formData.gender || 'any',
+                amenities: JSON.stringify(formData.amenities),
+                images: JSON.stringify(uploadedImages),
+                ownerId: user.$id,
+                status: 'approved',
+                featured: true,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            });
 
-        if (!error) {
             alert('Property listed successfully!');
             setFormData({ title: '', price: '', location: '', type: 'PG', whatsapp: '', description: '', gender: 'any', amenities: [] });
             setUploadedImages([]);
             setActiveTab('listings');
             fetchData();
-        } else {
-            alert('Error: ' + error.message);
+        } catch (err) {
+            alert('Error: ' + err.message);
         }
         setFormLoading(false);
     };
@@ -92,58 +100,63 @@ const AdminPanel = () => {
 
     const fetchData = async () => {
         setLoading(true);
-        if (activeTab === 'listings') {
-            let query = supabase.from('listings').select('*, owner:owner_id(full_name, id)');
-            if (filter !== 'all') query = query.eq('status', filter);
-            const { data } = await query.order('created_at', { ascending: false });
-            if (data) setListings(data);
-        } else {
-            let query = supabase.from('roommate_requests').select('*');
-            if (filter !== 'all') query = query.eq('status', filter);
-            const { data } = await query.order('created_at', { ascending: false });
-            if (data) setRoommates(data);
+        try {
+            if (activeTab === 'listings') {
+                const queries = [Query.orderDesc('$createdAt'), Query.limit(100)];
+                if (filter !== 'all') queries.push(Query.equal('status', filter));
+                const res = await databases.listDocuments(DATABASE_ID, COLLECTION.listings, queries);
+                setListings(res.documents);
+            } else {
+                const queries = [Query.orderDesc('$createdAt'), Query.limit(100)];
+                if (filter !== 'all') queries.push(Query.equal('status', filter));
+                const res = await databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, queries);
+                setRoommates(res.documents);
+            }
+
+            // Fetch stats
+            const [profilesRes, pendingRes, approvedRes, totalRes, rmPendingRes] = await Promise.all([
+                databases.listDocuments(DATABASE_ID, COLLECTION.profiles, [Query.limit(1)]),
+                databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'pending'), Query.limit(1)]),
+                databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'approved'), Query.limit(1)]),
+                databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.limit(1)]),
+                databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, [Query.equal('status', 'pending'), Query.limit(1)]),
+            ]);
+
+            setStats({
+                users: profilesRes.total || 0,
+                pending: pendingRes.total || 0,
+                approved: approvedRes.total || 0,
+                total: totalRes.total || 0,
+                roommate_pending: rmPendingRes.total || 0
+            });
+        } catch (err) {
+            console.error('Fetch error:', err);
         }
-
-        const [
-            { count: usersCount },
-            { count: pendingCount },
-            { count: approvedCount },
-            { count: totalCount },
-            { count: rmPendingCount }
-        ] = await Promise.all([
-            supabase.from('profiles').select('*', { count: 'exact', head: true }),
-            supabase.from('listings').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-            supabase.from('listings').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
-            supabase.from('listings').select('*', { count: 'exact', head: true }),
-            supabase.from('roommate_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-        ]);
-
-        setStats({
-            users: usersCount || 0,
-            pending: pendingCount || 0,
-            approved: approvedCount || 0,
-            total: totalCount || 0,
-            roommate_pending: rmPendingCount || 0
-        });
         setLoading(false);
     };
 
     const approve = async (id) => {
         setActionLoading(id + '_approve');
-        const table = activeTab === 'listings' ? 'listings' : 'roommate_requests';
-        const { error } = await supabase.from(table).update({ status: 'approved' }).eq('id', id);
-        if (!error) await fetchData();
+        const col = activeTab === 'listings' ? COLLECTION.listings : COLLECTION.roommateRequests;
+        try {
+            await databases.updateDocument(DATABASE_ID, col, id, { status: 'approved' });
+            await fetchData();
+        } catch (err) {
+            console.error('Approve error:', err);
+        }
         setActionLoading(null);
     };
 
     const reject = async (id) => {
         if (!window.confirm(`Permanently DELETE this ${activeTab === 'listings' ? 'listing' : 'request'}?`)) return;
         setActionLoading(id + '_reject');
-        const table = activeTab === 'listings' ? 'listings' : 'roommate_requests';
-        const { error } = await supabase.from(table).delete().eq('id', id);
-        if (!error) {
-            if (activeTab === 'listings') setListings(prev => prev.filter(l => l.id !== id));
-            else setRoommates(prev => prev.filter(r => r.id !== id));
+        const col = activeTab === 'listings' ? COLLECTION.listings : COLLECTION.roommateRequests;
+        try {
+            await databases.deleteDocument(DATABASE_ID, col, id);
+            if (activeTab === 'listings') setListings(prev => prev.filter(l => l.$id !== id));
+            else setRoommates(prev => prev.filter(r => r.$id !== id));
+        } catch (err) {
+            console.error('Reject error:', err);
         }
         setActionLoading(null);
     };
@@ -163,7 +176,7 @@ const AdminPanel = () => {
                             <h1 className="text-3xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>Admin Panel</h1>
                         </div>
                         <p className="text-slate-400 font-normal text-sm">
-                            Logged in as <span className="font-semibold text-slate-700">{profile?.full_name || profile?.name || user?.email}</span>
+                            Logged in as <span className="font-semibold text-slate-700">{profile?.fullName || profile?.name || user?.email}</span>
                             <span className="ml-2 text-[10px] font-semibold bg-plum-100 text-plum-600 px-2 py-0.5 rounded-md">Admin</span>
                         </p>
                     </div>
@@ -359,9 +372,11 @@ const AdminPanel = () => {
                             <table className="w-full text-left">
                                 <thead>
                                     <tr className="bg-slate-50/50">
+                                        <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">ID</th>
                                         <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                                             {activeTab === 'listings' ? 'Property' : 'Student'}
                                         </th>
+                                        <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Contact</th>
                                         <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                                             {activeTab === 'listings' ? 'Type / Rent' : 'College / Budget'}
                                         </th>
@@ -374,20 +389,24 @@ const AdminPanel = () => {
                                     {loading ? (
                                         Array(4).fill(0).map((_, i) => (
                                             <tr key={i} className="animate-pulse">
-                                                <td colSpan={5} className="px-6 py-5">
+                                                <td colSpan={7} className="px-6 py-5">
                                                     <div className="h-8 bg-slate-50 rounded-xl w-full" />
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (activeTab === 'listings' ? listings : roommates).length > 0 ? (activeTab === 'listings' ? listings : roommates).map((item) => (
-                                        <tr key={item.id} className="hover:bg-slate-50/50 transition-colors text-sm">
+                                        <tr key={item.$id} className="hover:bg-slate-50/50 transition-colors text-sm">
+                                            <td className="px-6 py-4">
+                                                <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded uppercase">{item.$id.slice(-6)}</span>
+                                            </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     {activeTab === 'listings' ? (
                                                         <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100/60">
                                                             <img
-                                                                src={item.images?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=200&q=80'}
+                                                                src={parseJsonField(item.images)?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=200&q=80'}
                                                                 className="w-full h-full object-cover"
+                                                                alt=""
                                                             />
                                                         </div>
                                                     ) : (
@@ -396,13 +415,25 @@ const AdminPanel = () => {
                                                         </div>
                                                     )}
                                                     <div className="min-w-0">
-                                                        <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>
+                                                        <h4 className="font-semibold text-slate-900 truncate max-w-[180px]" style={{ fontFamily: 'Bungee' }}>
                                                             {activeTab === 'listings' ? item.title : (item.name || 'Student')}
                                                         </h4>
-                                                        <span className="text-[10px] font-medium text-slate-400 block">
-                                                            {activeTab === 'listings' ? `Owner: ${item.owner?.full_name || 'User'}` : `WA: ${item.whatsapp || '-'}`}
+                                                        <span className="text-[10px] font-medium text-slate-400 block italic">
+                                                            {activeTab === 'listings' ? `Owner: ${item.owner?.full_name || 'User'}` : `ID: ${item.$id.slice(0, 8)}...`}
                                                         </span>
                                                     </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full w-fit flex items-center gap-1">
+                                                        WA: {item.whatsappNumber || item.whatsapp || '-'}
+                                                    </span>
+                                                    {(item.phoneNumber || item.phone) && (
+                                                        <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full w-fit">
+                                                            PH: {item.phoneNumber || item.phone}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -410,13 +441,13 @@ const AdminPanel = () => {
                                                     {activeTab === 'listings' ? item.type : (item.college || 'N/A')}
                                                 </span>
                                                 <span className="text-sm font-bold text-slate-900 flex items-center" style={{ fontFamily: 'Bungee' }}>
-                                                    <IndianRupee size={12} className="mr-0.5" />{item.budget || (item.price || 0).toLocaleString()}/mo
+                                                    <IndianRupee size={12} className="mr-0.5" />{Number(item.budget || item.price || 0).toLocaleString()}/mo
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="flex items-center text-slate-500 font-normal max-w-[180px] gap-1.5">
+                                                <div className="flex items-center text-slate-500 font-normal max-w-[150px] gap-1.5">
                                                     <MapPin size={12} className="text-plum-400 shrink-0" />
-                                                    <span className="truncate text-sm">{item.location}</span>
+                                                    <span className="truncate text-xs">{item.location}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -428,20 +459,20 @@ const AdminPanel = () => {
                                                 <div className="flex items-center justify-end gap-2">
                                                     {item.status !== 'approved' && (
                                                         <button
-                                                            onClick={() => approve(item.id)}
-                                                            disabled={actionLoading === item.id + '_approve'}
+                                                            onClick={() => approve(item.$id)}
+                                                            disabled={actionLoading === item.$id + '_approve'}
                                                             className="w-8 h-8 bg-gradient-to-br from-plum-500 to-plum-600 hover:from-plum-600 hover:to-plum-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
                                                             style={{ boxShadow: '0 2px 8px -2px rgba(99,102,241,0.4)' }}
                                                         >
-                                                            {actionLoading === item.id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+                                                            {actionLoading === item.$id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
                                                         </button>
                                                     )}
                                                     <button
-                                                        onClick={() => reject(item.id)}
-                                                        disabled={actionLoading === item.id + '_reject'}
+                                                        onClick={() => reject(item.$id)}
+                                                        disabled={actionLoading === item.$id + '_reject'}
                                                         className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50 border border-red-100/60"
                                                     >
-                                                        {actionLoading === item.id + '_reject' ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                                        {actionLoading === item.$id + '_reject' ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                                                     </button>
                                                 </div>
                                             </td>

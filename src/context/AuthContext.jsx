@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { account, databases, DATABASE_ID, COLLECTION, ID, Query } from '../lib/appwrite';
 
 const AuthContext = createContext({});
 
@@ -9,110 +9,108 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-            if (session?.user) fetchProfile(session.user);
-            else setLoading(false);
-        });
-
-        // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-            if (session?.user) fetchProfile(session.user);
-            else {
-                setProfile(null);
-                setLoading(false);
-            }
-        });
-
-        return () => {
-            subscription.unsubscribe();
-        };
+        // Check if user is already logged in
+        checkUser();
     }, []);
 
-    const fetchProfile = async (authUser) => {
+    const checkUser = async () => {
         try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', authUser.id)
-                .single();
-
-            if (error && error.code !== 'PGRST116') {
-                console.error('Error fetching profile:', error);
-            }
-
-            if (data) {
-                // Normalize: always expose name regardless of which column is used
-                data.name = data.full_name || data.name || '';
-                // If profile exists but role is missing, use metadata role
-                if (!data.role && authUser.user_metadata?.role) {
-                    data.role = authUser.user_metadata.role;
-                    // Also update the profile in DB
-                    await supabase
-                        .from('profiles')
-                        .update({ role: authUser.user_metadata.role })
-                        .eq('id', authUser.id);
-                }
-                setProfile(data);
-            } else {
-                // No profile found — create one from user metadata
-                const metaRole = authUser.user_metadata?.role || 'student';
-                const metaName = authUser.user_metadata?.full_name || authUser.user_metadata?.name || 'User';
-
-                const { data: newProfile, error: insertError } = await supabase
-                    .from('profiles')
-                    .upsert([{
-                        id: authUser.id,
-                        full_name: metaName,   // ← correct column name
-                        email: authUser.email,
-                        role: metaRole
-                    }], { onConflict: 'id' })
-                    .select()
-                    .single();
-
-                if (insertError) {
-                    console.error('Error creating profile:', insertError);
-                    // Fallback: create a local profile object from metadata
-                    setProfile({
-                        id: authUser.id,
-                        name: metaName,
-                        full_name: metaName,
-                        role: metaRole
-                    });
-                } else {
-                    newProfile.name = newProfile.full_name || metaName;
-                    setProfile(newProfile);
-                }
-            }
-        } catch (err) {
-            console.error('Profile fetch error:', err);
-            // Fallback: use metadata
-            setProfile({
-                id: authUser.id,
-                name: authUser.user_metadata?.full_name || 'User',
-                role: authUser.user_metadata?.role || 'student'
-            });
+            const authUser = await account.get();
+            setUser(authUser);
+            await fetchProfile(authUser);
+        } catch (e) {
+            // Not logged in
+            setUser(null);
+            setProfile(null);
         } finally {
             setLoading(false);
         }
     };
 
-    const signInWithGoogle = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin
+    const fetchProfile = async (authUser) => {
+        if (!authUser) return;
+        try {
+            console.log('Fetching profile for:', authUser.email);
+            const res = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTION.profiles,
+                [Query.equal('userId', authUser.$id)]
+            );
+
+            if (res.documents.length > 0) {
+                const data = res.documents[0];
+                // Normalize names
+                data.name = data.fullName || data.full_name || 'User';
+                data.id = data.$id;
+                console.log('Profile found:', data.role);
+                setProfile(data);
+            } else {
+                console.log('No profile found, creating default...');
+                const metaName = authUser.name || 'User';
+                const preferredRole = localStorage.getItem('google_preferred_role') || 'student';
+                localStorage.removeItem('google_preferred_role'); // Clean up
+
+                const newProfile = await databases.createDocument(
+                    DATABASE_ID,
+                    COLLECTION.profiles,
+                    ID.unique(),
+                    {
+                        userId: authUser.$id,
+                        fullName: metaName,
+                        email: authUser.email,
+                        role: preferredRole,
+                        createdAt: new Date().toISOString(),
+                    }
+                );
+                newProfile.id = newProfile.$id;
+                newProfile.name = metaName;
+                setProfile(newProfile);
             }
-        });
-        if (error) throw error;
+        } catch (err) {
+            console.error('Profile error:', err);
+            setProfile({
+                fullName: authUser.name || 'User',
+                role: 'student'
+            });
+        }
     };
 
-    const signOut = () => supabase.auth.signOut();
+    const signInWithGoogle = async (role = 'student') => {
+        // Store selected role so we can create the right profile on return
+        localStorage.setItem('google_preferred_role', role);
+
+        account.createOAuth2Session(
+            'google',
+            window.location.origin,         // success redirect
+            window.location.origin + '/login' // failure redirect
+        );
+
+    };
+
+    const signOut = async () => {
+        try {
+            await account.deleteSession('current');
+        } catch (err) {
+            console.error('Sign out error:', err);
+        }
+        setUser(null);
+        setProfile(null);
+    };
+
+    const refreshProfile = async () => {
+        if (user) await fetchProfile(user);
+    };
 
     return (
-        <AuthContext.Provider value={{ user, profile, loading, signOut, signInWithGoogle, refreshProfile: () => user && fetchProfile(user) }}>
+        <AuthContext.Provider value={{
+            user,
+            profile,
+            loading,
+            signOut,
+            signInWithGoogle,
+            refreshProfile,
+            checkUser,
+        }}>
             {children}
         </AuthContext.Provider>
     );

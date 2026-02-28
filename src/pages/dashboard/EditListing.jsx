@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
+import { databases, DATABASE_ID, COLLECTION } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
 import {
     ArrowLeft, MapPin, IndianRupee, Save, X, Plus,
@@ -32,24 +32,25 @@ const EditListing = () => {
 
     useEffect(() => {
         const fetchListing = async () => {
-            const { data, error } = await supabase
-                .from('listings')
-                .select('*')
-                .eq('id', id)
-                .single();
-
-            if (data) {
-                setFormData({
-                    title: data.title || '',
-                    description: data.description || '',
-                    price: data.price ? data.price.toString() : '',
-                    location: data.location || '',
-                    type: data.type || 'PG',
-                    phone_number: data.phone_number || '',
-                    whatsapp_number: data.whatsapp_number || '',
-                    amenities: data.amenities || [],
-                    images: data.images && data.images.length > 0 ? data.images : ['']
-                });
+            try {
+                const data = await databases.getDocument(DATABASE_ID, COLLECTION.listings, id);
+                if (data) {
+                    const amenities = typeof data.amenities === 'string' ? JSON.parse(data.amenities) : (data.amenities || []);
+                    const images = typeof data.images === 'string' ? JSON.parse(data.images) : (data.images || ['']);
+                    setFormData({
+                        title: data.title || '',
+                        description: data.description || '',
+                        price: data.price ? data.price.toString() : '',
+                        location: data.location || '',
+                        type: data.type || 'PG',
+                        phone_number: data.phoneNumber || '',
+                        whatsapp_number: data.whatsappNumber || '',
+                        amenities: amenities,
+                        images: images.length > 0 ? images : ['']
+                    });
+                }
+            } catch (err) {
+                console.error('Fetch error:', err);
             }
             setLoading(false);
         };
@@ -96,16 +97,21 @@ const EditListing = () => {
         try {
             if (!user) throw new Error('You must be logged in to edit a listing');
 
-            const { error: updateError } = await supabase
-                .from('listings')
-                .update({
-                    ...formData,
-                    price: parseFloat(formData.price),
-                    updated_at: new Date().toISOString()
-                })
-                .eq('id', id);
+            const imageUrls = formData.images.filter(url => url && url.trim());
 
-            if (updateError) throw updateError;
+            await databases.updateDocument(DATABASE_ID, COLLECTION.listings, id, {
+                title: formData.title,
+                description: formData.description,
+                price: parseFloat(formData.price),
+                location: formData.location,
+                type: formData.type,
+                phoneNumber: formData.phone_number,
+                whatsappNumber: formData.whatsapp_number,
+                amenities: JSON.stringify(formData.amenities),
+                images: JSON.stringify(imageUrls),
+                genderPreference: formData.gender_preference || 'any',
+                updatedAt: new Date().toISOString(),
+            });
 
             setSuccess(true);
             setTimeout(() => navigate('/dashboard'), 2000);
@@ -238,8 +244,8 @@ const EditListing = () => {
                                         type="button"
                                         onClick={() => toggleAmenity(amenity)}
                                         className={`flex items-center justify-center p-3 rounded-xl border-2 transition-all font-bold text-sm ${formData.amenities.includes(amenity)
-                                                ? 'border-plum-500 bg-plum-50 text-plum-700'
-                                                : 'border-slate-50 text-slate-500 hover:border-slate-100'
+                                            ? 'border-plum-500 bg-plum-50 text-plum-700'
+                                            : 'border-slate-50 text-slate-500 hover:border-slate-100'
                                             }`}
                                     >
                                         {amenity}

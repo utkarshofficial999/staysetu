@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { databases, DATABASE_ID, COLLECTION, Query, ID } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
 import {
     Users, Search, MessageCircle, MapPin, IndianRupee, Calendar,
@@ -26,13 +26,19 @@ const Roommates = () => {
 
     const fetchRequests = async () => {
         setLoading(true);
-        const { data } = await supabase
-            .from('roommate_requests')
-            .select('*')
-            .eq('status', 'approved')
-            .order('created_at', { ascending: false });
-
-        if (data) setRequests(data);
+        try {
+            const res = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTION.roommateRequests,
+                [
+                    Query.equal('status', 'approved'),
+                    Query.orderDesc('$createdAt'),
+                ]
+            );
+            setRequests(res.documents);
+        } catch (err) {
+            console.error('Fetch error:', err);
+        }
         setLoading(false);
     };
 
@@ -42,20 +48,24 @@ const Roommates = () => {
         setSubmitting(true);
 
         try {
-            const { error } = await supabase.from('roommate_requests').insert([{
-                user_id: user.id,
-                name: user.user_metadata?.full_name || user.email,
-                location: form.location,
-                budget: parseFloat(form.budget) || null,
-                gender_preference: form.gender_preference,
-                move_in_date: form.move_in_date || null,
-                description: form.description,
-                whatsapp: form.whatsapp,
-                college: form.college,
-                status: 'pending'
-            }]);
-
-            if (error) throw error;
+            await databases.createDocument(
+                DATABASE_ID,
+                COLLECTION.roommateRequests,
+                ID.unique(),
+                {
+                    userId: user.$id,
+                    name: user.name || user.email,
+                    location: form.location,
+                    budget: parseFloat(form.budget) || null,
+                    genderPreference: form.gender_preference,
+                    moveInDate: form.move_in_date || null,
+                    description: form.description,
+                    whatsapp: form.whatsapp,
+                    college: form.college,
+                    status: 'pending',
+                    createdAt: new Date().toISOString(),
+                }
+            );
 
             setSuccess(true);
             setForm({ location: '', budget: '', gender_preference: 'any', move_in_date: '', description: '', whatsapp: '', college: '' });
@@ -73,7 +83,7 @@ const Roommates = () => {
             r.college?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             r.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-        const matchGender = filterGender === 'all' || r.gender_preference === filterGender;
+        const matchGender = filterGender === 'all' || r.genderPreference === filterGender;
 
         return matchSearch && matchGender;
     });
@@ -201,7 +211,7 @@ const Roommates = () => {
                 ) : filtered.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         {filtered.map(req => (
-                            <div key={req.id} className="card-elevated p-6 flex flex-col">
+                            <div key={req.$id} className="card-elevated p-6 flex flex-col">
                                 {/* Header */}
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center gap-3">
@@ -237,14 +247,14 @@ const Roommates = () => {
                                             <IndianRupee size={10} className="text-plum-400" /> {req.budget?.toLocaleString()}/mo
                                         </span>
                                     )}
-                                    {req.gender_preference !== 'any' && (
+                                    {(req.genderPreference || req.gender_preference) !== 'any' && (
                                         <span className="flex items-center gap-1 text-[11px] font-medium bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
-                                            <User size={10} className="text-plum-400" /> {req.gender_preference}
+                                            <User size={10} className="text-plum-400" /> {req.genderPreference || req.gender_preference}
                                         </span>
                                     )}
-                                    {req.move_in_date && (
+                                    {(req.moveInDate || req.move_in_date) && (
                                         <span className="flex items-center gap-1 text-[11px] font-medium bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
-                                            <Calendar size={10} className="text-plum-400" /> {new Date(req.move_in_date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
+                                            <Calendar size={10} className="text-plum-400" /> {new Date(req.moveInDate || req.move_in_date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
                                         </span>
                                     )}
                                 </div>

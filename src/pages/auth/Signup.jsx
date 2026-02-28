@@ -1,21 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
+import { account, databases, DATABASE_ID, COLLECTION, ID } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
 import { Mail, Lock, User, UserCircle, Briefcase, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-// Reusable Google Icon component for aesthetic consistency
-const GoogleIcon = () => (
-    <svg width="18" height="18" viewBox="0 0 18 18">
-        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4" />
-        <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853" />
-        <path d="M3.964 10.712A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.712V4.956H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.044l3.007-2.332z" fill="#FBBC05" />
-        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.483 0 2.443 2.043.957 4.956l3.007 2.332C4.672 5.164 6.656 3.58 9 3.58z" fill="#EA4335" />
-    </svg>
-);
+import GoogleButton from '../../components/auth/GoogleButton';
 
 const Signup = () => {
-    const { signInWithGoogle } = useAuth();
+    const navigate = useNavigate();
+    const { user, profile, signInWithGoogle, checkUser } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
@@ -23,7 +16,14 @@ const Signup = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
-    const navigate = useNavigate();
+
+    // If already logged in, redirect
+    useEffect(() => {
+        if (user && profile) {
+            const role = profile.role || 'student';
+            navigate(role === 'owner' ? '/owner-dashboard' : '/dashboard', { replace: true });
+        }
+    }, [user, profile, navigate]);
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -31,42 +31,41 @@ const Signup = () => {
         setError(null);
 
         try {
-            const { data, error: signupError } = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: {
-                        full_name: fullName,
-                        role: role,
-                    },
-                },
-            });
+            // Create account
+            await account.create(ID.unique(), email, password, fullName);
 
-            if (signupError) throw signupError;
+            // Log in immediately
+            await account.createEmailPasswordSession(email, password);
 
-            const user = data.user;
+            // Get user
+            const authUser = await account.get();
 
-            if (user) {
-                await supabase
-                    .from('profiles')
-                    .upsert({
-                        id: user.id,
-                        full_name: fullName,
-                        email: user.email,
-                        role: role,
-                        updated_at: new Date().toISOString(),
-                    }, { onConflict: 'id' });
+            // Create profile document
+            await databases.createDocument(
+                DATABASE_ID,
+                COLLECTION.profiles,
+                ID.unique(),
+                {
+                    userId: authUser.$id,
+                    fullName: fullName,
+                    email: email,
+                    role: role,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                }
+            );
 
-                setSuccess(true);
+            // Refresh auth context
+            await checkUser();
 
-                setTimeout(() => {
-                    if (role === 'owner') {
-                        navigate('/owner-dashboard');
-                    } else {
-                        navigate('/dashboard');
-                    }
-                }, 1500);
-            }
+            setSuccess(true);
+            setTimeout(() => {
+                if (role === 'owner') {
+                    navigate('/owner-dashboard');
+                } else {
+                    navigate('/dashboard');
+                }
+            }, 1500);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -77,7 +76,8 @@ const Signup = () => {
     const handleGoogleLogin = async () => {
         try {
             setLoading(true);
-            await signInWithGoogle();
+            // Pass the current selected role to the OAuth flow
+            await signInWithGoogle(role);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -87,7 +87,6 @@ const Signup = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-white relative overflow-hidden">
-            {/* Background mesh */}
             <div className="absolute inset-0 bg-mesh pointer-events-none" />
 
             <div className="w-full max-w-md relative z-10">
@@ -111,42 +110,23 @@ const Signup = () => {
                     {success && (
                         <div className="mb-6 p-3.5 bg-emerald-50 border border-emerald-100 rounded-xl flex items-start space-x-3 animate-fade-in">
                             <CheckCircle2 className="text-emerald-500 shrink-0 mt-0.5" size={16} />
-                            <p className="text-sm text-emerald-600 font-medium">
-                                Account created! Redirecting...
-                            </p>
+                            <p className="text-sm text-emerald-600 font-medium">Account created! Redirecting...</p>
                         </div>
                     )}
 
                     <form onSubmit={handleSignup} className="space-y-5">
-                        {/* Role selector */}
                         <div>
                             <label className="block text-sm font-medium text-slate-600 mb-3">I want to</label>
                             <div className="grid grid-cols-2 gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setRole('student')}
-                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'student'
-                                        ? 'border-plum-300 bg-plum-50'
-                                        : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'
-                                        }`}
-                                >
+                                <button type="button" onClick={() => setRole('student')}
+                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'student' ? 'border-plum-300 bg-plum-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
                                     <UserCircle className={role === 'student' ? 'text-plum-900 transition-colors' : 'text-slate-400'} size={24} />
-                                    <span className={`text-sm font-semibold mt-2 ${role === 'student' ? 'text-plum-900 font-bold' : 'text-slate-600'}`}>
-                                        Find a Stay
-                                    </span>
+                                    <span className={`text-sm font-semibold mt-2 ${role === 'student' ? 'text-plum-900 font-bold' : 'text-slate-600'}`}>Find a Stay</span>
                                 </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setRole('owner')}
-                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'owner'
-                                        ? 'border-plum-300 bg-plum-50 shadow-sm'
-                                        : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'
-                                        }`}
-                                >
+                                <button type="button" onClick={() => setRole('owner')}
+                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'owner' ? 'border-plum-300 bg-plum-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
                                     <Briefcase className={role === 'owner' ? 'text-plum-900 transition-colors' : 'text-slate-400'} size={24} />
-                                    <span className={`text-sm font-semibold mt-2 ${role === 'owner' ? 'text-plum-900 font-bold' : 'text-slate-600'}`}>
-                                        List Property
-                                    </span>
+                                    <span className={`text-sm font-semibold mt-2 ${role === 'owner' ? 'text-plum-900 font-bold' : 'text-slate-600'}`}>List Property</span>
                                 </button>
                             </div>
                         </div>
@@ -155,88 +135,50 @@ const Signup = () => {
                             <label className="block text-sm font-medium text-slate-600 mb-2">Full Name</label>
                             <div className="relative">
                                 <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                <input
-                                    type="text"
-                                    required
-                                    className="input-field pl-10"
-                                    placeholder="Your full name"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
-                                />
+                                <input type="text" required className="input-field pl-10" placeholder="Your full name"
+                                    value={fullName} onChange={(e) => setFullName(e.target.value)} />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-5">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-2">Email</label>
-                                <div className="relative">
-                                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                    <input
-                                        type="email"
-                                        required
-                                        className="input-field pl-10"
-                                        placeholder="name@example.com"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-2">Password</label>
-                                <div className="relative">
-                                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                    <input
-                                        type="password"
-                                        required
-                                        minLength={6}
-                                        className="input-field pl-10"
-                                        placeholder="Min 6 characters"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                    />
-                                </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-600 mb-2">Email</label>
+                            <div className="relative">
+                                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                <input type="email" required className="input-field pl-10" placeholder="name@example.com"
+                                    value={email} onChange={(e) => setEmail(e.target.value)} />
                             </div>
                         </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full btn-primary flex items-center justify-center group py-3.5 mt-2"
-                        >
+                        <div>
+                            <label className="block text-sm font-medium text-slate-600 mb-2">Password</label>
+                            <div className="relative">
+                                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                <input type="password" required minLength={8} className="input-field pl-10" placeholder="Min 8 characters"
+                                    value={password} onChange={(e) => setPassword(e.target.value)} />
+                            </div>
+                        </div>
+
+                        <button type="submit" disabled={loading} className="w-full btn-primary flex items-center justify-center group py-3.5 mt-2">
                             {loading ? (
                                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                             ) : (
-                                <>
-                                    Create Account
-                                    <ArrowRight size={16} className="ml-2 group-hover:translate-x-0.5 transition-transform" />
-                                </>
+                                <>Create Account<ArrowRight size={16} className="ml-2 group-hover:translate-x-0.5 transition-transform" /></>
                             )}
                         </button>
                     </form>
 
                     <div className="mt-8">
                         <div className="relative flex items-center justify-center mb-6">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-slate-100"></div>
-                            </div>
+                            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
                             <span className="relative bg-white px-4 text-xs font-medium text-slate-400">or</span>
                         </div>
-                        <button
-                            onClick={handleGoogleLogin}
-                            type="button"
-                            className="w-full flex items-center justify-center space-x-3 py-3 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all font-semibold shadow-sm hover:shadow-md active:scale-[0.98]"
-                        >
-                            <GoogleIcon />
-                            <span className="text-sm font-bold text-slate-700">Continue with Google</span>
-                        </button>
+                        <GoogleButton onClick={handleGoogleLogin} loading={loading} />
                     </div>
                 </div>
 
                 <p className="mt-8 text-center text-slate-500 font-normal text-sm">
                     Already have an account?{' '}
-                    <Link to="/login" className="text-plum-900 hover:text-plum-900 font-semibold">
-                        Log in
-                    </Link>
+                    <Link to="/login" className="text-plum-900 hover:text-plum-900 font-semibold">Log in</Link>
                 </p>
             </div>
         </div>

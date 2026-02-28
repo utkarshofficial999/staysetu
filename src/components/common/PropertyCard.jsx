@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, IndianRupee, Star, Heart, ImageOff, Wifi, Wind, UtensilsCrossed, Car, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { parseJsonField } from '../../lib/appwrite';
 
 const FALLBACKS = [
     'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80',
@@ -22,8 +23,9 @@ const PropertyCard = ({ property }) => {
     const [imgLoaded, setImgLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
 
-    const fallback = FALLBACKS[(property?.id?.charCodeAt(0) || 0) % FALLBACKS.length];
-    const rawSrc = property?.images?.[0];
+    const fallback = FALLBACKS[((property?.$id || property?.id || '').charCodeAt(0) || 0) % FALLBACKS.length];
+    const images = parseJsonField(property?.images);
+    const rawSrc = images[0];
     const imgSrc = (!rawSrc || imgError) ? fallback : rawSrc;
     const ts = typeStyles[property?.type] || typeStyles.PG;
 
@@ -84,9 +86,9 @@ const PropertyCard = ({ property }) => {
                         <Star size={10} fill="currentColor" className="mr-1" />
                         4.8
                     </div>
-                    {(property?.gender_preference || property?.gender) && (
+                    {(property?.genderPreference || property?.gender_preference || property?.gender) && (
                         <div className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 uppercase`}>
-                            {property.gender_preference || property.gender} only
+                            {property.genderPreference || property.gender_preference || property.gender} only
                         </div>
                     )}
                 </div>
@@ -102,7 +104,7 @@ const PropertyCard = ({ property }) => {
 
                 <div className="mt-auto grid grid-cols-2 gap-3">
                     <Link
-                        to={`/property/${property?.id || '123'}`}
+                        to={`/property/${property?.$id || property?.id || '123'}`}
                         className="bg-slate-900 text-white py-3 px-4 rounded-xl text-center text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-colors"
                     >
                         View More
@@ -111,7 +113,12 @@ const PropertyCard = ({ property }) => {
                         onClick={(e) => {
                             e.preventDefault();
                             const message = encodeURIComponent(`Hi, I found your listing "${property?.title}" on StaySetu. Is it available?`);
-                            window.open(`https://wa.me/${property?.whatsapp_number || property?.phone_number || property?.owner_phone}?text=${message}`, '_blank');
+                            const number = property?.whatsappNumber || property?.phoneNumber || property?.phone_number || property?.owner_phone;
+                            if (number) {
+                                window.open(`https://wa.me/${number.replace(/\D/g, '')}?text=${message}`, '_blank');
+                            } else {
+                                alert('Contact number not available for this listing.');
+                            }
                         }}
                         className="border-2 border-slate-900 text-slate-900 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-colors"
                     >

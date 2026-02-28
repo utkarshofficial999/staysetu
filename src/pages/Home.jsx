@@ -3,7 +3,7 @@ import Hero from '../components/layout/Hero';
 import Categories from '../components/layout/Categories';
 import HowItWorks from '../components/layout/HowItWorks';
 import PropertyCard from '../components/common/PropertyCard';
-import { supabase } from '../lib/supabase';
+import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../lib/appwrite';
 import {
     ArrowRight, Shield, Zap, Star, Users, Home as HomeIcon,
     Search, CheckCircle2, MessageCircle, ArrowUpRight
@@ -27,42 +27,63 @@ const Home = () => {
             setLoading(true);
             try {
                 // 1. Fetch the Hero (Modern Stay) listing first
-                let { data: heroData } = await supabase
-                    .from('listings')
-                    .select('*')
-                    .eq('status', 'approved')
-                    .eq('featured', true)
-                    .order('created_at', { ascending: false })
-                    .limit(1);
+                const heroRes = await databases.listDocuments(
+                    DATABASE_ID,
+                    COLLECTION.listings,
+                    [
+                        Query.equal('status', 'approved'),
+                        Query.equal('featured', true),
+                        Query.orderDesc('$createdAt'),
+                        Query.limit(1),
+                    ]
+                );
 
                 let heroItem = null;
-                if (heroData && heroData.length > 0) {
-                    heroItem = heroData[0];
+                if (heroRes.documents.length > 0) {
+                    heroItem = heroRes.documents[0];
                 } else {
                     // Fallback to latest if no featured
-                    const { data: latest } = await supabase
-                        .from('listings')
-                        .select('*')
-                        .eq('status', 'approved')
-                        .order('created_at', { ascending: false })
-                        .limit(1);
-                    if (latest && latest.length > 0) heroItem = latest[0];
+                    const latestRes = await databases.listDocuments(
+                        DATABASE_ID,
+                        COLLECTION.listings,
+                        [
+                            Query.equal('status', 'approved'),
+                            Query.orderDesc('$createdAt'),
+                            Query.limit(1),
+                        ]
+                    );
+                    if (latestRes.documents.length > 0) heroItem = latestRes.documents[0];
+                }
+
+                // Parse hero item if exists
+                if (heroItem) {
+                    heroItem.images = parseJsonField(heroItem.images);
+                    heroItem.amenities = parseJsonField(heroItem.amenities);
                 }
                 setHeroListing(heroItem);
 
-                // 2. Fetch Featured Stays (Popular), EXCLUDING the hero listing
-                let popularQuery = supabase
-                    .from('listings')
-                    .select('*')
-                    .eq('status', 'approved')
-                    .order('created_at', { ascending: false });
+                // 2. Fetch Popular Stays, EXCLUDING the hero listing
+                const popularRes = await databases.listDocuments(
+                    DATABASE_ID,
+                    COLLECTION.listings,
+                    [
+                        Query.equal('status', 'approved'),
+                        Query.orderDesc('$createdAt'),
+                        Query.limit(5),
+                    ]
+                );
 
-                if (heroItem) {
-                    popularQuery = popularQuery.neq('id', heroItem.id);
-                }
+                const filtered = heroItem
+                    ? popularRes.documents.filter(d => d.$id !== heroItem.$id).slice(0, 3)
+                    : popularRes.documents.slice(0, 3);
 
-                const { data: popularData } = await popularQuery.limit(4);
-                if (popularData) setFeaturedListings(popularData);
+                // Parse filtered results
+                const parsed = filtered.map(item => ({
+                    ...item,
+                    images: parseJsonField(item.images),
+                    amenities: parseJsonField(item.amenities)
+                }));
+                setFeaturedListings(parsed);
 
             } catch (err) {
                 console.error('Home Page Fetch Error:', err);
@@ -96,16 +117,16 @@ const Home = () => {
                     </div>
 
                     {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                            {[1, 2, 3, 4].map((i) => (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            {[1, 2, 3].map((i) => (
                                 <div key={i} className="bg-white/5 animate-pulse rounded-3xl" style={{ height: 360, border: '1px solid rgba(255,255,255,0.05)' }} />
                             ))}
                         </div>
                     ) : featuredListings.length > 0 ? (
                         <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {featuredListings.map((listing) => (
-                                    <PropertyCard key={listing.id} property={listing} />
+                                    <PropertyCard key={listing.$id || listing.id} property={listing} />
                                 ))}
                             </div>
                             <div className="text-center mt-12">

@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
+import { account, databases, DATABASE_ID, COLLECTION, Query } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
 import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 
-// Reusable Google Icon component for aesthetic consistency
-const GoogleIcon = () => (
-    <svg width="18" height="18" viewBox="0 0 18 18">
-        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4" />
-        <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853" />
-        <path d="M3.964 10.712A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.712V4.956H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.044l3.007-2.332z" fill="#FBBC05" />
-        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.483 0 2.443 2.043.957 4.956l3.007 2.332C4.672 5.164 6.656 3.58 9 3.58z" fill="#EA4335" />
-    </svg>
-);
+import GoogleButton from '../../components/auth/GoogleButton';
 
 const Login = () => {
-    const { signInWithGoogle } = useAuth();
+    const navigate = useNavigate();
+    const { user, profile, signInWithGoogle, checkUser } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const navigate = useNavigate();
+
+    // If already logged in, redirect
+    useEffect(() => {
+        if (user && profile) {
+            const role = profile.role || 'student';
+            navigate(role === 'owner' ? '/owner-dashboard' : '/dashboard', { replace: true });
+        }
+    }, [user, profile, navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -28,29 +28,26 @@ const Login = () => {
         setError(null);
 
         try {
-            const { data, error: loginError } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
+            await account.createEmailPasswordSession(email, password);
 
-            if (loginError) throw loginError;
+            // Get user and profile
+            const authUser = await account.get();
+            const res = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTION.profiles,
+                [Query.equal('userId', authUser.$id)]
+            );
 
-            const user = data.user;
+            const role = res.documents[0]?.role || 'student';
 
-            const { data: profileData } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', user.id)
-                .single();
-
-            const role = profileData?.role || user?.user_metadata?.role || 'student';
+            // Refresh auth context
+            await checkUser();
 
             if (role === 'owner') {
                 navigate('/owner-dashboard', { replace: true });
             } else {
                 navigate('/dashboard', { replace: true });
             }
-
         } catch (err) {
             setError(err.message);
         } finally {
@@ -71,7 +68,6 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-white relative overflow-hidden">
-            {/* Background mesh */}
             <div className="absolute inset-0 bg-mesh pointer-events-none" />
 
             <div className="w-full max-w-md relative z-10">
@@ -97,14 +93,8 @@ const Login = () => {
                             <label className="block text-sm font-medium text-slate-600 mb-2">Email</label>
                             <div className="relative">
                                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                <input
-                                    type="email"
-                                    required
-                                    className="input-field pl-10"
-                                    placeholder="name@example.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
+                                <input type="email" required className="input-field pl-10" placeholder="name@example.com"
+                                    value={email} onChange={(e) => setEmail(e.target.value)} />
                             </div>
                         </div>
 
@@ -115,56 +105,32 @@ const Login = () => {
                             </div>
                             <div className="relative">
                                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                <input
-                                    type="password"
-                                    required
-                                    className="input-field pl-10"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
+                                <input type="password" required className="input-field pl-10" placeholder="••••••••"
+                                    value={password} onChange={(e) => setPassword(e.target.value)} />
                             </div>
                         </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full btn-primary flex items-center justify-center group py-3"
-                        >
+                        <button type="submit" disabled={loading} className="w-full btn-primary flex items-center justify-center group py-3">
                             {loading ? (
                                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                             ) : (
-                                <>
-                                    Log In
-                                    <ArrowRight size={16} className="ml-2 group-hover:translate-x-0.5 transition-transform" />
-                                </>
+                                <>Log In<ArrowRight size={16} className="ml-2 group-hover:translate-x-0.5 transition-transform" /></>
                             )}
                         </button>
                     </form>
 
                     <div className="mt-7">
                         <div className="relative flex items-center justify-center mb-5">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-slate-100"></div>
-                            </div>
+                            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
                             <span className="relative bg-white px-4 text-xs font-medium text-slate-400">or</span>
                         </div>
-                        <button
-                            onClick={handleGoogleLogin}
-                            type="button"
-                            className="w-full flex items-center justify-center space-x-3 py-3 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all font-semibold shadow-sm hover:shadow-md active:scale-[0.98]"
-                        >
-                            <GoogleIcon />
-                            <span className="text-sm font-bold text-slate-700">Continue with Google</span>
-                        </button>
+                        <GoogleButton onClick={handleGoogleLogin} loading={loading} />
                     </div>
                 </div>
 
                 <p className="mt-8 text-center text-slate-500 font-normal text-sm">
                     Don't have an account?{' '}
-                    <Link to="/signup" className="text-plum-900 hover:text-plum-900 font-semibold">
-                        Sign up
-                    </Link>
+                    <Link to="/signup" className="text-plum-900 hover:text-plum-900 font-semibold">Sign up</Link>
                 </p>
             </div>
         </div>

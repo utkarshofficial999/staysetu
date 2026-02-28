@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, MapPin, Home, IndianRupee, X, Check } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { databases, DATABASE_ID, COLLECTION, Query } from '../lib/appwrite';
 import PropertyCard from '../components/common/PropertyCard';
 
 const Listings = () => {
@@ -20,33 +20,52 @@ const Listings = () => {
 
     const fetchListings = async () => {
         setLoading(true);
-        let query = supabase
-            .from('listings')
-            .select('*')
-            .eq('status', 'approved');
 
-        if (searchQuery) {
-            query = query.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%`);
+        try {
+            // Build query filters
+            const queries = [
+                Query.equal('status', 'approved'),
+                Query.orderDesc('$createdAt'),
+                Query.limit(100),
+            ];
+
+            if (propertyType !== 'all') {
+                queries.push(Query.equal('type', propertyType));
+            }
+
+            const res = await databases.listDocuments(DATABASE_ID, COLLECTION.listings, queries);
+
+            let results = res.documents;
+
+            // Client-side filtering for search, price, amenities, gender
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                results = results.filter(l =>
+                    (l.title || '').toLowerCase().includes(q) ||
+                    (l.location || '').toLowerCase().includes(q)
+                );
+            }
+
+            results = results.filter(l => (l.price || 0) <= priceRange);
+
+            if (amenities.length > 0) {
+                results = results.filter(l => {
+                    const listingAmenities = typeof l.amenities === 'string' ? JSON.parse(l.amenities) : (l.amenities || []);
+                    return amenities.every(a => listingAmenities.includes(a));
+                });
+            }
+
+            if (genderFilter !== 'all') {
+                const genderValue = genderFilter === 'male' ? 'boys' : 'girls';
+                results = results.filter(l =>
+                    l.genderPreference === genderValue || l.genderPreference === 'any' || !l.genderPreference
+                );
+            }
+
+            setListings(results);
+        } catch (err) {
+            console.error('Fetch listings error:', err);
         }
-
-        if (propertyType !== 'all') {
-            query = query.eq('type', propertyType);
-        }
-
-        query = query.lte('price', priceRange);
-
-        if (amenities.length > 0) {
-            query = query.contains('amenities', amenities);
-        }
-
-        if (genderFilter !== 'all') {
-            const genderValue = genderFilter === 'male' ? 'boys' : 'girls';
-            query = query.or(`gender_preference.eq.${genderValue},gender_preference.eq.any`);
-        }
-
-        const { data, error } = await query.order('created_at', { ascending: false });
-
-        if (data) setListings(data);
         setLoading(false);
     };
 

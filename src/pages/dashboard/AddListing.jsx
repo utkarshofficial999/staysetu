@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
+import { databases, DATABASE_ID, COLLECTION, ID } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
 import {
     ArrowLeft, Upload, MapPin, IndianRupee, Home,
@@ -68,16 +68,24 @@ const AddListing = () => {
         try {
             if (!user) throw new Error('You must be logged in to add a listing');
 
-            const { data, error: insertError } = await supabase
-                .from('listings')
-                .insert([{
-                    ...formData,
-                    owner_id: user.id,
-                    price: parseFloat(formData.price),
-                    status: 'pending' // Requires admin approval before going live
-                }]);
+            const imageUrls = formData.images.filter(url => url.trim());
 
-            if (insertError) throw insertError;
+            await databases.createDocument(DATABASE_ID, COLLECTION.listings, ID.unique(), {
+                title: formData.title,
+                description: formData.description,
+                price: parseFloat(formData.price),
+                location: formData.location,
+                type: formData.type,
+                phoneNumber: formData.phone_number,
+                whatsappNumber: formData.whatsapp_number,
+                amenities: JSON.stringify(formData.amenities),
+                images: JSON.stringify(imageUrls),
+                ownerId: user.$id,
+                status: 'pending',
+                genderPreference: formData.gender_preference || 'any',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            });
 
             setSuccess(true);
             setTimeout(() => navigate('/dashboard'), 2000);

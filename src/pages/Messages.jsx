@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { databases, DATABASE_ID, COLLECTION, Query, ID, client } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
 import {
     Send, User as UserIcon, MessageSquare, Search,
@@ -41,23 +41,24 @@ const Messages = () => {
     const loadConversations = useCallback(async () => {
         if (!user) return;
         try {
-            // Get all messages I sent or received
-            const { data: msgs, error } = await supabase
-                .from('messages')
-                .select('sender_id, receiver_id, content, created_at')
-                .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
-                .order('created_at', { ascending: false });
+            const sentRes = await databases.listDocuments(
+                DATABASE_ID, COLLECTION.messages,
+                [Query.equal('senderId', user.$id), Query.orderDesc('$createdAt'), Query.limit(200)]
+            );
+            const recvRes = await databases.listDocuments(
+                DATABASE_ID, COLLECTION.messages,
+                [Query.equal('receiverId', user.$id), Query.orderDesc('$createdAt'), Query.limit(200)]
+            );
 
-            if (error) throw error;
+            const allMsgs = [...sentRes.documents, ...recvRes.documents]
+                .sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
 
-            // Build unique conversation partners
             const partnerIds = new Set();
-            msgs?.forEach(m => {
-                const otherId = m.sender_id === user.id ? m.receiver_id : m.sender_id;
+            allMsgs.forEach(m => {
+                const otherId = m.senderId === user.$id ? m.receiverId : m.senderId;
                 if (otherId) partnerIds.add(otherId);
             });
 
-            // If coming from property page, add the owner too
             if (targetUserId) partnerIds.add(targetUserId);
 
             if (partnerIds.size === 0) {
@@ -65,22 +66,20 @@ const Messages = () => {
                 return;
             }
 
-            // Fetch all partner profiles
-            const { data: profiles } = await supabase
-                .from('profiles')
-                .select('id, full_name, role')
-                .in('id', Array.from(partnerIds));
+            const profilesRes = await databases.listDocuments(
+                DATABASE_ID, COLLECTION.profiles,
+                [Query.equal('userId', Array.from(partnerIds)), Query.limit(50)]
+            );
 
-            const convList = (profiles || []).map(p => ({
-                id: p.id,
-                name: p.full_name || p.email || 'User',
+            const convList = profilesRes.documents.map(p => ({
+                id: p.userId,
+                name: p.fullName || 'User',
                 role: p.role || 'user',
-                lastMsg: msgs?.find(m => m.sender_id === p.id || m.receiver_id === p.id)?.content || ''
+                lastMsg: allMsgs.find(m => m.senderId === p.userId || m.receiverId === p.userId)?.content || ''
             }));
 
             setConversations(convList);
 
-            // Auto-open chat if coming from property page
             if (targetUserId) {
                 const partner = convList.find(c => c.id === targetUserId);
                 if (partner) setActiveChat(partner);
@@ -101,25 +100,23 @@ const Messages = () => {
         if (!activeChat || !user) return;
         setLoadingMsgs(true);
         try {
-            const { data, error } = await supabase
-                .from('messages')
-                .select('*')
-                .or(
-                    `and(sender_id.eq.${user.id},receiver_id.eq.${activeChat.id}),` +
-                    `and(sender_id.eq.${activeChat.id},receiver_id.eq.${user.id})`
-                )
-                .order('created_at', { ascending: true });
+            const sentRes = await databases.listDocuments(
+                DATABASE_ID, COLLECTION.messages,
+                [Query.equal('senderId', user.$id), Query.equal('receiverId', activeChat.id), Query.orderAsc('$createdAt'), Query.limit(200)]
+            );
+            const recvRes = await databases.listDocuments(
+                DATABASE_ID, COLLECTION.messages,
+                [Query.equal('senderId', activeChat.id), Query.equal('receiverId', user.$id), Query.orderAsc('$createdAt'), Query.limit(200)]
+            );
 
-            if (error) throw error;
-            setMessages(data || []);
+            const all = [...sentRes.documents, ...recvRes.documents]
+                .sort((a, b) => new Date(a.$createdAt) - new Date(b.$createdAt));
+            setMessages(all);
 
-            // Mark received messages as read
-            await supabase
-                .from('messages')
-                .update({ is_read: true })
-                .eq('receiver_id', user.id)
-                .eq('sender_id', activeChat.id)
-                .eq('is_read', false);
+            // Mark unread as read
+            for (const m of recvRes.documents.filter(m => !m.isRead)) {
+                try { await databases.updateDocument(DATABASE_ID, COLLECTION.messages, m.$id, { isRead: true }); } catch (e) { }
+            }
         } catch (err) {
             console.error('Load messages error:', err);
         } finally {
@@ -131,54 +128,12 @@ const Messages = () => {
         loadMessages();
     }, [loadMessages]);
 
-    // ─── Realtime subscription ───────────────────────────────────────────────
+    // ─── Poll for new messages ──────────────────────────────────────────────
     useEffect(() => {
         if (!activeChat || !user) return;
-
-        // Remove old channel if any
-        if (channelRef.current) {
-            supabase.removeChannel(channelRef.current);
-        }
-
-        const channelName = `chat:${[user.id, activeChat.id].sort().join('_')}`;
-
-        channelRef.current = supabase
-            .channel(channelName)
-            .on('postgres_changes', {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'messages',
-            }, (payload) => {
-                const msg = payload.new;
-                // Only add if it belongs to this conversation
-                const belongsHere =
-                    (msg.sender_id === user.id && msg.receiver_id === activeChat.id) ||
-                    (msg.sender_id === activeChat.id && msg.receiver_id === user.id);
-
-                if (belongsHere) {
-                    setMessages(prev => {
-                        // Avoid duplicates (optimistic update already added it)
-                        if (prev.find(m => m.id === msg.id)) return prev;
-                        return [...prev, msg];
-                    });
-
-                    // Update conversations last message
-                    setConversations(prev =>
-                        prev.map(c =>
-                            c.id === activeChat.id ? { ...c, lastMsg: msg.content } : c
-                        )
-                    );
-                }
-            })
-            .subscribe();
-
-        return () => {
-            if (channelRef.current) {
-                supabase.removeChannel(channelRef.current);
-                channelRef.current = null;
-            }
-        };
-    }, [activeChat, user]);
+        const poll = setInterval(loadMessages, 5000);
+        return () => clearInterval(poll);
+    }, [activeChat, user, loadMessages]);
 
     // ─── Send message ────────────────────────────────────────────────────────
     const handleSend = async (e) => {
@@ -189,42 +144,37 @@ const Messages = () => {
         setNewMessage('');
         setSending(true);
 
-        // Optimistic update
         const tempMsg = {
-            id: `temp-${Date.now()}`,
-            sender_id: user.id,
-            receiver_id: activeChat.id,
+            $id: `temp-${Date.now()}`,
+            senderId: user.$id,
+            receiverId: activeChat.id,
             content,
-            created_at: new Date().toISOString(),
-            is_read: false,
+            $createdAt: new Date().toISOString(),
+            isRead: false,
         };
         setMessages(prev => [...prev, tempMsg]);
 
         try {
-            const { data, error } = await supabase
-                .from('messages')
-                .insert([{
-                    sender_id: user.id,
-                    receiver_id: activeChat.id,
+            const data = await databases.createDocument(
+                DATABASE_ID, COLLECTION.messages, ID.unique(),
+                {
+                    senderId: user.$id,
+                    receiverId: activeChat.id,
                     content,
-                    listing_id: listingId || null,
-                    is_read: false,
-                }])
-                .select()
-                .single();
+                    listingId: listingId || null,
+                    isRead: false,
+                    createdAt: new Date().toISOString(),
+                }
+            );
 
-            if (error) throw error;
-
-            // Replace temp message with real one
-            setMessages(prev => prev.map(m => m.id === tempMsg.id ? data : m));
+            setMessages(prev => prev.map(m => m.$id === tempMsg.$id ? data : m));
             setConversations(prev =>
                 prev.map(c => c.id === activeChat.id ? { ...c, lastMsg: content } : c)
             );
         } catch (err) {
             console.error('Send error:', err);
-            // Remove temp message on error
-            setMessages(prev => prev.filter(m => m.id !== tempMsg.id));
-            setNewMessage(content); // Restore
+            setMessages(prev => prev.filter(m => m.$id !== tempMsg.$id));
+            setNewMessage(content);
         } finally {
             setSending(false);
             inputRef.current?.focus();
@@ -234,27 +184,24 @@ const Messages = () => {
     // ─── Start new conversation (when coming from property page) ────────────
     useEffect(() => {
         if (!targetUserId || !user || loadingConvs) return;
-        // Check if already in list
         const exists = conversations.find(c => c.id === targetUserId);
         if (!exists) {
-            // Fetch the owner profile and add to list
-            supabase
-                .from('profiles')
-                .select('id, full_name, role')
-                .eq('id', targetUserId)
-                .single()
-                .then(({ data }) => {
-                    if (data) {
-                        const partner = {
-                            id: data.id,
-                            name: data.full_name || 'Owner',
-                            role: data.role || 'owner',
-                            lastMsg: ''
-                        };
-                        setConversations(prev => [partner, ...prev]);
-                        setActiveChat(partner);
-                    }
-                });
+            databases.listDocuments(
+                DATABASE_ID, COLLECTION.profiles,
+                [Query.equal('userId', targetUserId)]
+            ).then(res => {
+                if (res.documents.length > 0) {
+                    const p = res.documents[0];
+                    const partner = {
+                        id: p.userId,
+                        name: p.fullName || 'Owner',
+                        role: p.role || 'owner',
+                        lastMsg: ''
+                    };
+                    setConversations(prev => [partner, ...prev]);
+                    setActiveChat(partner);
+                }
+            });
         }
     }, [targetUserId, user, loadingConvs, conversations]);
 
@@ -409,13 +356,13 @@ const Messages = () => {
                                         </div>
                                     ) : (
                                         messages.map((msg, idx) => {
-                                            const isMine = msg.sender_id === user.id;
+                                            const isMine = msg.senderId === user.$id;
                                             const showTimestamp = idx === messages.length - 1 ||
-                                                messages[idx + 1]?.sender_id !== msg.sender_id;
+                                                messages[idx + 1]?.senderId !== msg.senderId;
 
                                             return (
                                                 <div
-                                                    key={msg.id || idx}
+                                                    key={msg.$id || idx}
                                                     className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}
                                                 >
                                                     <div className={`max-w-[70%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${isMine
@@ -427,10 +374,10 @@ const Messages = () => {
                                                     {showTimestamp && (
                                                         <div className={`flex items-center mt-1 ${isMine ? 'flex-row-reverse' : ''}`}>
                                                             <span className="text-[10px] font-semibold text-slate-400 mx-1">
-                                                                {formatTime(msg.created_at)}
+                                                                {formatTime(msg.$createdAt || msg.createdAt)}
                                                             </span>
                                                             {isMine && (
-                                                                <CheckCheck size={12} className={msg.is_read ? 'text-plum-400' : 'text-slate-300'} />
+                                                                <CheckCheck size={12} className={msg.isRead ? 'text-plum-400' : 'text-slate-300'} />
                                                             )}
                                                         </div>
                                                     )}

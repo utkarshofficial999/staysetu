@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { supabase } from '../../lib/supabase';
+import { databases, storage, DATABASE_ID, COLLECTION, BUCKET_ID, Query, ID, parseJsonField } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -54,38 +54,38 @@ const OwnerDashboard = () => {
     };
 
     const fetchUserListings = async () => {
-        const { data, error } = await supabase
-            .from('listings')
-            .select('*')
-            .eq('owner_id', user.id)
-            .order('created_at', { ascending: false });
-
-        if (data) {
+        try {
+            const res = await databases.listDocuments(DATABASE_ID, COLLECTION.listings, [
+                Query.equal('ownerId', user.$id),
+                Query.orderDesc('$createdAt'),
+                Query.limit(100),
+            ]);
+            const data = res.documents;
             setListings(data);
             const total = data.length;
             const approved = data.filter(l => l.status === 'approved').length;
             const pending = total - approved;
-            const views = data.reduce((acc, curr) => acc + (curr.views_count || 0), 0);
+            const views = data.reduce((acc, curr) => acc + (curr.viewsCount || 0), 0);
             setStats(prev => ({ ...prev, total, approved, pending, views }));
+        } catch (err) {
+            console.error('Fetch error:', err);
         }
     };
 
 
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this listing? This cannot be undone.')) {
-            const { error } = await supabase
-                .from('listings')
-                .delete()
-                .eq('id', id);
-
-            if (!error) {
-                setListings(listings.filter(l => l.id !== id));
+            try {
+                await databases.deleteDocument(DATABASE_ID, COLLECTION.listings, id);
+                setListings(listings.filter(l => l.$id !== id));
                 setStats(prev => ({
                     ...prev,
                     total: prev.total - 1,
-                    approved: prev.approved - (listings.find(l => l.id === id)?.status === 'approved' ? 1 : 0),
-                    pending: prev.pending - (listings.find(l => l.id === id)?.status !== 'approved' ? 1 : 0)
+                    approved: prev.approved - (listings.find(l => l.$id === id)?.status === 'approved' ? 1 : 0),
+                    pending: prev.pending - (listings.find(l => l.$id === id)?.status !== 'approved' ? 1 : 0)
                 }));
+            } catch (err) {
+                console.error('Delete error:', err);
             }
         }
     };
@@ -120,28 +120,21 @@ const OwnerDashboard = () => {
         const newUploads = [];
 
         for (const file of toUpload) {
-            const ext = file.name.split('.').pop();
-            const fileName = `${user.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-
-            const { data, error } = await supabase.storage
-                .from('listing')
-                .upload(fileName, file, { upsert: true });
-
-            if (error) {
-                console.error('Upload error:', error.message);
-                continue;
+            try {
+                const result = await storage.createFile(BUCKET_ID, ID.unique(), file);
+                // Construct the file view URL manually for reliability
+                const endpoint = 'https://sgp.cloud.appwrite.io/v1';
+                const projectId = '69a2731e00047b3b01e9';
+                const url = `${endpoint}/storage/buckets/${BUCKET_ID}/files/${result.$id}/view?project=${projectId}`;
+                newUploads.push({ url, name: file.name, fileId: result.$id });
+            } catch (err) {
+                console.error('Upload error:', err);
+                alert(`Failed to upload ${file.name}: ${err.message}`);
             }
-
-            const { data: { publicUrl } } = supabase.storage
-                .from('listing')
-                .getPublicUrl(fileName);
-
-            newUploads.push({ url: publicUrl, name: file.name });
         }
 
         setUploadedImages(prev => [...prev, ...newUploads]);
         setUploadingImages(false);
-        // Reset file input
         e.target.value = '';
     };
 
@@ -159,23 +152,25 @@ const OwnerDashboard = () => {
 
             const imageUrls = uploadedImages.map(img => img.url);
 
-            const { error: insertError } = await supabase
-                .from('listings')
-                .insert([{
-                    title: formData.title,
-                    description: formData.description,
-                    price: parseFloat(formData.price),
-                    location: formData.location,
-                    type: formData.type,
-                    phone_number: formData.phone_number,
-                    whatsapp_number: formData.whatsapp_number,
-                    amenities: formData.amenities,
-                    images: imageUrls.length > 0 ? imageUrls : null,
-                    owner_id: user.id,
-                    status: 'pending'
-                }]);
-
-            if (insertError) throw insertError;
+            await databases.createDocument(DATABASE_ID, COLLECTION.listings, ID.unique(), {
+                title: formData.title,
+                description: formData.description,
+                price: parseFloat(formData.price),
+                location: formData.location,
+                type: formData.type,
+                phoneNumber: formData.phone_number,
+                whatsappNumber: formData.whatsapp_number,
+                amenities: JSON.stringify(formData.amenities),
+                images: JSON.stringify(imageUrls.length > 0 ? imageUrls : []),
+                ownerId: user.$id,
+                status: 'pending',
+                genderPreference: formData.gender_preference || 'any',
+                occupancy: formData.occupancy || 'single',
+                deposit: formData.deposit || null,
+                availableFrom: formData.available_from || null,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            });
 
             setFormSuccess(true);
             setFormData({
@@ -338,12 +333,12 @@ const OwnerDashboard = () => {
                                     </thead>
                                     <tbody className="divide-y divide-slate-50">
                                         {listings.length > 0 ? listings.map((listing) => (
-                                            <tr key={listing.id} className="hover:bg-[#0a080a]/50 transition-colors">
+                                            <tr key={listing.$id} className="hover:bg-[#0a080a]/50 transition-colors">
                                                 <td className="px-8 py-5">
                                                     <div className="flex items-center">
                                                         <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 mr-4 shrink-0 border border-white/5 shadow-sm">
                                                             <img
-                                                                src={listing.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
+                                                                src={parseJsonField(listing.images)?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
                                                                 alt={listing.title}
                                                                 className="w-full h-full object-cover"
                                                             />
@@ -375,27 +370,27 @@ const OwnerDashboard = () => {
                                                 <td className="px-6 py-5">
                                                     <div className="flex items-center gap-1 text-slate-300 font-bold text-sm">
                                                         <Eye size={14} className="text-slate-400" />
-                                                        {listing.views_count || 0}
+                                                        {listing.viewsCount || 0}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <div className="flex items-center gap-2">
                                                         <Link
-                                                            to={`/property/${listing.id}`}
+                                                            to={`/property/${listing.$id}`}
                                                             className="w-9 h-9 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-400 rounded-lg flex items-center justify-center transition-colors"
                                                             title="View"
                                                         >
                                                             <Eye size={16} />
                                                         </Link>
                                                         <Link
-                                                            to={`/dashboard/edit-listing/${listing.id}`}
+                                                            to={`/dashboard/edit-listing/${listing.$id}`}
                                                             className="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-plum-950 rounded-lg flex items-center justify-center transition-colors"
                                                             title="Edit"
                                                         >
                                                             <Edit2 size={16} />
                                                         </Link>
                                                         <button
-                                                            onClick={() => handleDelete(listing.id)}
+                                                            onClick={() => handleDelete(listing.$id)}
                                                             className="w-9 h-9 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-colors"
                                                             title="Delete"
                                                         >
@@ -427,11 +422,11 @@ const OwnerDashboard = () => {
                             {/* Mobile Cards */}
                             <div className="md:hidden p-4 space-y-2">
                                 {listings.length > 0 ? listings.map((listing) => (
-                                    <div key={listing.id} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                                    <div key={listing.$id} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
                                         <div className="flex items-center gap-3 mb-3">
                                             <div className="w-[4.5rem] h-[4.5rem] rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-white/10">
                                                 <img
-                                                    src={listing.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
+                                                    src={parseJsonField(listing.images)?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
                                                     alt={listing.title}
                                                     className="w-full h-full object-cover"
                                                 />
@@ -452,9 +447,9 @@ const OwnerDashboard = () => {
                                             </div>
                                         </div>
                                         <div className="flex gap-2">
-                                            <Link to={`/property/${listing.id}`} className="flex-1 bg-white text-center py-2 rounded-lg text-sm font-bold text-slate-500 border border-slate-200">View</Link>
-                                            <Link to={`/dashboard/edit-listing/${listing.id}`} className="flex-1 bg-blue-50 text-center py-2 rounded-lg text-sm font-bold text-blue-600">Edit</Link>
-                                            <button onClick={() => handleDelete(listing.id)} className="bg-red-50 px-4 py-2 rounded-lg text-sm font-bold text-red-500">
+                                            <Link to={`/property/${listing.$id}`} className="flex-1 bg-white text-center py-2 rounded-lg text-sm font-bold text-slate-500 border border-slate-200">View</Link>
+                                            <Link to={`/dashboard/edit-listing/${listing.$id}`} className="flex-1 bg-blue-50 text-center py-2 rounded-lg text-sm font-bold text-blue-600">Edit</Link>
+                                            <button onClick={() => handleDelete(listing.$id)} className="bg-red-50 px-4 py-2 rounded-lg text-sm font-bold text-red-500">
                                                 <Trash2 size={14} />
                                             </button>
                                         </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Home, ArrowRight, Sparkles, MapPin, CheckCircle2, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../../lib/appwrite';
 
 const Hero = ({ featuredProp }) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -29,25 +29,38 @@ const Hero = ({ featuredProp }) => {
             const fetchFeaturedData = async () => {
                 try {
                     // Try to get Admin-tagged "Modern Stays" first
-                    let { data } = await supabase
-                        .from('listings')
-                        .select('*')
-                        .eq('status', 'approved')
-                        .eq('featured', true)
-                        .order('created_at', { ascending: false })
-                        .limit(1);
+                    const res = await databases.listDocuments(
+                        DATABASE_ID,
+                        COLLECTION.listings,
+                        [
+                            Query.equal('status', 'approved'),
+                            Query.equal('featured', true),
+                            Query.orderDesc('$createdAt'),
+                            Query.limit(1),
+                        ]
+                    );
 
-                    if (data && data.length > 0) {
-                        setFeaturedListing(data[0]);
+                    if (res.documents.length > 0) {
+                        const data = { ...res.documents[0] };
+                        data.images = parseJsonField(data.images);
+                        data.amenities = parseJsonField(data.amenities);
+                        setFeaturedListing(data);
                     } else {
-                        // Fallback to any latest approved listing
-                        const { data: latest } = await supabase
-                            .from('listings')
-                            .select('*')
-                            .eq('status', 'approved')
-                            .order('created_at', { ascending: false })
-                            .limit(1);
-                        if (latest && latest.length > 0) setFeaturedListing(latest[0]);
+                        const latestRes = await databases.listDocuments(
+                            DATABASE_ID,
+                            COLLECTION.listings,
+                            [
+                                Query.equal('status', 'approved'),
+                                Query.orderDesc('$createdAt'),
+                                Query.limit(1),
+                            ]
+                        );
+                        if (latestRes.documents.length > 0) {
+                            const data = { ...latestRes.documents[0] };
+                            data.images = parseJsonField(data.images);
+                            data.amenities = parseJsonField(data.amenities);
+                            setFeaturedListing(data);
+                        }
                     }
                 } catch (err) {
                     console.error('Fetch error:', err);
@@ -90,6 +103,10 @@ const Hero = ({ featuredProp }) => {
             }
         }
     };
+
+    const displayAmenities = parseJsonField(featuredListing?.amenities).length > 0
+        ? parseJsonField(featuredListing?.amenities).slice(0, 3)
+        : ['WiFi', 'AC', 'Power'];
 
     return (
         <div className="relative min-h-[95vh] flex items-center overflow-hidden bg-white">
@@ -156,7 +173,7 @@ const Hero = ({ featuredProp }) => {
                         </motion.div>
                     </motion.div>
 
-                    <div className="lg:col-span-5 relative mt-20 lg:mt-0 flex justify-center lg:block cursor-pointer" onClick={() => featuredListing && navigate(`/property/${featuredListing.id}`)}>
+                    <div className="lg:col-span-5 relative mt-20 lg:mt-0 flex justify-center lg:block cursor-pointer" onClick={() => featuredListing && navigate(`/property/${featuredListing.$id || featuredListing.id}`)}>
                         <motion.div
                             initial={{ x: 60, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
@@ -167,7 +184,7 @@ const Hero = ({ featuredProp }) => {
                             <div className="relative z-10 p-4 md:p-5 bg-white border-2 border-slate-900 rounded-[2rem] md:rounded-[2.5rem] shadow-[12px_12px_0px_#0f172a] md:shadow-[20px_20px_0px_#0f172a] transform rotate-1 md:rotate-3 scale-95 md:scale-110">
                                 <div className="aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 border-2 border-slate-900 relative bg-slate-100">
                                     <img
-                                        src={featuredListing?.images?.[0] || "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80"}
+                                        src={parseJsonField(featuredListing?.images)[0] || "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80"}
                                         alt="Preview"
                                         className="w-full h-full object-cover"
                                     />
@@ -181,14 +198,14 @@ const Hero = ({ featuredProp }) => {
                                             {featuredListing?.title || 'Modern Stay'}
                                         </h3>
                                         <div className="text-plum-600 font-bold shrink-0">
-                                            ₹{(featuredListing?.price || 8500).toLocaleString()}/mo
+                                            ₹{(Number(featuredListing?.price) || 8500).toLocaleString()}/mo
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-1 text-slate-400 text-xs font-medium mb-4">
                                         <MapPin size={12} /> {featuredListing?.location || 'Near Galgotias University'}
                                     </div>
                                     <div className="flex flex-wrap gap-2">
-                                        {(featuredListing?.amenities?.slice(0, 3) || ['WiFi', 'AC', 'Power']).map(tag => (
+                                        {displayAmenities.map(tag => (
                                             <span key={tag} className="px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-500">{tag}</span>
                                         ))}
                                     </div>

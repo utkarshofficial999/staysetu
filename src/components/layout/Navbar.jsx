@@ -1,45 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogOut, LayoutDashboard, Search, Users, ShieldCheck, ChevronDown } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
     const [scrolled, setScrolled] = useState(false);
-    const [user, setUser] = useState(null);
-    const [profile, setProfile] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const { user, profile, signOut } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-            if (session?.user) fetchProfile(session.user.id);
-        });
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            setScrolled(currentScrollY > 10);
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-            if (session?.user) fetchProfile(session.user.id);
-            else setProfile(null);
-        });
-
-        const handleScroll = () => setScrolled(window.scrollY > 10);
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            subscription.unsubscribe();
-            window.removeEventListener('scroll', handleScroll);
+            // Hide on scroll down, show on scroll up
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                setIsVisible(false);
+            } else {
+                setIsVisible(true);
+            }
+            setLastScrollY(currentScrollY);
         };
-    }, []);
 
-    const fetchProfile = async (userId) => {
-        const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
-        if (data) setProfile(data);
-    };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [lastScrollY]);
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
+        await signOut();
         setIsOpen(false);
         setDropdownOpen(false);
         navigate('/');
@@ -64,10 +58,10 @@ const Navbar = () => {
     return (
         <>
             <nav
-                className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out px-4 py-2 ${scrolled
-                    ? 'top-4 w-[95%] max-w-7xl bg-white/90 rounded-[2rem] border border-slate-200/60 shadow-[0_12px_40px_rgba(58,31,61,0.08)]'
-                    : 'top-0 w-full bg-white/60 backdrop-blur-xl border-b border-slate-100'
-                    }`}
+                className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 py-3 ${scrolled
+                    ? 'bg-white/80 backdrop-blur-2xl border-b border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]'
+                    : 'bg-white/60 backdrop-blur-xl border-b border-slate-100'
+                    } ${isVisible ? 'translate-y-0' : '-translate-y-full shadow-none'}`}
             >
                 <div className="max-w-7xl mx-auto px-2">
                     <div className="flex justify-between h-14 items-center">
@@ -113,11 +107,11 @@ const Navbar = () => {
                                         className="flex items-center gap-3 bg-slate-100/60 hover:bg-slate-200/60 border border-slate-200/60 pl-2 pr-4 py-1.5 rounded-full transition-all duration-300 group"
                                     >
                                         <div className="w-8 h-8 rounded-full bg-[#ffffff] flex items-center justify-center text-black text-xs font-black shadow-[0_0_10px_rgba(255,255,255,0.4)]">
-                                            {(profile?.full_name || 'U').charAt(0).toUpperCase()}
+                                            {(profile?.fullName || profile?.name || 'U').charAt(0).toUpperCase()}
                                         </div>
                                         <span className="text-[13px] font-black text-black uppercase tracking-wider"
                                             style={{ textShadow: 'none' }}>
-                                            {profile?.full_name?.split(' ')[0] || 'User'}
+                                            {(profile?.fullName || profile?.name || 'User').split(' ')[0]}
                                         </span>
                                         <ChevronDown size={14} className={`text-black transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : ''}`}
                                             style={{ filter: 'none' }} />
@@ -130,8 +124,8 @@ const Navbar = () => {
                                             <div className="absolute right-0 mt-3 w-56 bg-white border border-slate-200 rounded-[2rem] shadow-[0_12px_50px_rgba(0,0,0,0.15)] z-50 py-3 animate-fade-in origin-top-right overflow-hidden">
                                                 {/* User info */}
                                                 <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
-                                                    <p className="text-sm font-black text-slate-900 truncate uppercase tracking-tighter">{profile?.full_name || user.email}</p>
-                                                    <p className="text-[10px] text-slate-500 truncate mt-0.5 font-bold uppercase">{user.email}</p>
+                                                    <p className="text-sm font-black text-slate-900 truncate uppercase tracking-tighter">{profile?.fullName || profile?.name || user?.email}</p>
+                                                    <p className="text-[10px] text-slate-500 truncate mt-0.5 font-bold uppercase">{user?.email}</p>
                                                     <span className="inline-flex mt-2 px-2 py-0.5 rounded bg-[#ffffff] text-black text-[9px] font-black uppercase tracking-widest">
                                                         {roleBadge.label}
                                                     </span>
@@ -201,10 +195,10 @@ const Navbar = () => {
                                         {/* User info card */}
                                         <div className="flex items-center gap-3 px-4 py-4 bg-slate-50 rounded-xl mb-3 border border-slate-200">
                                             <div className="w-10 h-10 rounded-full bg-[#ffffff] flex items-center justify-center text-black text-sm font-black border border-slate-200 shadow-sm">
-                                                {(profile?.full_name || 'U').charAt(0).toUpperCase()}
+                                                {(profile?.fullName || profile?.name || 'U').charAt(0).toUpperCase()}
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <p className="text-sm font-black text-slate-900 truncate">{profile?.full_name || 'User'}</p>
+                                                <p className="text-sm font-black text-slate-900 truncate">{profile?.fullName || profile?.name || 'User'}</p>
                                                 <span className={`text-[10px] font-black uppercase tracking-wider text-slate-500`}>{roleBadge.label}</span>
                                             </div>
                                         </div>
