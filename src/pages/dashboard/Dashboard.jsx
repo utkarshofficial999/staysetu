@@ -5,7 +5,7 @@ import StudentDashboard from './StudentDashboard';
 import OwnerDashboard from './OwnerDashboard';
 
 // Superadmin whitelist
-const ADMIN_EMAILS = ['sudhansu@gmail.com', 'yutkarsh669@gmail.com'];
+const ADMIN_EMAILS = ['sudhansu@gmail.com', 'yutkarsh669@gmail.com', 'sudhanshupandey7393@gmail.com'];
 
 const Dashboard = () => {
     const { user, profile, loading } = useAuth();

@@ -66,17 +66,10 @@ const Navbar = () => {
                 <div className="max-w-7xl mx-auto px-2">
                     <div className="flex justify-between h-14 items-center">
 
-                        {/* Logo */}
                         <Link to="/" className="flex items-center gap-3 group" onClick={() => setIsOpen(false)}>
-                            <div className="w-10 h-10 flex items-center justify-center rounded-xl overflow-hidden shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                <img src="/logo.png" alt="StaySetu Logo" className="w-full h-full object-cover" />
+                            <div className="w-32 h-14 flex items-center justify-center rounded-xl overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-300">
+                                <img src="/logo.png?v=4" alt="StaySetu Logo" className="w-full h-full object-contain" />
                             </div>
-                            <span className="text-2xl font-black tracking-tighter text-black"
-                                style={{
-                                    fontFamily: 'Bungee, cursive'
-                                }}>
-                                StaySetu
-                            </span>
                         </Link>
 
                         {/* Desktop Nav */}

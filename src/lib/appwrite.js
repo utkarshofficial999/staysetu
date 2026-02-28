@@ -2,9 +2,16 @@ import { Client, Account, Databases, Storage, ID, Query } from 'appwrite';
 
 const client = new Client();
 
+const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT || 'https://sgp.cloud.appwrite.io/v1';
+const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID || '69a2731e00047b3b01e9';
+
+if (!import.meta.env.VITE_APPWRITE_PROJECT_ID) {
+    console.warn('Appwrite Project ID is missing from environment variables. Using default fallback.');
+}
+
 client
-    .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT || 'https://sgp.cloud.appwrite.io/v1')
-    .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID || '69a2731e00047b3b01e9');
+    .setEndpoint(endpoint)
+    .setProject(projectId);
 
 export const account = new Account(client);
 export const databases = new Databases(client);

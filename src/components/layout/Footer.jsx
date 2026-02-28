@@ -22,11 +22,10 @@ const Footer = () => {
 
                     {/* Brand */}
                     <div className="col-span-1 lg:col-span-1">
-                        <Link to="/" className="flex items-center space-x-2.5 mb-6 group">
-                            <div className="w-9 h-9 flex items-center justify-center rounded-xl overflow-hidden shadow-md group-hover:scale-110 transition-transform">
-                                <img src="/logo.png" alt="StaySetu Logo" className="w-full h-full object-cover" />
+                        <Link to="/" className="flex items-center mb-6 group">
+                            <div className="w-36 h-16 flex items-center justify-center rounded-xl overflow-hidden group-hover:rotate-1 transition-transform">
+                                <img src="/logo.png?v=4" alt="StaySetu Logo" className="w-full h-full object-contain" />
                             </div>
-                            <span className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>StaySetu</span>
                         </Link>
                         <p className="text-slate-500 mb-8 leading-relaxed text-sm font-normal">
                             Your bridge to better living. We connect students with safe, verified, and affordable housing options.
@@ -151,7 +150,7 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-        </footer>
+        </footer >
     );
 };
 
