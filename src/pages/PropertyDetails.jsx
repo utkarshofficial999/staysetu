@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
+import PropertyMap from '../components/common/PropertyMap';
 
 const PropertyDetails = () => {
     const { id } = useParams();
@@ -208,7 +209,7 @@ const PropertyDetails = () => {
                                 </p>
                             </div>
 
-                            <div>
+                            <div className="mb-10">
                                 <h3 className="text-sm font-semibold text-slate-900 mb-4 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>Amenities</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                     {property.amenities?.map((amenity) => {
@@ -224,6 +225,21 @@ const PropertyDetails = () => {
                                         );
                                     })}
                                 </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-sm font-semibold text-slate-900 mb-4 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>Location</h3>
+                                {property.latitude && property.longitude ? (
+                                    <PropertyMap
+                                        position={{ lat: parseFloat(property.latitude), lng: parseFloat(property.longitude) }}
+                                    />
+                                ) : (
+                                    <div className="p-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-center">
+                                        <MapPin className="text-slate-300 mx-auto mb-3" size={32} />
+                                        <p className="text-slate-500 text-sm font-medium">Exact map coordinates not provided by owner</p>
+                                        <p className="text-slate-400 text-xs mt-1">Address: {property.location}</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

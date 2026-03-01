@@ -4,8 +4,9 @@ import { databases, DATABASE_ID, COLLECTION } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
 import {
     ArrowLeft, MapPin, IndianRupee, Save, X, Plus,
-    AlertCircle, CheckCircle2
+    AlertCircle, CheckCircle2, Locate, Search
 } from 'lucide-react';
+import PropertyMap from '../../components/common/PropertyMap';
 
 const EditListing = () => {
     const { id } = useParams();
@@ -21,6 +22,8 @@ const EditListing = () => {
         description: '',
         price: '',
         location: '',
+        latitude: '',
+        longitude: '',
         type: 'PG',
         phone_number: '',
         whatsapp_number: '',
@@ -42,6 +45,8 @@ const EditListing = () => {
                         description: data.description || '',
                         price: data.price ? data.price.toString() : '',
                         location: data.location || '',
+                        latitude: data.latitude || '',
+                        longitude: data.longitude || '',
                         type: data.type || 'PG',
                         phone_number: data.phoneNumber || '',
                         whatsapp_number: data.whatsappNumber || '',
@@ -61,6 +66,79 @@ const EditListing = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleLocationChange = (lat, lng) => {
+        setFormData(prev => ({
+            ...prev,
+            latitude: lat.toString(),
+            longitude: lng.toString()
+        }));
+    };
+
+    const useCurrentLocation = () => {
+        if (!navigator.geolocation) {
+            setError('Geolocation is not supported by your browser');
+            return;
+        }
+
+        setSaving(true);
+        setError(null);
+
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const { latitude, longitude } = position.coords;
+                handleLocationChange(latitude, longitude);
+
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                    const data = await response.json();
+                    if (data && data.display_name) {
+                        setFormData(prev => ({
+                            ...prev,
+                            location: data.display_name
+                        }));
+                    }
+                } catch (err) {
+                    console.error('Reverse geocoding error:', err);
+                } finally {
+                    setSaving(false);
+                }
+            },
+            (err) => {
+                setError('Unable to retrieve your location. Please ensure location services are enabled.');
+                console.error(err);
+                setSaving(false);
+            }
+        );
+    };
+
+    const searchAddressOnMap = async () => {
+        if (!formData.location || formData.location.trim().length < 5) {
+            setError('Please enter a more specific address to search on the map.');
+            return;
+        }
+
+        setSaving(true);
+        setError(null);
+
+        try {
+            const query = encodeURIComponent(formData.location);
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                const { lat, lon } = data[0];
+                handleLocationChange(parseFloat(lat), parseFloat(lon));
+            } else {
+                setError('Could not find this address on the map. Please pin it manually.');
+            }
+        } catch (err) {
+            setError('Error searching address. Please try pinning manually.');
+            console.error(err);
+        } finally {
+            setSaving(false);
+        }
     };
 
     const toggleAmenity = (amenity) => {
@@ -104,6 +182,8 @@ const EditListing = () => {
                 description: formData.description,
                 price: parseFloat(formData.price),
                 location: formData.location,
+                latitude: formData.latitude,
+                longitude: formData.longitude,
                 type: formData.type,
                 phoneNumber: formData.phone_number,
                 whatsappNumber: formData.whatsapp_number,
@@ -206,19 +286,54 @@ const EditListing = () => {
                                     </div>
                                 </div>
                                 <div className="md:col-span-2">
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Full Location / Address</label>
-                                    <div className="relative">
-                                        <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                                        <input
-                                            type="text"
-                                            name="location"
-                                            required
-                                            placeholder="e.g. Plot 12, Alpha 2, Greater Noida"
-                                            className="input-field pl-10"
-                                            value={formData.location}
-                                            onChange={handleChange}
-                                        />
+                                    <div className="flex gap-2 mb-6">
+                                        <div className="relative flex-1">
+                                            <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                            <input
+                                                type="text"
+                                                name="location"
+                                                required
+                                                placeholder="e.g. Plot 12, Alpha 2, Greater Noida"
+                                                className="input-field pl-10"
+                                                value={formData.location}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={searchAddressOnMap}
+                                            className="px-6 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 shrink-0"
+                                        >
+                                            <Search size={14} />
+                                            <span className="hidden sm:inline">Find on Map</span>
+                                        </button>
                                     </div>
+
+                                    <div className="flex items-center justify-between mb-3">
+                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest">Pin Precise Location on Map</label>
+                                        <button
+                                            type="button"
+                                            onClick={useCurrentLocation}
+                                            className="flex items-center gap-1.5 text-xs font-black text-plum-600 hover:text-plum-700 transition-colors uppercase tracking-widest"
+                                        >
+                                            <Locate size={14} />
+                                            Use Live Location
+                                        </button>
+                                    </div>
+                                    <PropertyMap
+                                        isPicker={true}
+                                        position={formData.latitude && formData.longitude ? { lat: parseFloat(formData.latitude), lng: parseFloat(formData.longitude) } : null}
+                                        onLocationChange={handleLocationChange}
+                                    />
+                                    {(formData.latitude && formData.longitude) ? (
+                                        <p className="mt-2 text-[11px] text-emerald-600 font-bold flex items-center">
+                                            <Locate size={10} className="mr-1" /> Coordinates pinned: {parseFloat(formData.latitude).toFixed(4)}, {parseFloat(formData.longitude).toFixed(4)}
+                                        </p>
+                                    ) : (
+                                        <p className="mt-2 text-[11px] text-amber-600 font-bold flex items-center">
+                                            <AlertCircle size={10} className="mr-1" /> Please click on the map to pin the exact property location
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="md:col-span-2">
                                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Description</label>

@@ -191,6 +191,8 @@ async function setupListings() {
     await createStringAttr(col, 'description', 5000, false);
     await createFloatAttr(col, 'price', true);
     await createStringAttr(col, 'location', 500, true);
+    await createStringAttr(col, 'latitude', 50, false);
+    await createStringAttr(col, 'longitude', 50, false);
     await createStringAttr(col, 'type', 20, true, 'PG');
     await createStringAttr(col, 'phoneNumber', 20, false);
     await createStringAttr(col, 'whatsappNumber', 20, false);
