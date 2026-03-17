@@ -189,7 +189,7 @@ const Hero = ({ featuredProp }) => {
                                         className="w-full h-full object-cover"
                                     />
                                     <div className="absolute top-4 left-4 bg-white border-2 border-slate-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">
-                                        {featuredListing?.type || 'Featured'} {featuredListing?.type === 'Flat' ? 'Flat' : 'PG'}
+                                        {featuredListing?.type || 'Featured'}
                                     </div>
                                 </div>
                                 <div className="px-2">
