@@ -27,6 +27,7 @@ export const COLLECTION = {
     favorites: 'favorites',
     roommateRequests: 'roommate_requests',
     messages: 'messages',
+    whatsappLeads: 'whatsapp_leads',
 };
 
 // Helper: Get image URL from Appwrite storage

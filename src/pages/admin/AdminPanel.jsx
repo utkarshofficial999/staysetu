@@ -3,7 +3,7 @@ import { databases, storage, DATABASE_ID, COLLECTION, BUCKET_ID, Query, ID, pars
 import {
     CheckCircle, Users, Home, MapPin, IndianRupee,
     Clock, Trash2, ShieldCheck, LogOut, Loader2, Plus,
-    Upload, X, Image as ImageIcon, Save
+    Upload, X, Image as ImageIcon, Save, Phone, Download, MessageCircle
 } from 'lucide-react';
 import { useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -13,9 +13,10 @@ const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState('listings');
     const [listings, setListings] = useState([]);
     const [roommates, setRoommates] = useState([]);
+    const [whatsappLeads, setWhatsappLeads] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('pending');
-    const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, total: 0, roommate_pending: 0 });
+    const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, total: 0, roommate_pending: 0, wa_leads: 0 });
     const [actionLoading, setActionLoading] = useState(null);
     const fileInputRef = useRef(null);
 
@@ -106,7 +107,11 @@ const AdminPanel = () => {
                 if (filter !== 'all') queries.push(Query.equal('status', filter));
                 const res = await databases.listDocuments(DATABASE_ID, COLLECTION.listings, queries);
                 setListings(res.documents);
-            } else {
+            } else if (activeTab === 'whatsapp_leads') {
+                const queries = [Query.orderDesc('$createdAt'), Query.limit(200)];
+                const res = await databases.listDocuments(DATABASE_ID, COLLECTION.whatsappLeads, queries);
+                setWhatsappLeads(res.documents);
+            } else if (activeTab !== 'add') {
                 const queries = [Query.orderDesc('$createdAt'), Query.limit(100)];
                 if (filter !== 'all') queries.push(Query.equal('status', filter));
                 const res = await databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, queries);
@@ -114,12 +119,13 @@ const AdminPanel = () => {
             }
 
             // Fetch stats
-            const [profilesRes, pendingRes, approvedRes, totalRes, rmPendingRes] = await Promise.all([
+            const [profilesRes, pendingRes, approvedRes, totalRes, rmPendingRes, waLeadsRes] = await Promise.all([
                 databases.listDocuments(DATABASE_ID, COLLECTION.profiles, [Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'pending'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'approved'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, [Query.equal('status', 'pending'), Query.limit(1)]),
+                databases.listDocuments(DATABASE_ID, COLLECTION.whatsappLeads, [Query.limit(1)]).catch(() => ({ total: 0 })),
             ]);
 
             setStats({
@@ -127,7 +133,8 @@ const AdminPanel = () => {
                 pending: pendingRes.total || 0,
                 approved: approvedRes.total || 0,
                 total: totalRes.total || 0,
-                roommate_pending: rmPendingRes.total || 0
+                roommate_pending: rmPendingRes.total || 0,
+                wa_leads: waLeadsRes.total || 0,
             });
         } catch (err) {
             console.error('Fetch error:', err);
@@ -189,13 +196,14 @@ const AdminPanel = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
                     {[
                         { label: 'Users', value: stats.users, icon: Users, gradient: 'from-plum-500 to-purple-600' },
                         { label: 'Listings', value: stats.total, icon: Home, gradient: 'from-plum-950 to-plum-600' },
                         { label: 'Pending', value: stats.pending, icon: Clock, gradient: 'from-amber-500 to-orange-600' },
                         { label: 'Live', value: stats.approved, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600' },
                         { label: 'RM Pending', value: stats.roommate_pending, icon: Users, gradient: 'from-pink-500 to-rose-600' },
+                        { label: 'WA Leads', value: stats.wa_leads, icon: Phone, gradient: 'from-green-500 to-emerald-600' },
                     ].map((s, i) => (
                         <div key={i} className="card-elevated p-5 flex flex-col gap-2">
                             <div className={`bg-gradient-to-br ${s.gradient} w-10 h-10 rounded-xl flex items-center justify-center text-white`}
@@ -239,10 +247,19 @@ const AdminPanel = () => {
                         >
                             + Add Property
                         </button>
+                        <button
+                            onClick={() => { setActiveTab('whatsapp_leads'); }}
+                            className={`flex-1 py-4 text-sm font-semibold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'whatsapp_leads'
+                                ? 'text-green-600 border-b-2 border-green-500 bg-green-50/30'
+                                : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            <MessageCircle size={14} /> WA Leads ({stats.wa_leads})
+                        </button>
                     </div>
 
                     {/* Filter Bar */}
-                    {activeTab !== 'add' && (
+                    {activeTab !== 'add' && activeTab !== 'whatsapp_leads' && (
                         <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>
                                 {activeTab === 'listings' ? 'Listing Verification' : 'Student Requirements'}
@@ -268,7 +285,81 @@ const AdminPanel = () => {
                         </div>
                     )}
 
-                    {activeTab === 'add' ? (
+                    {activeTab === 'whatsapp_leads' ? (
+                        <div className="p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>WhatsApp Contact Leads</h3>
+                                <button
+                                    onClick={() => {
+                                        const csv = ['Phone Number,Listing,Owner,Clicker Name,Clicker Email,Source,Time'];
+                                        whatsappLeads.forEach(l => csv.push(`${l.phoneNumber},"${l.listingTitle}","${l.ownerName}","${l.clickerName}",${l.clickerEmail},${l.source},${l.clickedAt || l.$createdAt}`));
+                                        const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement('a'); a.href = url; a.download = `whatsapp-leads-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+                                    }}
+                                    className="btn-secondary flex items-center gap-2 text-xs py-2 px-4"
+                                >
+                                    <Download size={14} /> Export CSV
+                                </button>
+                            </div>
+                            {loading ? (
+                                <div className="py-20 text-center"><Loader2 size={28} className="animate-spin mx-auto text-slate-300" /></div>
+                            ) : whatsappLeads.length > 0 ? (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead>
+                                            <tr className="bg-green-50/50">
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">#</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Phone Number</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Property</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Clicker</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Source</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-50">
+                                            {whatsappLeads.map((lead, i) => (
+                                                <tr key={lead.$id} className="hover:bg-green-50/30 transition-colors text-sm">
+                                                    <td className="px-4 py-3 text-xs text-slate-400 font-mono">{i + 1}</td>
+                                                    <td className="px-4 py-3">
+                                                        <span className="text-xs font-bold text-green-700 bg-green-50 px-2.5 py-1 rounded-full border border-green-200 flex items-center gap-1.5 w-fit">
+                                                            <Phone size={11} /> {lead.phoneNumber || '-'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <div className="max-w-[200px]">
+                                                            <p className="text-xs font-semibold text-slate-900 truncate">{lead.listingTitle || '-'}</p>
+                                                            <p className="text-[10px] text-slate-400">Owner: {lead.ownerName || '-'}</p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <div>
+                                                            <p className="text-xs font-semibold text-slate-700">{lead.clickerName || 'Guest'}</p>
+                                                            <p className="text-[10px] text-slate-400">{lead.clickerEmail || 'Not logged in'}</p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 text-slate-500">{lead.source}</span>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-[11px] text-slate-400 whitespace-nowrap">
+                                                        {new Date(lead.clickedAt || lead.$createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="py-20 text-center">
+                                    <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-green-300">
+                                        <MessageCircle size={24} />
+                                    </div>
+                                    <p className="text-slate-400 font-medium">No WhatsApp leads yet.</p>
+                                    <p className="text-slate-300 text-xs mt-1">Leads will appear here when users click "Contact via WhatsApp"</p>
+                                </div>
+                            )}
+                        </div>
+                    ) : activeTab === 'add' ? (
                         <div className="p-8 max-w-4xl mx-auto">
                             <form onSubmit={submitListing} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, IndianRupee, Star, Heart, ImageOff, Wifi, Wind, UtensilsCrossed, Car, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { parseJsonField } from '../../lib/appwrite';
+import { trackWhatsAppClick, openWhatsApp } from '../../lib/whatsappTracker';
 
 const FALLBACKS = [
     'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80',
@@ -28,6 +29,28 @@ const PropertyCard = ({ property }) => {
     const rawSrc = images[0];
     const imgSrc = (!rawSrc || imgError) ? fallback : rawSrc;
     const ts = typeStyles[property?.type] || typeStyles.PG;
+
+    const handleWhatsAppClick = (e) => {
+        e.preventDefault();
+        const messageText = `Hi, I found your listing "${property?.title}" on StaySetu. Is it available?`;
+        const message = encodeURIComponent(messageText);
+        const number = property?.whatsappNumber || property?.phoneNumber || property?.phone_number || property?.owner_phone;
+
+        // Track the click (fire-and-forget)
+        trackWhatsAppClick({
+            phoneNumber: number || '',
+            listingId: property?.$id || property?.id || '',
+            listingTitle: property?.title || '',
+            ownerName: '',
+            clickerUserId: '',
+            clickerName: '',
+            clickerEmail: '',
+            source: 'property_card',
+            message: messageText,
+        });
+
+        openWhatsApp(number, message);
+    };
 
     return (
         <div className="group relative flex flex-col bg-white rounded-[2.5rem] border-2 border-slate-900 overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)]">
@@ -110,16 +133,7 @@ const PropertyCard = ({ property }) => {
                         View More
                     </Link>
                     <button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            const message = encodeURIComponent(`Hi, I found your listing "${property?.title}" on StaySetu. Is it available?`);
-                            const number = property?.whatsappNumber || property?.phoneNumber || property?.phone_number || property?.owner_phone;
-                            if (number) {
-                                window.open(`https://wa.me/${number.replace(/\D/g, '')}?text=${message}`, '_blank');
-                            } else {
-                                alert('Contact number not available for this listing.');
-                            }
-                        }}
+                        onClick={handleWhatsAppClick}
                         className="border-2 border-slate-900 text-slate-900 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-colors"
                     >
                         Contact Us
@@ -131,3 +145,4 @@ const PropertyCard = ({ property }) => {
 };
 
 export default PropertyCard;
+

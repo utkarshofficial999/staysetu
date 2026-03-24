@@ -8,10 +8,11 @@ import {
 import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
 import PropertyMap from '../components/common/PropertyMap';
+import { trackWhatsAppClick, openWhatsApp } from '../lib/whatsappTracker';
 
 const PropertyDetails = () => {
     const { id } = useParams();
-    const { user } = useAuth();
+    const { user, profile } = useAuth();
     const navigate = useNavigate();
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -51,8 +52,24 @@ const PropertyDetails = () => {
     }, [id]);
 
     const initiateWhatsApp = () => {
-        const message = encodeURIComponent(`Hi, I found your listing "${property.title}" on StaySetu. Is it available?`);
-        window.open(`https://wa.me/${property.whatsappNumber || property.phoneNumber || property.whatsapp_number || property.phone_number}?text=${message}`, '_blank');
+        const phoneNumber = property.whatsappNumber || property.phoneNumber || property.whatsapp_number || property.phone_number;
+        const messageText = `Hi, I found your listing "${property.title}" on StaySetu. Is it available?`;
+        const message = encodeURIComponent(messageText);
+
+        // Track the click (fire-and-forget)
+        trackWhatsAppClick({
+            phoneNumber,
+            listingId: property.$id || id,
+            listingTitle: property.title,
+            ownerName: property.owner?.name || '',
+            clickerUserId: user?.$id || '',
+            clickerName: profile?.fullName || user?.name || '',
+            clickerEmail: user?.email || '',
+            source: 'property_details',
+            message: messageText,
+        });
+
+        openWhatsApp(phoneNumber, message);
     };
 
     const handleMessage = () => {
