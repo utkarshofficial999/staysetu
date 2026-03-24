@@ -90,7 +90,9 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/listings" element={<Listings />} />
-          <Route path="/property/:id" element={<PropertyDetails />} />
+          <Route path="/property/:id" element={
+            <ProtectedRoute><PropertyDetails /></ProtectedRoute>
+          } />
           <Route path="/roommates" element={<Roommates />} />
           <Route path="/messages" element={
             <ProtectedRoute><Messages /></ProtectedRoute>
