@@ -4,6 +4,7 @@
  * who contacted which property owner (broker).
  */
 import { databases, DATABASE_ID, ID } from './appwrite';
+import { Permission, Role } from 'appwrite';
 
 export const WHATSAPP_LEADS_COLLECTION = 'whatsapp_leads';
 
@@ -39,7 +40,7 @@ export async function trackWhatsAppClick({
             WHATSAPP_LEADS_COLLECTION,
             ID.unique(),
             {
-                phoneNumber: (phoneNumber || '').replace(/\D/g, '').slice(0, 20),
+                phoneNumber: (phoneNumber || '').replace(/\D/g, '').slice(0, 20) || 'unknown',
                 listingId: listingId || '',
                 listingTitle: (listingTitle || '').slice(0, 255),
                 ownerName: (ownerName || '').slice(0, 255),
@@ -49,7 +50,10 @@ export async function trackWhatsAppClick({
                 source: source.slice(0, 50),
                 message: (message || '').slice(0, 1000),
                 clickedAt: new Date().toISOString(),
-            }
+            },
+            [
+                Permission.read(Role.any()),
+            ]
         );
     } catch (err) {
         // Never block the main flow — just log the error
