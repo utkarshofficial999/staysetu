@@ -16,6 +16,7 @@ import Listings from './pages/Listings';
 import PropertyDetails from './pages/PropertyDetails';
 import Messages from './pages/Messages';
 import Roommates from './pages/Roommates';
+import Maids from './pages/Maids';
 import Dashboard from './pages/dashboard/Dashboard';
 import OwnerDashboard from './pages/dashboard/OwnerDashboard';
 import AddListing from './pages/dashboard/AddListing';
@@ -94,6 +95,9 @@ const AppContent = () => {
             <ProtectedRoute><PropertyDetails /></ProtectedRoute>
           } />
           <Route path="/roommates" element={<Roommates />} />
+          <Route path="/maids" element={
+            <ProtectedRoute><Maids /></ProtectedRoute>
+          } />
           <Route path="/messages" element={
             <ProtectedRoute><Messages /></ProtectedRoute>
           } />

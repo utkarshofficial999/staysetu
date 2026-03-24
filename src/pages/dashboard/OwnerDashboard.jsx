@@ -9,7 +9,7 @@ import {
     BarChart3, ArrowUpRight, ArrowLeft, Upload,
     Save, X, User, LogOut, Shield, Briefcase,
     Phone, Send, Bell, Settings, Building2,
-    ChevronLeft, MoreVertical, Filter, Locate
+    ChevronLeft, MoreVertical, Filter, Locate, Brush
 } from 'lucide-react';
 import PropertyMap from '../../components/common/PropertyMap';
 
@@ -285,9 +285,47 @@ const OwnerDashboard = () => {
         return `${days}d ago`;
     };
 
+    // Maid service form state
+    const [maidForm, setMaidForm] = useState({
+        title: '', description: '', location: '', serviceType: 'all-in-one',
+        timing: '', price: '', whatsappNumber: '', phoneNumber: '', genderPreference: 'any'
+    });
+    const [maidFormLoading, setMaidFormLoading] = useState(false);
+
+    const handleMaidChange = (e) => setMaidForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+    const handleSubmitMaid = async (e) => {
+        e.preventDefault();
+        setMaidFormLoading(true);
+        try {
+            await databases.createDocument(DATABASE_ID, COLLECTION.maidServices, ID.unique(), {
+                title: maidForm.title,
+                description: maidForm.description,
+                location: maidForm.location,
+                serviceType: maidForm.serviceType,
+                timing: maidForm.timing,
+                price: maidForm.price ? parseFloat(maidForm.price) : null,
+                whatsappNumber: maidForm.whatsappNumber,
+                phoneNumber: maidForm.phoneNumber,
+                postedBy: user.$id,
+                posterName: profile?.fullName || profile?.name || 'Owner',
+                genderPreference: maidForm.genderPreference,
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+            });
+            alert('Maid service posted! It will be visible after admin approval.');
+            setMaidForm({ title: '', description: '', location: '', serviceType: 'all-in-one', timing: '', price: '', whatsappNumber: '', phoneNumber: '', genderPreference: 'any' });
+            setActiveTab('overview');
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+        setMaidFormLoading(false);
+    };
+
     const tabs = [
         { id: 'overview', label: 'Overview', icon: BarChart3 },
         { id: 'add', label: 'Add Listing', icon: Plus },
+        { id: 'maid', label: 'Post Maid', icon: Brush },
         { id: 'profile', label: 'Profile', icon: User },
     ];
 
@@ -813,6 +851,100 @@ const OwnerDashboard = () => {
                     </div>
                 )}
 
+
+
+                {/* ===== POST MAID TAB ===== */}
+                {activeTab === 'maid' && (
+                    <div className="animate-fade-in max-w-4xl mx-auto">
+                        <div className="card-elevated overflow-hidden">
+                            <div className="p-8 md:p-10 border-b border-slate-50">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500">
+                                        <Brush size={24} />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>Post Maid Service</h2>
+                                        <p className="text-slate-400 font-normal text-sm">Submit a maid/helper listing for admin approval.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleSubmitMaid} className="p-8 md:p-12 space-y-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Service Title *</label>
+                                        <input type="text" name="title" required placeholder="e.g. Experienced Cook Available near Knowledge Park"
+                                            className="input-field" value={maidForm.title} onChange={handleMaidChange} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Service Type *</label>
+                                        <select name="serviceType" className="input-field cursor-pointer" value={maidForm.serviceType} onChange={handleMaidChange}>
+                                            <option value="all-in-one">⭐ All-in-One</option>
+                                            <option value="cooking">🍳 Cooking</option>
+                                            <option value="cleaning">🧹 Cleaning</option>
+                                            <option value="laundry">👕 Laundry</option>
+                                            <option value="babysitting">👶 Babysitting</option>
+                                            <option value="elderly-care">🧓 Elderly Care</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Gender Preference</label>
+                                        <select name="genderPreference" className="input-field cursor-pointer" value={maidForm.genderPreference} onChange={handleMaidChange}>
+                                            <option value="any">Any</option>
+                                            <option value="female">Female Only</option>
+                                            <option value="male">Male Only</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Location *</label>
+                                        <div className="relative">
+                                            <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                            <input type="text" name="location" required placeholder="e.g. Alpha 2, Greater Noida"
+                                                className="input-field pl-10" value={maidForm.location} onChange={handleMaidChange} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Timing</label>
+                                        <input type="text" name="timing" placeholder="e.g. Morning 8-11 AM"
+                                            className="input-field" value={maidForm.timing} onChange={handleMaidChange} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Monthly Charge (₹)</label>
+                                        <div className="relative">
+                                            <IndianRupee size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                            <input type="number" name="price" placeholder="3000"
+                                                className="input-field pl-10" value={maidForm.price} onChange={handleMaidChange} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">WhatsApp Number *</label>
+                                        <div className="relative">
+                                            <Send size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                            <input type="tel" name="whatsappNumber" required placeholder="+91 XXXXX XXXXX"
+                                                className="input-field pl-11" value={maidForm.whatsappNumber} onChange={handleMaidChange} />
+                                        </div>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Description</label>
+                                        <textarea name="description" rows={3} placeholder="Describe the service — experience, specialties, schedule..."
+                                            className="input-field resize-none" value={maidForm.description} onChange={handleMaidChange}></textarea>
+                                    </div>
+                                </div>
+
+                                <div className="pt-6 border-t border-slate-50">
+                                    <button type="submit" disabled={maidFormLoading}
+                                        className="w-full btn-primary py-4 rounded-2xl text-sm flex items-center justify-center gap-2">
+                                        {maidFormLoading ? (
+                                            <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        ) : (
+                                            <><Brush size={16} /> Submit Maid Service for Approval</>
+                                        )}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
 
                 {/* ===== PROFILE TAB ===== */}
                 {activeTab === 'profile' && (

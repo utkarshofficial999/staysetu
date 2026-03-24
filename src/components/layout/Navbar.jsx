@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut, LayoutDashboard, Search, Users, ShieldCheck, ChevronDown } from 'lucide-react';
+import { Menu, X, User, LogOut, LayoutDashboard, Search, Users, ShieldCheck, ChevronDown, Brush } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
@@ -44,6 +44,7 @@ const Navbar = () => {
     const navLinks = [
         { name: 'Browse', path: '/listings', icon: Search },
         { name: 'Roommates', path: '/roommates', icon: Users },
+        { name: 'Maids', path: '/maids', icon: Brush },
     ];
 
     const role = profile?.role || 'student';

@@ -3,7 +3,7 @@ import { databases, storage, DATABASE_ID, COLLECTION, BUCKET_ID, Query, ID, pars
 import {
     CheckCircle, Users, Home, MapPin, IndianRupee,
     Clock, Trash2, ShieldCheck, LogOut, Loader2, Plus,
-    Upload, X, Image as ImageIcon, Save, Phone, Download, MessageCircle
+    Upload, X, Image as ImageIcon, Save, Phone, Download, MessageCircle, Brush
 } from 'lucide-react';
 import { useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -14,9 +14,10 @@ const AdminPanel = () => {
     const [listings, setListings] = useState([]);
     const [roommates, setRoommates] = useState([]);
     const [whatsappLeads, setWhatsappLeads] = useState([]);
+    const [maidServices, setMaidServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('pending');
-    const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, total: 0, roommate_pending: 0, wa_leads: 0 });
+    const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, total: 0, roommate_pending: 0, wa_leads: 0, maid_pending: 0 });
     const [actionLoading, setActionLoading] = useState(null);
     const fileInputRef = useRef(null);
 
@@ -111,6 +112,11 @@ const AdminPanel = () => {
                 const queries = [Query.orderDesc('$createdAt'), Query.limit(200)];
                 const res = await databases.listDocuments(DATABASE_ID, COLLECTION.whatsappLeads, queries);
                 setWhatsappLeads(res.documents);
+            } else if (activeTab === 'maids') {
+                const queries = [Query.orderDesc('$createdAt'), Query.limit(100)];
+                if (filter !== 'all') queries.push(Query.equal('status', filter));
+                const res = await databases.listDocuments(DATABASE_ID, COLLECTION.maidServices, queries);
+                setMaidServices(res.documents);
             } else if (activeTab !== 'add') {
                 const queries = [Query.orderDesc('$createdAt'), Query.limit(100)];
                 if (filter !== 'all') queries.push(Query.equal('status', filter));
@@ -119,13 +125,14 @@ const AdminPanel = () => {
             }
 
             // Fetch stats
-            const [profilesRes, pendingRes, approvedRes, totalRes, rmPendingRes, waLeadsRes] = await Promise.all([
+            const [profilesRes, pendingRes, approvedRes, totalRes, rmPendingRes, waLeadsRes, maidPendingRes] = await Promise.all([
                 databases.listDocuments(DATABASE_ID, COLLECTION.profiles, [Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'pending'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'approved'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, [Query.equal('status', 'pending'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.whatsappLeads, [Query.limit(1)]).catch(() => ({ total: 0 })),
+                databases.listDocuments(DATABASE_ID, COLLECTION.maidServices, [Query.equal('status', 'pending'), Query.limit(1)]).catch(() => ({ total: 0 })),
             ]);
 
             setStats({
@@ -135,6 +142,7 @@ const AdminPanel = () => {
                 total: totalRes.total || 0,
                 roommate_pending: rmPendingRes.total || 0,
                 wa_leads: waLeadsRes.total || 0,
+                maid_pending: maidPendingRes.total || 0,
             });
         } catch (err) {
             console.error('Fetch error:', err);
@@ -142,11 +150,16 @@ const AdminPanel = () => {
         setLoading(false);
     };
 
+    const getCollectionForTab = () => {
+        if (activeTab === 'listings') return COLLECTION.listings;
+        if (activeTab === 'maids') return COLLECTION.maidServices;
+        return COLLECTION.roommateRequests;
+    };
+
     const approve = async (id) => {
         setActionLoading(id + '_approve');
-        const col = activeTab === 'listings' ? COLLECTION.listings : COLLECTION.roommateRequests;
         try {
-            await databases.updateDocument(DATABASE_ID, col, id, { status: 'approved' });
+            await databases.updateDocument(DATABASE_ID, getCollectionForTab(), id, { status: 'approved' });
             await fetchData();
         } catch (err) {
             console.error('Approve error:', err);
@@ -155,12 +168,12 @@ const AdminPanel = () => {
     };
 
     const reject = async (id) => {
-        if (!window.confirm(`Permanently DELETE this ${activeTab === 'listings' ? 'listing' : 'request'}?`)) return;
+        if (!window.confirm('Permanently DELETE this item?')) return;
         setActionLoading(id + '_reject');
-        const col = activeTab === 'listings' ? COLLECTION.listings : COLLECTION.roommateRequests;
         try {
-            await databases.deleteDocument(DATABASE_ID, col, id);
+            await databases.deleteDocument(DATABASE_ID, getCollectionForTab(), id);
             if (activeTab === 'listings') setListings(prev => prev.filter(l => l.$id !== id));
+            else if (activeTab === 'maids') setMaidServices(prev => prev.filter(m => m.$id !== id));
             else setRoommates(prev => prev.filter(r => r.$id !== id));
         } catch (err) {
             console.error('Reject error:', err);
@@ -204,6 +217,7 @@ const AdminPanel = () => {
                         { label: 'Live', value: stats.approved, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600' },
                         { label: 'RM Pending', value: stats.roommate_pending, icon: Users, gradient: 'from-pink-500 to-rose-600' },
                         { label: 'WA Leads', value: stats.wa_leads, icon: Phone, gradient: 'from-green-500 to-emerald-600' },
+                        { label: 'Maid Req', value: stats.maid_pending, icon: Brush, gradient: 'from-amber-500 to-yellow-600' },
                     ].map((s, i) => (
                         <div key={i} className="card-elevated p-5 flex flex-col gap-2">
                             <div className={`bg-gradient-to-br ${s.gradient} w-10 h-10 rounded-xl flex items-center justify-center text-white`}
@@ -256,13 +270,22 @@ const AdminPanel = () => {
                         >
                             <MessageCircle size={14} /> WA Leads ({stats.wa_leads})
                         </button>
+                        <button
+                            onClick={() => { setActiveTab('maids'); setFilter('pending'); }}
+                            className={`flex-1 py-4 text-sm font-semibold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'maids'
+                                ? 'text-amber-600 border-b-2 border-amber-500 bg-amber-50/30'
+                                : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            <Brush size={14} /> Maids ({stats.maid_pending})
+                        </button>
                     </div>
 
                     {/* Filter Bar */}
                     {activeTab !== 'add' && activeTab !== 'whatsapp_leads' && (
                         <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>
-                                {activeTab === 'listings' ? 'Listing Verification' : 'Student Requirements'}
+                                {activeTab === 'listings' ? 'Listing Verification' : activeTab === 'maids' ? 'Maid Service Approvals' : 'Student Requirements'}
                             </h3>
                             <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100/60">
                                 {[
@@ -356,6 +379,70 @@ const AdminPanel = () => {
                                     </div>
                                     <p className="text-slate-400 font-medium">No WhatsApp leads yet.</p>
                                     <p className="text-slate-300 text-xs mt-1">Leads will appear here when users click "Contact via WhatsApp"</p>
+                                </div>
+                            )}
+                        </div>
+                    ) : activeTab === 'maids' ? (
+                        <div className="p-6">
+                            {loading ? (
+                                <div className="py-20 text-center"><Loader2 size={28} className="animate-spin mx-auto text-slate-300" /></div>
+                            ) : maidServices.length > 0 ? (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead>
+                                            <tr className="bg-amber-50/50">
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Service</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Type</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Location</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Contact</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Price</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                                                <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-50">
+                                            {maidServices.map((m) => (
+                                                <tr key={m.$id} className="hover:bg-amber-50/30 transition-colors text-sm">
+                                                    <td className="px-4 py-3">
+                                                        <p className="text-xs font-bold text-slate-900 truncate max-w-[180px]">{m.title}</p>
+                                                        <p className="text-[10px] text-slate-400">by {m.posterName || 'Unknown'}</p>
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">{m.serviceType || 'all-in-one'}</span>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-xs text-slate-500"><span className="flex items-center gap-1"><MapPin size={10} />{m.location}</span></td>
+                                                    <td className="px-4 py-3">
+                                                        <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200 flex items-center gap-1 w-fit">
+                                                            <Phone size={10} /> {m.whatsappNumber || m.phoneNumber || '-'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-xs font-bold text-slate-700">{m.price ? `₹${Number(m.price).toLocaleString()}` : '-'}</td>
+                                                    <td className="px-4 py-3">
+                                                        <span className={m.status === 'approved' ? 'chip-approved' : 'chip-pending'}>{m.status === 'approved' ? 'Live' : 'Pending'}</span>
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <div className="flex gap-1.5">
+                                                            {m.status !== 'approved' && (
+                                                                <button onClick={() => approve(m.$id)} disabled={actionLoading === m.$id + '_approve'}
+                                                                    className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1">
+                                                                    {actionLoading === m.$id + '_approve' ? <Loader2 size={10} className="animate-spin" /> : <CheckCircle size={10} />} Approve
+                                                                </button>
+                                                            )}
+                                                            <button onClick={() => reject(m.$id)} disabled={actionLoading === m.$id + '_reject'}
+                                                                className="bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1">
+                                                                {actionLoading === m.$id + '_reject' ? <Loader2 size={10} className="animate-spin" /> : <Trash2 size={10} />} Delete
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="py-20 text-center">
+                                    <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-amber-300"><Brush size={24} /></div>
+                                    <p className="text-slate-400 font-medium">No {filter === 'all' ? '' : filter} maid services found.</p>
                                 </div>
                             )}
                         </div>
