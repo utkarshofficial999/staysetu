@@ -414,6 +414,8 @@ const StudentDashboard = () => {
                                 className="btn-primary py-3 px-6 flex items-center gap-2 shrink-0"
                             >
                                 {showRoommateForm ? <X size={18} /> : <Plus size={18} />}
+                                {showRoommateForm ? 'Cancel' : 'Post My Requirement'}
+                            </button>
                         </div>
 
                         {/* Incoming Requests Section */}
