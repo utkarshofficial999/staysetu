@@ -60,8 +60,8 @@ export default {
                     pink: '#ff00ff',
                     white: '#ffffff',
                 },
-                surface: '#ffffff',
-                'surface-2': '#faf7f5',
+                surface: '#F3EDE8',
+                'surface-2': '#E9E1D8',
             },
             borderRadius: {
                 '2xl': '1rem',
