@@ -62,6 +62,7 @@ export default {
                 },
                 surface: '#F3EDE8',
                 'surface-2': '#E9E1D8',
+                'nav-surface': '#F7F5F3',
             },
             borderRadius: {
                 '2xl': '1rem',

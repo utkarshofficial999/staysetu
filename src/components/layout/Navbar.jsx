@@ -60,8 +60,8 @@ const Navbar = () => {
         <>
             <nav
                 className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 py-3 ${scrolled
-                    ? 'bg-slate-50/80 backdrop-blur-2xl border-b border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]'
-                    : 'bg-slate-50/60 backdrop-blur-xl border-b border-slate-100'
+                    ? 'bg-nav-surface/80 backdrop-blur-2xl border-b border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]'
+                    : 'bg-nav-surface/60 backdrop-blur-xl border-b border-slate-100'
                     } ${isVisible ? 'translate-y-0' : '-translate-y-full shadow-none'}`}
             >
                 <div className="max-w-7xl mx-auto px-2">
@@ -167,7 +167,7 @@ const Navbar = () => {
 
                 {/* Mobile dropdown */}
                 {isOpen && (
-                    <div className="md:hidden bg-slate-50/98 backdrop-blur-3xl border-t border-slate-200 animate-fade-in">
+                    <div className="md:hidden bg-nav-surface/98 backdrop-blur-3xl border-t border-slate-200 animate-fade-in">
                         <div className="px-4 pt-2 pb-8 space-y-1.5">
                             {navLinks.map((link) => (
                                 <Link
