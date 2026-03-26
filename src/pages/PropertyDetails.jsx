@@ -254,7 +254,7 @@ const PropertyDetails = () => {
                                                 <Users size={16} />
                                             </div>
                                             <span className="font-bold text-emerald-700 text-xs uppercase tracking-tight">
-                                                {occ === 'single' ? 'Single' : occ === 'double' ? 'Double Sharing' : 'Triple Sharing'}
+                                                {occ === 'single' ? 'Single' : occ === 'double' ? 'Double Sharing' : occ === 'triple' ? 'Triple Sharing' : 'Four Sharing'}
                                             </span>
                                         </div>
                                     ))}

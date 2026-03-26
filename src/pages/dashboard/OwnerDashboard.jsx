@@ -665,7 +665,8 @@ const OwnerDashboard = () => {
                                                 {[
                                                     { id: 'single', label: 'Single' },
                                                     { id: 'double', label: 'Double Sharing' },
-                                                    { id: 'triple', label: 'Triple Sharing' }
+                                                    { id: 'triple', label: 'Triple Sharing' },
+                                                    { id: 'four', label: 'Four Sharing' }
                                                 ].map((opt) => (
                                                     <button
                                                         key={opt.id}
