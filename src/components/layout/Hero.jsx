@@ -132,7 +132,7 @@ const Hero = ({ featuredProp }) => {
         : ['WiFi', 'AC', 'Power'];
 
     return (
-        <div className="relative min-h-[95vh] flex items-center overflow-hidden bg-white">
+        <div className="relative min-h-[95vh] flex items-center overflow-hidden bg-surface">
             {/* Background elements */}
             <div className="absolute top-0 right-0 w-[55%] h-full bg-slate-50 opacity-40 -skew-x-[15deg] translate-x-1/4 -z-0" />
             <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-plum-100/20 rounded-full blur-[120px] -z-0" />
