@@ -30,7 +30,7 @@
 
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: #ffffff;
+    background: var(--surface);
     color: #1a1a1a;
     font-weight: 500;
     font-size: 1rem;
