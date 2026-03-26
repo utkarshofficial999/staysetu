@@ -30,7 +30,7 @@ const OwnerDashboard = () => {
         phone_number: '', whatsapp_number: '',
         amenities: [], images: [''],
         gender_preference: 'any',
-        occupancy: 'single',
+        occupancy: ['single'],
         deposit: '',
         available_from: '',
         latitude: '',
@@ -105,6 +105,15 @@ const OwnerDashboard = () => {
             amenities: prev.amenities.includes(amenity)
                 ? prev.amenities.filter(a => a !== amenity)
                 : [...prev.amenities, amenity]
+        }));
+    };
+
+    const toggleOccupancy = (type) => {
+        setFormData(prev => ({
+            ...prev,
+            occupancy: prev.occupancy.includes(type)
+                ? (prev.occupancy.length > 1 ? prev.occupancy.filter(o => o !== type) : prev.occupancy)
+                : [...prev.occupancy, type]
         }));
     };
 
@@ -243,7 +252,7 @@ const OwnerDashboard = () => {
                 ownerId: user.$id,
                 status: 'pending',
                 genderPreference: formData.gender_preference || 'any',
-                occupancy: formData.occupancy || 'single',
+                occupancy: JSON.stringify(formData.occupancy),
                 deposit: formData.deposit || null,
                 availableFrom: formData.available_from || null,
                 createdAt: new Date().toISOString(),
@@ -256,7 +265,7 @@ const OwnerDashboard = () => {
                 location: '', type: 'PG',
                 phone_number: '', whatsapp_number: '',
                 amenities: [], images: [''],
-                gender_preference: 'any', occupancy: 'single',
+                gender_preference: 'any', occupancy: ['single'],
                 deposit: '', available_from: '',
                 latitude: '', longitude: ''
             });
@@ -652,11 +661,25 @@ const OwnerDashboard = () => {
                                         </div>
                                         <div>
                                             <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Room Occupancy</label>
-                                            <select name="occupancy" className="input-field cursor-pointer" value={formData.occupancy} onChange={handleChange}>
-                                                <option value="single">Single</option>
-                                                <option value="double">Double Sharing</option>
-                                                <option value="triple">Triple Sharing</option>
-                                            </select>
+                                            <div className="flex flex-wrap gap-2">
+                                                {[
+                                                    { id: 'single', label: 'Single' },
+                                                    { id: 'double', label: 'Double Sharing' },
+                                                    { id: 'triple', label: 'Triple Sharing' }
+                                                ].map((opt) => (
+                                                    <button
+                                                        key={opt.id}
+                                                        type="button"
+                                                        onClick={() => toggleOccupancy(opt.id)}
+                                                        className={`px-4 py-2 rounded-xl border-2 transition-all font-bold text-xs ${formData.occupancy.includes(opt.id)
+                                                            ? 'border-plum-500 bg-plum-50 text-plum-700'
+                                                            : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
+                                                            }`}
+                                                    >
+                                                        {opt.label}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
                                         <div className="md:col-span-2">
                                             <div className="flex gap-2 mb-6">

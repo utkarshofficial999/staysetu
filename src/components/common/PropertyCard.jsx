@@ -114,15 +114,28 @@ const PropertyCard = ({ property }) => {
                             {property.genderPreference || property.gender_preference || property.gender} only
                         </div>
                     )}
+                    {property?.listedBy && (
+                        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 bg-white text-slate-900 uppercase`}>
+                            {property.listedBy}
+                        </div>
+                    )}
                 </div>
 
                 <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-1 group-hover:text-plum-600 transition-colors" style={{ fontFamily: 'Bungee' }}>
                     {property?.title || 'Comfortable Stay'}
                 </h3>
 
-                <div className="flex items-center text-slate-500 text-sm font-medium mb-6">
+                <div className="flex items-center text-slate-500 text-sm font-medium mb-3">
                     <MapPin size={14} className="text-slate-400 mr-1.5 shrink-0" />
                     <span className="truncate">{property?.location || 'Greater Noida'}</span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 mb-6">
+                    {(parseJsonField(property?.occupancy) || ['single']).map((occ) => (
+                        <span key={occ} className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-plum-50 text-plum-600 border border-plum-100 uppercase">
+                            {occ}
+                        </span>
+                    ))}
                 </div>
 
                 <div className="mt-auto grid grid-cols-2 gap-3">

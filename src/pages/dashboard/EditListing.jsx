@@ -28,7 +28,9 @@ const EditListing = () => {
         phone_number: '',
         whatsapp_number: '',
         amenities: [],
-        images: ['']
+        images: [''],
+        listed_by: 'owner',
+        occupancy: []
     });
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry', 'Security', 'Gym', 'Attached Bath'];
@@ -51,7 +53,10 @@ const EditListing = () => {
                         phone_number: data.phoneNumber || '',
                         whatsapp_number: data.whatsappNumber || '',
                         amenities: amenities,
-                        images: images.length > 0 ? images : ['']
+                        images: images.length > 0 ? images : [''],
+                        listed_by: data.listedBy || 'owner',
+                        occupancy: data.occupancy ? JSON.parse(data.occupancy) : ['single'],
+                        gender_preference: data.genderPreference || 'any'
                     });
                 }
             } catch (err) {
@@ -150,6 +155,15 @@ const EditListing = () => {
         }));
     };
 
+    const toggleOccupancy = (type) => {
+        setFormData(prev => ({
+            ...prev,
+            occupancy: prev.occupancy.includes(type)
+                ? (prev.occupancy.length > 1 ? prev.occupancy.filter(o => o !== type) : prev.occupancy)
+                : [...prev.occupancy, type]
+        }));
+    };
+
     const handleImageUrlChange = (index, value) => {
         const newImages = [...formData.images];
         newImages[index] = value;
@@ -190,6 +204,8 @@ const EditListing = () => {
                 amenities: JSON.stringify(formData.amenities),
                 images: JSON.stringify(imageUrls),
                 genderPreference: formData.gender_preference || 'any',
+                listedBy: formData.listed_by || 'owner',
+                occupancy: JSON.stringify(formData.occupancy),
                 updatedAt: new Date().toISOString(),
             });
 
@@ -245,6 +261,53 @@ const EditListing = () => {
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-plum-500">Step 1 — Basic Information</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="md:col-span-2">
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Are you an Owner or a Broker?</label>
+                                    <div className="flex gap-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, listed_by: 'owner' }))}
+                                            className={`flex-1 py-4 rounded-2xl border-2 transition-all font-bold text-sm ${formData.listed_by === 'owner'
+                                                ? 'border-plum-500 bg-plum-50 text-plum-700'
+                                                : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
+                                                }`}
+                                        >
+                                            Owner
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, listed_by: 'broker' }))}
+                                            className={`flex-1 py-4 rounded-2xl border-2 transition-all font-bold text-sm ${formData.listed_by === 'broker'
+                                                ? 'border-plum-500 bg-plum-50 text-plum-700'
+                                                : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
+                                                }`}
+                                        >
+                                            Broker
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Room Occupancy</label>
+                                    <div className="flex flex-wrap gap-4">
+                                        {[
+                                            { id: 'single', label: 'Single' },
+                                            { id: 'double', label: 'Double Sharing' },
+                                            { id: 'triple', label: 'Triple Sharing' }
+                                        ].map((opt) => (
+                                            <button
+                                                key={opt.id}
+                                                type="button"
+                                                onClick={() => toggleOccupancy(opt.id)}
+                                                className={`flex-1 py-4 rounded-2xl border-2 transition-all font-bold text-sm ${formData.occupancy.includes(opt.id)
+                                                    ? 'border-plum-500 bg-plum-50 text-plum-700'
+                                                    : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
+                                                    }`}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                                 <div className="md:col-span-2">
                                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Property Title</label>
                                     <input

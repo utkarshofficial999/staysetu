@@ -27,7 +27,9 @@ const AddListing = () => {
         phone_number: '',
         whatsapp_number: '',
         amenities: [],
-        images: [''] // Array of image URLs
+        images: [''], // Array of image URLs
+        listed_by: 'owner', // owner or broker
+        occupancy: ['single']
     });
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry', 'Security', 'Gym', 'Attached Bath'];
@@ -119,6 +121,15 @@ const AddListing = () => {
         }));
     };
 
+    const toggleOccupancy = (type) => {
+        setFormData(prev => ({
+            ...prev,
+            occupancy: prev.occupancy.includes(type)
+                ? (prev.occupancy.length > 1 ? prev.occupancy.filter(o => o !== type) : prev.occupancy)
+                : [...prev.occupancy, type]
+        }));
+    };
+
     const handleImageUrlChange = (index, value) => {
         const newImages = [...formData.images];
         newImages[index] = value;
@@ -161,6 +172,8 @@ const AddListing = () => {
                 ownerId: user.$id,
                 status: 'pending',
                 genderPreference: formData.gender_preference || 'any',
+                listedBy: formData.listed_by || 'owner',
+                occupancy: JSON.stringify(formData.occupancy),
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             });
@@ -213,6 +226,31 @@ const AddListing = () => {
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2">
+                                    <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Are you an Owner or a Broker?</label>
+                                    <div className="flex gap-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, listed_by: 'owner' }))}
+                                            className={`flex-1 py-4 rounded-2xl border-2 transition-all font-bold text-sm ${formData.listed_by === 'owner'
+                                                ? 'border-plum-500 bg-plum-50 text-plum-700'
+                                                : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
+                                                }`}
+                                        >
+                                            Owner
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, listed_by: 'broker' }))}
+                                            className={`flex-1 py-4 rounded-2xl border-2 transition-all font-bold text-sm ${formData.listed_by === 'broker'
+                                                ? 'border-plum-500 bg-plum-50 text-plum-700'
+                                                : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
+                                                }`}
+                                        >
+                                            Broker
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="md:col-span-2">
                                     <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Property Title</label>
                                     <input
                                         type="text"
@@ -249,6 +287,28 @@ const AddListing = () => {
                                         <option value="boys">Boys Only</option>
                                         <option value="girls">Girls Only</option>
                                     </select>
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Room Occupancy</label>
+                                    <div className="flex flex-wrap gap-4">
+                                        {[
+                                            { id: 'single', label: 'Single' },
+                                            { id: 'double', label: 'Double Sharing' },
+                                            { id: 'triple', label: 'Triple Sharing' }
+                                        ].map((opt) => (
+                                            <button
+                                                key={opt.id}
+                                                type="button"
+                                                onClick={() => toggleOccupancy(opt.id)}
+                                                className={`flex-1 py-4 rounded-2xl border-2 transition-all font-bold text-sm ${formData.occupancy.includes(opt.id)
+                                                    ? 'border-plum-500 bg-plum-50 text-plum-700'
+                                                    : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
+                                                    }`}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Monthly Rent (₹)</label>

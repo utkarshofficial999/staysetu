@@ -39,6 +39,7 @@ const PropertyDetails = () => {
                     // Parse JSON fields
                     data.images = parseJsonField(data.images);
                     data.amenities = parseJsonField(data.amenities);
+                    data.occupancy = parseJsonField(data.occupancy) || ['single'];
                     setProperty(data);
                 }
             } catch (err) {
@@ -241,6 +242,22 @@ const PropertyDetails = () => {
                                             </div>
                                         );
                                     })}
+                                </div>
+                            </div>
+
+                            <div className="mb-10">
+                                <h3 className="text-sm font-semibold text-slate-900 mb-4 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>Available Room Types</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                    {property.occupancy?.map((occ) => (
+                                        <div key={occ} className="flex items-center gap-3 p-3.5 bg-emerald-50 rounded-xl border border-emerald-100">
+                                            <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center text-emerald-600 border border-emerald-100">
+                                                <Users size={16} />
+                                            </div>
+                                            <span className="font-bold text-emerald-700 text-xs uppercase tracking-tight">
+                                                {occ === 'single' ? 'Single' : occ === 'double' ? 'Double Sharing' : 'Triple Sharing'}
+                                            </span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 
