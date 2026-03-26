@@ -152,7 +152,7 @@ const Home = () => {
             <HowItWorks />
 
             {/* Why StaySetu */}
-            <section className="py-16 relative overflow-hidden bg-slate-50 border-y border-slate-100">
+            <section className="py-16 relative overflow-hidden bg-surface border-y border-slate-100">
                 <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">

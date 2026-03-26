@@ -30,7 +30,7 @@ const steps = [
 
 const HowItWorks = () => {
     return (
-        <section className="py-16 bg-white relative overflow-hidden">
+        <section className="py-16 bg-surface relative overflow-hidden">
             {/* Subtle background */}
             <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
 

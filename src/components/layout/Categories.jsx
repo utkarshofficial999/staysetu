@@ -37,7 +37,7 @@ const categories = [
 
 const Categories = () => {
     return (
-        <section className="relative py-16 bg-white overflow-hidden">
+        <section className="relative py-16 bg-surface overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-100 to-transparent" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,7 +51,7 @@ const Categories = () => {
                             We've organized the best student housing options into clear categories to help you find your new home faster.
                         </p>
                     </div>
-                    <Link to="/listings" className="group flex items-center gap-3 text-slate-900 font-black text-sm uppercase tracking-widest bg-slate-50 px-6 py-3 rounded-2xl border border-slate-200 hover:bg-slate-900 hover:text-white transition-all duration-300">
+                    <Link to="/listings" className="group flex items-center gap-3 text-slate-900 font-black text-sm uppercase tracking-widest bg-white px-6 py-3 rounded-2xl border border-slate-200 hover:bg-slate-900 hover:text-white transition-all duration-300">
                         View All Listings <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </Link>
                 </div>

@@ -13,7 +13,7 @@ const Footer = () => {
     };
 
     return (
-        <footer className="relative z-10 bg-white text-slate-600 pt-20 pb-8 overflow-hidden border-t border-slate-100">
+        <footer className="relative z-10 bg-surface text-slate-600 pt-20 pb-8 overflow-hidden border-t border-slate-100">
             {/* Subtle gradient accent at top */}
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-plum-400/30 to-transparent" />
 
