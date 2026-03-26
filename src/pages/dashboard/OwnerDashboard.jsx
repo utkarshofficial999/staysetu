@@ -94,6 +94,19 @@ const OwnerDashboard = () => {
     };
 
 
+    const handleMarkAsSold = async (id) => {
+        if (window.confirm('Mark this property as sold? It will no longer be visible to users.')) {
+            try {
+                await databases.updateDocument(DATABASE_ID, COLLECTION.listings, id, {
+                    status: 'sold'
+                });
+                setListings(listings.map(l => l.$id === id ? { ...l, status: 'sold' } : l));
+            } catch (err) {
+                console.error('Update error:', err);
+            }
+        }
+    };
+
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this listing? This cannot be undone.')) {
             try {
