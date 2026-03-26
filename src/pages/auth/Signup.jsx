@@ -86,7 +86,7 @@ const Signup = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-white relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-surface relative overflow-hidden">
             <div className="absolute inset-0 bg-mesh pointer-events-none" />
 
             <div className="w-full max-w-md relative z-10">
@@ -169,7 +169,7 @@ const Signup = () => {
                     <div className="mt-8">
                         <div className="relative flex items-center justify-center mb-6">
                             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-                            <span className="relative bg-white px-4 text-xs font-medium text-slate-400">or</span>
+                            <span className="relative bg-surface px-4 text-xs font-medium text-slate-400">or</span>
                         </div>
                         <GoogleButton onClick={handleGoogleLogin} loading={loading} />
                     </div>
