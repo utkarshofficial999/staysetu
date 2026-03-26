@@ -60,15 +60,6 @@ const Roommates = () => {
         if (!user) return alert('Please login to send a request');
         if (sentRequests.includes(post.$id)) return;
 
-        let phone = user.phone || "";
-        if (!phone) {
-            phone = window.prompt("The poster needs your phone number to contact you. Please enter your 10-digit number:");
-            if (!phone || phone.length < 10) {
-                alert("Valid phone number is required to send a request.");
-                return;
-            }
-        }
-
         setSubmitting(true);
         try {
             await databases.createDocument(
@@ -80,7 +71,7 @@ const Roommates = () => {
                     posterId: post.userId,
                     requesterId: user.$id,
                     requesterName: user.name || user.email,
-                    requesterPhone: phone,
+                    requesterPhone: user.phone || user.email || '',
                     status: 'pending',
                     createdAt: new Date().toISOString(),
                     // Include some post details for the dashboard

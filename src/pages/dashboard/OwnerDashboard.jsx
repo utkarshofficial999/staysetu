@@ -488,20 +488,31 @@ const OwnerDashboard = () => {
                                     </div>
 
                                     <div className="flex flex-col gap-2">
-                                        <a
-                                            href={`tel:${request.requesterPhone}`}
-                                            className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs hover:bg-slate-800 transition-all shadow-md shadow-slate-100"
-                                        >
-                                            <Phone size={14} /> Call: {request.requesterPhone || 'No number'}
-                                        </a>
-                                        <a
-                                            href={`https://wa.me/${request.requesterPhone?.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${request.requesterName}, I saw your interest in my roommate requirement on StaySetu!`)}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 rounded-xl text-xs hover:bg-[#128C7E] transition-all shadow-md shadow-green-50"
-                                        >
-                                            <MessageCircle size={14} /> WhatsApp
-                                        </a>
+                                        {request.requesterPhone && !request.requesterPhone.includes('@') ? (
+                                            <>
+                                                <a
+                                                    href={`tel:${request.requesterPhone}`}
+                                                    className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs hover:bg-slate-800 transition-all shadow-md shadow-slate-100"
+                                                >
+                                                    <Phone size={14} /> Call: {request.requesterPhone}
+                                                </a>
+                                                <a
+                                                    href={`https://wa.me/${request.requesterPhone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${request.requesterName}, I saw your interest in my roommate requirement on StaySetu!`)}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 rounded-xl text-xs hover:bg-[#128C7E] transition-all shadow-md shadow-green-50"
+                                                >
+                                                    <MessageCircle size={14} /> WhatsApp
+                                                </a>
+                                            </>
+                                        ) : (
+                                            <a
+                                                href={`mailto:${request.requesterPhone}`}
+                                                className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs hover:bg-slate-800 transition-all shadow-md shadow-slate-100"
+                                            >
+                                                <Mail size={14} /> Email: {request.requesterPhone}
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -572,8 +583,13 @@ const OwnerDashboard = () => {
                                                     <span className="text-[10px] text-slate-400 font-normal">/month</span>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <span className={listing.status === 'approved' ? 'chip-approved' : 'chip-pending'}>
-                                                        {listing.status === 'approved' ? 'Live' : 'Pending'}
+                                                    <span className={
+                                                        listing.status === 'approved' ? 'chip-approved' :
+                                                            listing.status === 'sold' ? 'bg-slate-100 text-slate-500 border border-slate-200 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' :
+                                                                'chip-pending'
+                                                    }>
+                                                        {listing.status === 'approved' ? 'Live' :
+                                                            listing.status === 'sold' ? 'Sold' : 'Pending'}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-5">
@@ -598,6 +614,15 @@ const OwnerDashboard = () => {
                                                         >
                                                             <Edit2 size={16} />
                                                         </Link>
+                                                        {listing.status === 'approved' && (
+                                                            <button
+                                                                onClick={() => handleMarkAsSold(listing.$id)}
+                                                                className="w-9 h-9 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center transition-colors"
+                                                                title="Mark as Sold"
+                                                            >
+                                                                <CheckCircle size={16} />
+                                                            </button>
+                                                        )}
                                                         <button
                                                             onClick={() => handleDelete(listing.$id)}
                                                             className="w-9 h-9 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-colors"

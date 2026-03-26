@@ -449,20 +449,31 @@ const StudentDashboard = () => {
                                             </div>
 
                                             <div className="flex flex-col gap-2">
-                                                <a
-                                                    href={`tel:${request.requesterPhone}`}
-                                                    className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs hover:bg-slate-800 transition-all shadow-md shadow-slate-100"
-                                                >
-                                                    <Phone size={14} /> Call: {request.requesterPhone || 'No number'}
-                                                </a>
-                                                <a
-                                                    href={`https://wa.me/${request.requesterPhone?.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${request.requesterName}, I saw your interest in my roommate requirement on StaySetu!`)}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 rounded-xl text-xs hover:bg-[#128C7E] transition-all shadow-md shadow-green-50"
-                                                >
-                                                    <MessageCircle size={14} /> WhatsApp
-                                                </a>
+                                                {request.requesterPhone && !request.requesterPhone.includes('@') ? (
+                                                    <>
+                                                        <a
+                                                            href={`tel:${request.requesterPhone}`}
+                                                            className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs hover:bg-slate-800 transition-all shadow-md shadow-slate-100"
+                                                        >
+                                                            <Phone size={14} /> Call: {request.requesterPhone}
+                                                        </a>
+                                                        <a
+                                                            href={`https://wa.me/${request.requesterPhone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${request.requesterName}, I saw your interest in my roommate requirement on StaySetu!`)}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 rounded-xl text-xs hover:bg-[#128C7E] transition-all shadow-md shadow-green-50"
+                                                        >
+                                                            <MessageCircle size={14} /> WhatsApp
+                                                        </a>
+                                                    </>
+                                                ) : (
+                                                    <a
+                                                        href={`mailto:${request.requesterPhone}`}
+                                                        className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs hover:bg-slate-800 transition-all shadow-md shadow-slate-100"
+                                                    >
+                                                        <Mail size={14} /> Email: {request.requesterPhone}
+                                                    </a>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
