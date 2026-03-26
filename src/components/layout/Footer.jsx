@@ -126,7 +126,7 @@ const Footer = () => {
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border border-slate-100">
                                     <MapPin size={14} className="text-plum-600" />
                                 </div>
-                                <span className="text-slate-600">ABES Engineering College, Ghaziabad</span>
+                                <span className="text-slate-600">Ghaziabad, Uttarpradesh</span>
                             </li>
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-100">
