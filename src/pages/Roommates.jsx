@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 const Roommates = () => {
-    const { user } = useAuth();
+    const { user, profile } = useAuth();
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -16,7 +16,13 @@ const Roommates = () => {
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [form, setForm] = useState({
-        move_in_date: '', description: '', whatsapp: '', college: ''
+        location: '',
+        budget: '',
+        college: '',
+        whatsapp: '',
+        gender_preference: 'any',
+        move_in_date: '',
+        description: ''
     });
     const [sentRequests, setSentRequests] = useState([]);
 
@@ -60,6 +66,10 @@ const Roommates = () => {
         if (!user) return alert('Please login to send a request');
         if (sentRequests.includes(post.$id)) return;
 
+        // Ensure we have the poster's ID
+        const posterId = post.userId || post.ownerId;
+        if (!posterId) return alert('Invalid post data. Cannot send request.');
+
         setSubmitting(true);
         try {
             await databases.createDocument(
@@ -68,22 +78,61 @@ const Roommates = () => {
                 ID.unique(),
                 {
                     roommatePostId: post.$id,
-                    posterId: post.userId,
+                    posterId: posterId,
                     requesterId: user.$id,
-                    requesterName: user.name || user.email,
-                    requesterPhone: user.phone || user.email || '',
+                    requesterName: profile?.fullName || profile?.name || user.name || user.email,
+                    requesterPhone: profile?.whatsapp || user.phone || user.email || '',
                     status: 'pending',
                     createdAt: new Date().toISOString(),
-                    // Include some post details for the dashboard
-                    postLocation: post.location,
-                    postCollege: post.college
+                    postLocation: post.location || 'Unknown',
+                    postCollege: post.college || 'Unknown'
                 }
             );
             setSentRequests(prev => [...prev, post.$id]);
             alert('Request sent successfully!');
         } catch (err) {
             console.error('Send request error:', err);
-            alert('Failed to send request. Please try again.');
+            alert('Failed to send request: ' + (err.message || 'Please try again.'));
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!user) return alert('Please login to post');
+
+        setSubmitting(true);
+        setSuccess(false);
+        try {
+            await databases.createDocument(
+                DATABASE_ID,
+                COLLECTION.roommateRequests,
+                ID.unique(),
+                {
+                    userId: user.$id,
+                    name: profile?.fullName || profile?.name || user.name || user.email,
+                    location: form.location,
+                    college: form.college,
+                    budget: parseFloat(form.budget) || 0,
+                    whatsapp: form.whatsapp,
+                    genderPreference: form.gender_preference,
+                    description: form.description,
+                    moveInDate: form.move_in_date || null,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                }
+            );
+            setSuccess(true);
+            setForm({ location: '', budget: '', college: '', whatsapp: '', gender_preference: 'any', move_in_date: '', description: '' });
+            setTimeout(() => {
+                setSuccess(false);
+                setShowForm(false);
+            }, 3000);
+            fetchRequests();
+        } catch (err) {
+            console.error('Submit error:', err);
+            alert('Error: ' + err.message);
         } finally {
             setSubmitting(false);
         }
