@@ -156,7 +156,7 @@ const Hero = ({ featuredProp }) => {
                         </h1>
 
                         <motion.p variants={text3DVariants} className="text-lg text-slate-500 font-medium max-w-lg mb-8 leading-relaxed">
-                            Vetted PGs, Hostels, and Flats designed for student life. No brokerage, and verified listings.
+                            Vetted Properties, Hostels, and Flats designed for student life. No brokerage, and verified listings.
                         </motion.p>
 
                         <motion.button
@@ -166,7 +166,7 @@ const Hero = ({ featuredProp }) => {
                             className="flex items-center gap-2 mb-10 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-xl border-2 border-emerald-100 font-bold text-xs hover:bg-emerald-100 transition-all hover:-translate-y-0.5"
                         >
                             <Navigation size={14} className={loadingLocation ? 'animate-spin' : ''} />
-                            {loadingLocation ? 'Getting location...' : 'Find PGs Near Me'}
+                            {loadingLocation ? 'Getting location...' : 'Find Properties Near Me'}
                         </motion.button>
 
                         <motion.div variants={text3DVariants} className="w-full max-w-2xl mb-12">
