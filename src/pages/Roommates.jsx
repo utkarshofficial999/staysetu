@@ -16,13 +16,27 @@ const Roommates = () => {
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [form, setForm] = useState({
-        location: '', budget: '', gender_preference: 'any',
         move_in_date: '', description: '', whatsapp: '', college: ''
     });
+    const [sentRequests, setSentRequests] = useState([]);
 
     useEffect(() => {
         fetchRequests();
-    }, []);
+        if (user) fetchSentRequests();
+    }, [user]);
+
+    const fetchSentRequests = async () => {
+        try {
+            const res = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTION.roommateConnectRequests,
+                [Query.equal('requesterId', user.$id)]
+            );
+            setSentRequests(res.documents.map(d => d.roommatePostId));
+        } catch (err) {
+            console.error('Fetch sent requests error:', err);
+        }
+    };
 
     const fetchRequests = async () => {
         setLoading(true);
@@ -42,36 +56,34 @@ const Roommates = () => {
         setLoading(false);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!user) return;
-        setSubmitting(true);
+    const handleSendRequest = async (post) => {
+        if (!user) return alert('Please login to send a request');
+        if (sentRequests.includes(post.$id)) return;
 
+        setSubmitting(true);
         try {
             await databases.createDocument(
                 DATABASE_ID,
-                COLLECTION.roommateRequests,
+                COLLECTION.roommateConnectRequests,
                 ID.unique(),
                 {
-                    userId: user.$id,
-                    name: user.name || user.email,
-                    location: form.location,
-                    budget: parseFloat(form.budget) || null,
-                    genderPreference: form.gender_preference,
-                    moveInDate: form.move_in_date || null,
-                    description: form.description,
-                    whatsapp: form.whatsapp,
-                    college: form.college,
+                    roommatePostId: post.$id,
+                    posterId: post.userId,
+                    requesterId: user.$id,
+                    requesterName: user.name || user.email,
+                    requesterPhone: user.phone || '', // Need to ensure user has phone or ask for it
                     status: 'pending',
                     createdAt: new Date().toISOString(),
+                    // Include some post details for the dashboard
+                    postLocation: post.location,
+                    postCollege: post.college
                 }
             );
-
-            setSuccess(true);
-            setForm({ location: '', budget: '', gender_preference: 'any', move_in_date: '', description: '', whatsapp: '', college: '' });
-            setTimeout(() => { setSuccess(false); setShowForm(false); }, 2500);
+            setSentRequests(prev => [...prev, post.$id]);
+            alert('Request sent successfully!');
         } catch (err) {
-            console.error(err);
+            console.error('Send request error:', err);
+            alert('Failed to send request. Please try again.');
         } finally {
             setSubmitting(false);
         }
@@ -260,15 +272,29 @@ const Roommates = () => {
                                 </div>
 
                                 {/* CTA */}
-                                {req.whatsapp && (
-                                    <a
-                                        href={`https://wa.me/${req.whatsapp.replace(/\D/g, '')}?text=Hi ${req.name}, I found your roommate requirement on StaySetu.`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn-whatsapp text-sm justify-center mt-auto"
+                                {req.userId !== user?.$id ? (
+                                    <button
+                                        onClick={() => handleSendRequest(req)}
+                                        disabled={sentRequests.includes(req.$id) || submitting}
+                                        className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg mt-auto ${sentRequests.includes(req.$id)
+                                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 cursor-default shadow-none'
+                                            : 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-200'
+                                            }`}
                                     >
-                                        <MessageCircle size={15} /> Connect on WhatsApp
-                                    </a>
+                                        {sentRequests.includes(req.$id) ? (
+                                            <>
+                                                <CheckCircle2 size={16} /> Request Sent
+                                            </>
+                                        ) : (
+                                            <>
+                                                <MessageCircle size={16} /> Send Interest Request
+                                            </>
+                                        )}
+                                    </button>
+                                ) : (
+                                    <div className="w-full flex items-center justify-center gap-2 py-3.5 bg-slate-50 text-slate-400 rounded-2xl font-bold text-sm mt-auto border border-slate-100">
+                                        <Users size={16} /> Your Requirement
+                                    </div>
                                 )}
                             </div>
                         ))}

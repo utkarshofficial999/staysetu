@@ -30,6 +30,8 @@ const StudentDashboard = () => {
     const [showRoommateForm, setShowRoommateForm] = useState(false);
     const [roommateSubmitting, setRoommateSubmitting] = useState(false);
     const [roommateSuccess, setRoommateSuccess] = useState(false);
+    const [incomingRequests, setIncomingRequests] = useState([]);
+    const [requestsLoading, setRequestsLoading] = useState(false);
     const [roommateForm, setRoommateForm] = useState({
         location: '',
         budget: '',
@@ -44,8 +46,26 @@ const StudentDashboard = () => {
         if (user) {
             fetchAllData();
             fetchRoommateRequests();
+            fetchIncomingRequests();
         }
     }, [user]);
+
+    const fetchIncomingRequests = async () => {
+        if (!user) return;
+        setRequestsLoading(true);
+        try {
+            const res = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTION.roommateConnectRequests,
+                [Query.equal('posterId', user.$id), Query.orderDesc('$createdAt')]
+            );
+            setIncomingRequests(res.documents);
+        } catch (err) {
+            console.error('Fetch incoming requests error:', err);
+        } finally {
+            setRequestsLoading(false);
+        }
+    };
 
     const fetchAllData = async () => {
         setLoading(true);
@@ -394,9 +414,59 @@ const StudentDashboard = () => {
                                 className="btn-primary py-3 px-6 flex items-center gap-2 shrink-0"
                             >
                                 {showRoommateForm ? <X size={18} /> : <Plus size={18} />}
-                                {showRoommateForm ? 'Cancel' : 'Post My Requirement'}
-                            </button>
                         </div>
+
+                        {/* Incoming Requests Section */}
+                        {incomingRequests.length > 0 && (
+                            <div className="mb-10 animate-slide-up">
+                                <div className="flex items-center gap-2 mb-6">
+                                    <div className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center font-bold">
+                                        {incomingRequests.length}
+                                    </div>
+                                    <h3 className="text-lg font-black text-slate-900" style={{ fontFamily: 'Bungee' }}>Interest Requests Received</h3>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {incomingRequests.map((request) => (
+                                        <div key={request.$id} className="bg-white border-2 border-emerald-100 rounded-[2rem] p-6 shadow-sm shadow-emerald-50">
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-black">
+                                                        {request.requesterName?.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-slate-900 text-sm">{request.requesterName}</h4>
+                                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{timeAgo(request.$createdAt)}</p>
+                                                    </div>
+                                                </div>
+                                                <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100 italic">Interested</span>
+                                            </div>
+
+                                            <div className="bg-slate-50 rounded-2xl p-4 mb-4 border border-slate-100">
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Interested in Post</p>
+                                                <p className="text-xs font-bold text-slate-700 truncate">{request.postLocation} ({request.postCollege})</p>
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <a
+                                                    href={`tel:${request.requesterPhone}`}
+                                                    className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs hover:bg-slate-800 transition-all shadow-md shadow-slate-100"
+                                                >
+                                                    <Phone size={14} /> Call: {request.requesterPhone || 'No number'}
+                                                </a>
+                                                <a
+                                                    href={`https://wa.me/${request.requesterPhone?.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${request.requesterName}, I saw your interest in my roommate requirement on StaySetu!`)}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 rounded-xl text-xs hover:bg-[#128C7E] transition-all shadow-md shadow-green-50"
+                                                >
+                                                    <MessageCircle size={14} /> WhatsApp
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Post Form */}
                         {showRoommateForm && (
