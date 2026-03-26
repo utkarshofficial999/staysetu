@@ -371,7 +371,7 @@ const OwnerDashboard = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-white">
+            <div className="min-h-screen flex items-center justify-center bg-surface">
                 <div className="text-center">
                     <div className="w-10 h-10 border-3 border-plum-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-slate-400 font-normal text-sm">Loading dashboard...</p>
@@ -381,7 +381,7 @@ const OwnerDashboard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-white pt-20 pb-12">
+        <div className="min-h-screen bg-surface pt-20 pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header */}
