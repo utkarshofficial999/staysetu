@@ -15,8 +15,26 @@ const Listings = () => {
     const [genderFilter, setGenderFilter] = useState(searchParams.get('gender') || 'all');
     const [priceRange, setPriceRange] = useState(parseInt(searchParams.get('price')) || 100000);
     const [amenities, setAmenities] = useState(searchParams.get('amenities')?.split(',') || []);
+    const [userCoords, setUserCoords] = useState(
+        searchParams.get('lat') && searchParams.get('lng')
+            ? { lat: parseFloat(searchParams.get('lat')), lng: parseFloat(searchParams.get('lng')) }
+            : null
+    );
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry'];
+
+    // Haversine formula to calculate distance in KM
+    const getDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371; // Radius of the earth in km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    };
 
     const fetchListings = async () => {
         setLoading(true);
@@ -62,6 +80,19 @@ const Listings = () => {
                 );
             }
 
+            // Distance sorting
+            if (userCoords) {
+                results = results.map(l => {
+                    const lat = parseFloat(l.latitude);
+                    const lng = parseFloat(l.longitude);
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        return { ...l, distance: getDistance(userCoords.lat, userCoords.lng, lat, lng) };
+                    }
+                    return { ...l, distance: Infinity };
+                });
+                results.sort((a, b) => a.distance - b.distance);
+            }
+
             setListings(results);
         } catch (err) {
             console.error('Fetch listings error:', err);
@@ -79,8 +110,12 @@ const Listings = () => {
         if (genderFilter !== 'all') params.set('gender', genderFilter);
         if (priceRange < 100000) params.set('price', priceRange);
         if (amenities.length > 0) params.set('amenities', amenities.join(','));
+        if (userCoords) {
+            params.set('lat', userCoords.lat);
+            params.set('lng', userCoords.lng);
+        }
         setSearchParams(params, { replace: true });
-    }, [searchQuery, propertyType, genderFilter, priceRange, amenities]);
+    }, [searchQuery, propertyType, genderFilter, priceRange, amenities, userCoords]);
 
     const handleSearch = (e) => {
         if (e) e.preventDefault();
@@ -105,6 +140,7 @@ const Listings = () => {
                         setGenderFilter('all');
                         setPriceRange(100000);
                         setAmenities([]);
+                        setUserCoords(null);
                         setSearchParams({});
                     }}
                     className="text-plum-900 text-xs font-semibold hover:text-plum-900 transition-colors"
@@ -217,7 +253,7 @@ const Listings = () => {
                     <div>
                         <h1 className="text-3xl font-bold text-slate-900 mb-1" style={{ fontFamily: 'Bungee' }}>Explore Stays</h1>
                         <p className="text-slate-400 font-normal text-sm">
-                            Discover {listings.length} verified properties for you
+                            {userCoords ? `Showing properties near your location` : `Discover ${listings.length} verified properties for you`}
                         </p>
                     </div>
 
@@ -242,6 +278,30 @@ const Listings = () => {
                         <span className="text-sm">Filters</span>
                     </button>
                 </div>
+
+                {userCoords && (
+                    <div className="flex items-center gap-3 mb-8 p-4 bg-emerald-50 rounded-2xl border border-emerald-100 animate-fade-in">
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 border border-emerald-100 shadow-sm">
+                            <MapPin size={18} />
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="text-xs font-bold text-emerald-900 uppercase tracking-wider">Location Filter Active</h4>
+                            <p className="text-[11px] text-emerald-600 font-medium">Showing properties sorted by proximity to you</p>
+                        </div>
+                        <button
+                            onClick={() => {
+                                setUserCoords(null);
+                                const params = new URLSearchParams(searchParams);
+                                params.delete('lat');
+                                params.delete('lng');
+                                setSearchParams(params);
+                            }}
+                            className="px-4 py-2 bg-white text-emerald-700 border border-emerald-200 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-all shadow-sm"
+                        >
+                            Clear Location
+                        </button>
+                    </div>
+                )}
 
                 <div className="flex gap-8">
                     {/* Desktop Filters */}

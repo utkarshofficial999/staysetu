@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Home, ArrowRight, Sparkles, MapPin, CheckCircle2, Users } from 'lucide-react';
+import { Search, Home, ArrowRight, Sparkles, MapPin, CheckCircle2, Users, Navigation } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../../lib/appwrite';
@@ -9,6 +9,7 @@ const Hero = ({ featuredProp }) => {
     const [type, setType] = useState('all');
     const [shouldAnimate, setShouldAnimate] = useState(false);
     const [featuredListing, setFeaturedListing] = useState(featuredProp || null);
+    const [loadingLocation, setLoadingLocation] = useState(false);
     const navigate = useNavigate();
 
     // Sync with prop changes
@@ -75,6 +76,28 @@ const Hero = ({ featuredProp }) => {
         navigate(`/listings?q=${searchQuery}&type=${type}`);
     };
 
+    const handleLiveLocation = () => {
+        setLoadingLocation(true);
+        if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser");
+            setLoadingLocation(false);
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                navigate(`/listings?lat=${latitude}&lng=${longitude}`);
+                setLoadingLocation(false);
+            },
+            (error) => {
+                console.error("Error getting location:", error);
+                alert("Unable to retrieve your location. Please check your permissions.");
+                setLoadingLocation(false);
+            }
+        );
+    };
+
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -132,9 +155,19 @@ const Hero = ({ featuredProp }) => {
                             <motion.span variants={text3DVariants} className="block transform-gpu origin-bottom">Living.</motion.span>
                         </h1>
 
-                        <motion.p variants={text3DVariants} className="text-lg text-slate-500 font-medium max-w-lg mb-12 leading-relaxed">
+                        <motion.p variants={text3DVariants} className="text-lg text-slate-500 font-medium max-w-lg mb-8 leading-relaxed">
                             Vetted PGs, Hostels, and Flats designed for student life. No brokerage, and verified listings.
                         </motion.p>
+
+                        <motion.button
+                            variants={text3DVariants}
+                            onClick={handleLiveLocation}
+                            disabled={loadingLocation}
+                            className="flex items-center gap-2 mb-10 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-xl border-2 border-emerald-100 font-bold text-xs hover:bg-emerald-100 transition-all hover:-translate-y-0.5"
+                        >
+                            <Navigation size={14} className={loadingLocation ? 'animate-spin' : ''} />
+                            {loadingLocation ? 'Getting location...' : 'Find PGs Near Me'}
+                        </motion.button>
 
                         <motion.div variants={text3DVariants} className="w-full max-w-2xl mb-12">
                             <form onSubmit={handleSearch} className="relative group">
