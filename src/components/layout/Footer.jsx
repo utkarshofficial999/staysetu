@@ -32,7 +32,7 @@ const Footer = () => {
                         </p>
                         <div className="flex space-x-3">
                             <a
-                                href="https://www.instagram.com/sudhanshu.pandey_/?igsh=MWEwZ3NqcDdoc2FuNQ%3D%3D"
+                                href="https://www.instagram.com/stay.setu/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-plum-900 hover:bg-slate-100 transition-all duration-300 border border-slate-100"
@@ -112,13 +112,15 @@ const Footer = () => {
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-100">
                                     <Mail size={14} className="text-plum-600" />
                                 </div>
-                                <span className="text-slate-600">sudhanshupandey7393@gmail.com</span>
+                                <span className="text-slate-600">staysetu26@gmail.com</span>
                             </li>
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-100">
-                                    <Phone size={14} className="text-plum-600" />
+                                    <Instagram size={14} className="text-plum-600" />
                                 </div>
-                                <span className="text-slate-600">+91 7393 011 350</span>
+                                <a href="https://www.instagram.com/stay.setu/" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-plum-600 transition-colors">
+                                    stay.setu
+                                </a>
                             </li>
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border border-slate-100">
