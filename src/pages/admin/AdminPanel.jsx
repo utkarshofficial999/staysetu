@@ -197,7 +197,7 @@ const AdminPanel = () => {
                         </div>
                         <p className="text-slate-400 font-normal text-sm">
                             Logged in as <span className="font-semibold text-slate-700">{profile?.fullName || profile?.name || user?.email}</span>
-                            <span className="ml-2 text-[10px] font-semibold bg-plum-100 text-plum-600 px-2 py-0.5 rounded-md">Admin</span>
+                            <span className="ml-2 text-[10px] font-semibold bg-blue-100 text-blue-600 px-2 py-0.5 rounded-md">Admin</span>
                         </p>
                     </div>
                     <button
@@ -211,8 +211,8 @@ const AdminPanel = () => {
                 {/* Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
                     {[
-                        { label: 'Users', value: stats.users, icon: Users, gradient: 'from-plum-500 to-purple-600' },
-                        { label: 'Listings', value: stats.total, icon: Home, gradient: 'from-plum-950 to-plum-600' },
+                        { label: 'Users', value: stats.users, icon: Users, gradient: 'from-blue-500 to-purple-600' },
+                        { label: 'Listings', value: stats.total, icon: Home, gradient: 'from-blue-950 to-blue-600' },
                         { label: 'Pending', value: stats.pending, icon: Clock, gradient: 'from-amber-500 to-orange-600' },
                         { label: 'Live', value: stats.approved, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600' },
                         { label: 'RM Pending', value: stats.roommate_pending, icon: Users, gradient: 'from-pink-500 to-rose-600' },
@@ -237,7 +237,7 @@ const AdminPanel = () => {
                         <button
                             onClick={() => { setActiveTab('listings'); setFilter('pending'); }}
                             className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === 'listings'
-                                ? 'text-plum-600 border-b-2 border-plum-500 bg-plum-50/30'
+                                ? 'text-blue-600 border-b-2 border-blue-500 bg-blue-50/30'
                                 : 'text-slate-400 hover:text-slate-600'
                                 }`}
                         >
@@ -246,7 +246,7 @@ const AdminPanel = () => {
                         <button
                             onClick={() => { setActiveTab('roommates'); setFilter('pending'); }}
                             className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === 'roommates'
-                                ? 'text-plum-600 border-b-2 border-plum-500 bg-plum-50/30'
+                                ? 'text-blue-600 border-b-2 border-blue-500 bg-blue-50/30'
                                 : 'text-slate-400 hover:text-slate-600'
                                 }`}
                         >
@@ -255,7 +255,7 @@ const AdminPanel = () => {
                         <button
                             onClick={() => setActiveTab('add')}
                             className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === 'add'
-                                ? 'text-plum-600 border-b-2 border-plum-500 bg-plum-50/30'
+                                ? 'text-blue-600 border-b-2 border-blue-500 bg-blue-50/30'
                                 : 'text-slate-400 hover:text-slate-600'
                                 }`}
                         >
@@ -452,23 +452,23 @@ const AdminPanel = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-slate-400 uppercase">Title</label>
-                                        <input name="title" required value={formData.title} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none" placeholder="e.g. Modern PG Near Campus" />
+                                        <input name="title" required value={formData.title} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-blue-500 outline-none" placeholder="e.g. Modern PG Near Campus" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-slate-400 uppercase">Monthly Price</label>
-                                        <input name="price" type="number" required value={formData.price} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none" placeholder="e.g. 8500" />
+                                        <input name="price" type="number" required value={formData.price} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-blue-500 outline-none" placeholder="e.g. 8500" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-slate-400 uppercase">Location</label>
-                                        <input name="location" required value={formData.location} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none" placeholder="e.g. Knowledge Park 2" />
+                                        <input name="location" required value={formData.location} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-blue-500 outline-none" placeholder="e.g. Knowledge Park 2" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-slate-400 uppercase">WhatsApp Number</label>
-                                        <input name="whatsapp" required value={formData.whatsapp} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none" placeholder="+91 XXXX XXXX" />
+                                        <input name="whatsapp" required value={formData.whatsapp} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-blue-500 outline-none" placeholder="+91 XXXX XXXX" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-slate-400 uppercase">Property Type</label>
-                                        <select name="type" value={formData.type} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none">
+                                        <select name="type" value={formData.type} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-blue-500 outline-none">
                                             <option>PG</option>
                                             <option>Flat</option>
                                             <option>Hostel</option>
@@ -476,7 +476,7 @@ const AdminPanel = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-slate-400 uppercase">Gender Preference</label>
-                                        <select name="gender" value={formData.gender} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none">
+                                        <select name="gender" value={formData.gender} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-blue-500 outline-none">
                                             <option value="any">Any</option>
                                             <option value="boys">Boys Only</option>
                                             <option value="girls">Girls Only</option>
@@ -486,7 +486,7 @@ const AdminPanel = () => {
 
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-400 uppercase">Description</label>
-                                    <textarea name="description" value={formData.description} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-plum-500 outline-none h-24" placeholder="Describe the property, rules, etc." />
+                                    <textarea name="description" value={formData.description} onChange={handleFormChange} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-blue-500 outline-none h-24" placeholder="Describe the property, rules, etc." />
                                 </div>
 
                                 <div className="space-y-4">
@@ -497,7 +497,7 @@ const AdminPanel = () => {
                                                 key={opt} type="button"
                                                 onClick={() => toggleAmenity(opt)}
                                                 className={`px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all ${formData.amenities.includes(opt)
-                                                    ? 'bg-plum-600 border-plum-600 text-white'
+                                                    ? 'bg-blue-600 border-blue-600 text-white'
                                                     : 'border-slate-100 text-slate-400 hover:border-slate-200'
                                                     }`}
                                             >
@@ -526,7 +526,7 @@ const AdminPanel = () => {
                                             type="button"
                                             onClick={() => fileInputRef.current.click()}
                                             disabled={uploading}
-                                            className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-plum-300 hover:text-plum-500 transition-all bg-slate-50/50"
+                                            className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-all bg-slate-50/50"
                                         >
                                             {uploading ? <Loader2 size={24} className="animate-spin" /> : <Upload size={24} />}
                                             <span className="text-[10px] font-bold mt-2 uppercase tracking-wider">{uploading ? 'Uploading...' : 'Add Photos'}</span>
@@ -588,7 +588,7 @@ const AdminPanel = () => {
                                                             />
                                                         </div>
                                                     ) : (
-                                                        <div className="w-10 h-10 bg-gradient-to-br from-plum-400 to-plum-500 rounded-xl flex items-center justify-center shrink-0 text-white text-sm font-semibold">
+                                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-xl flex items-center justify-center shrink-0 text-white text-sm font-semibold">
                                                             {(item.name || 'U').charAt(0).toUpperCase()}
                                                         </div>
                                                     )}
@@ -624,7 +624,7 @@ const AdminPanel = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center text-slate-500 font-normal max-w-[150px] gap-1.5">
-                                                    <MapPin size={12} className="text-plum-400 shrink-0" />
+                                                    <MapPin size={12} className="text-blue-400 shrink-0" />
                                                     <span className="truncate text-xs">{item.location}</span>
                                                 </div>
                                             </td>
@@ -639,7 +639,7 @@ const AdminPanel = () => {
                                                         <button
                                                             onClick={() => approve(item.$id)}
                                                             disabled={actionLoading === item.$id + '_approve'}
-                                                            className="w-8 h-8 bg-gradient-to-br from-plum-500 to-plum-600 hover:from-plum-600 hover:to-plum-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
+                                                            className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
                                                             style={{ boxShadow: '0 2px 8px -2px rgba(99,102,241,0.4)' }}
                                                         >
                                                             {actionLoading === item.$id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}

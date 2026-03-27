@@ -143,7 +143,7 @@ const Listings = () => {
                         setUserCoords(null);
                         setSearchParams({});
                     }}
-                    className="text-plum-900 text-xs font-semibold hover:text-plum-900 transition-colors"
+                    className="text-blue-900 text-xs font-semibold hover:text-blue-900 transition-colors"
                 >
                     Reset
                 </button>
@@ -158,7 +158,7 @@ const Listings = () => {
                             key={type}
                             onClick={() => setPropertyType(type)}
                             className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all text-sm font-medium ${propertyType === type
-                                ? 'border-plum-200 bg-plum-50 text-plum-900 shadow-sm'
+                                ? 'border-blue-200 bg-blue-50 text-blue-900 shadow-sm'
                                 : 'border-transparent text-slate-500 hover:bg-slate-50'
                                 }`}
                         >
@@ -178,7 +178,7 @@ const Listings = () => {
                             key={key}
                             onClick={() => setGenderFilter(key)}
                             className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all text-sm font-medium ${genderFilter === key
-                                ? 'border-plum-200 bg-plum-50 text-plum-900 shadow-sm'
+                                ? 'border-blue-200 bg-blue-50 text-blue-900 shadow-sm'
                                 : 'border-transparent text-slate-500 hover:bg-slate-50'
                                 }`}
                         >
@@ -203,7 +203,7 @@ const Listings = () => {
                     min="2000"
                     max="100000"
                     step="500"
-                    className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-plum-500"
+                    className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blue-500"
                     value={priceRange}
                     onChange={(e) => setPriceRange(parseInt(e.target.value))}
                 />
@@ -222,7 +222,7 @@ const Listings = () => {
                             <div
                                 onClick={() => toggleAmenity(amenity)}
                                 className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${amenities.includes(amenity)
-                                    ? 'bg-plum-500 border-plum-500 shadow-md'
+                                    ? 'bg-blue-500 border-blue-500 shadow-md'
                                     : 'border-slate-200 group-hover:border-slate-300'
                                     }`}
                             >
@@ -259,7 +259,7 @@ const Listings = () => {
 
                     <form onSubmit={handleSearch} className="flex-1 md:max-w-sm group">
                         <div className="relative">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-plum-900 transition-colors" size={16} />
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-900 transition-colors" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search by area, college..."

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, Home, ArrowRight, Sparkles, MapPin, CheckCircle2, Users, Navigation } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -6,6 +6,10 @@ import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../..
 
 const Hero = ({ featuredProp }) => {
     const [searchQuery, setSearchQuery] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const searchRef = useRef(null);
     const [type, setType] = useState('all');
     const [shouldAnimate, setShouldAnimate] = useState(false);
     const [featuredListing, setFeaturedListing] = useState(featuredProp || null);
@@ -26,49 +30,56 @@ const Hero = ({ featuredProp }) => {
             sessionStorage.setItem('hero-3d-played-v3', 'true');
         }
 
-        if (!featuredProp) {
-            const fetchFeaturedData = async () => {
-                try {
-                    // Try to get Admin-tagged "Modern Stays" first
-                    const res = await databases.listDocuments(
-                        DATABASE_ID,
-                        COLLECTION.listings,
-                        [
-                            Query.equal('status', 'approved'),
-                            Query.equal('featured', true),
-                            Query.orderDesc('$createdAt'),
-                            Query.limit(1),
-                        ]
-                    );
+        const fetchData = async () => {
+            try {
+                // Fetch top listings to build suggestions
+                const res = await databases.listDocuments(
+                    DATABASE_ID,
+                    COLLECTION.listings,
+                    [
+                        Query.equal('status', 'approved'),
+                        Query.orderDesc('viewsCount'),
+                        Query.limit(100),
+                    ]
+                );
 
-                    if (res.documents.length > 0) {
-                        const data = { ...res.documents[0] };
+                if (res.documents.length > 0) {
+                    // Extract unique locations, titles, and colleges
+                    const vals = new Set();
+                    res.documents.forEach(doc => {
+                        if (doc.location) vals.add(doc.location);
+                        if (doc.title) vals.add(doc.title);
+                        if (doc.college) vals.add(doc.college);
+                        // Also common areas if they exist in location
+                        const parts = doc.location.split(',');
+                        if (parts.length > 0) vals.add(parts[0].trim());
+                    });
+                    setSuggestions(Array.from(vals));
+
+                    // Set featured listing if not provided
+                    if (!featuredProp) {
+                        const featured = res.documents.find(d => d.featured) || res.documents[0];
+                        const data = { ...featured };
                         data.images = parseJsonField(data.images);
                         data.amenities = parseJsonField(data.amenities);
                         setFeaturedListing(data);
-                    } else {
-                        const latestRes = await databases.listDocuments(
-                            DATABASE_ID,
-                            COLLECTION.listings,
-                            [
-                                Query.equal('status', 'approved'),
-                                Query.orderDesc('$createdAt'),
-                                Query.limit(1),
-                            ]
-                        );
-                        if (latestRes.documents.length > 0) {
-                            const data = { ...latestRes.documents[0] };
-                            data.images = parseJsonField(data.images);
-                            data.amenities = parseJsonField(data.amenities);
-                            setFeaturedListing(data);
-                        }
                     }
-                } catch (err) {
-                    console.error('Fetch error:', err);
                 }
-            };
-            fetchFeaturedData();
-        }
+            } catch (err) {
+                console.error('Fetch suggestions error:', err);
+            }
+        };
+
+        fetchData();
+
+        // Click outside handler
+        const handleClickOutside = (e) => {
+            if (searchRef.current && !searchRef.current.contains(e.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [featuredProp]);
 
     const handleSearch = (e) => {
@@ -132,12 +143,14 @@ const Hero = ({ featuredProp }) => {
         : ['WiFi', 'AC', 'Power'];
 
     return (
-        <div className="relative min-h-[95vh] flex items-center overflow-hidden bg-surface">
-            {/* Background elements */}
-            <div className="absolute top-0 right-0 w-[55%] h-full bg-slate-50 opacity-40 -skew-x-[15deg] translate-x-1/4 -z-0" />
-            <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-plum-100/20 rounded-full blur-[120px] -z-0" />
+        <div className="relative min-h-[85vh] flex items-center bg-surface">
+            {/* Background elements - Clipped here instead of the whole Hero */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none -z-0">
+                <div className="absolute top-0 right-0 w-[55%] h-full bg-slate-50 opacity-40 -skew-x-[15deg] translate-x-1/4" />
+                <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-plum-100/20 rounded-full blur-[120px]" />
+            </div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+            <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 w-full">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
                     {/* Left - Content & Search */}
@@ -170,7 +183,7 @@ const Hero = ({ featuredProp }) => {
                         </motion.button>
 
                         <motion.div variants={text3DVariants} className="w-full max-w-2xl mb-12">
-                            <form onSubmit={handleSearch} className="relative group">
+                            <form onSubmit={handleSearch} className="relative group" ref={searchRef}>
                                 <div className="absolute inset-0 bg-slate-900 rounded-[2rem] translate-x-1.5 translate-y-1.5 group-focus-within:translate-x-2.5 group-focus-within:translate-y-2.5 transition-transform" />
                                 <div className="relative flex flex-col md:flex-row items-center gap-2 p-2 bg-white border-2 border-slate-900 rounded-[2rem]">
                                     <div className="flex-1 w-full flex items-center px-4 gap-3">
@@ -180,7 +193,24 @@ const Hero = ({ featuredProp }) => {
                                             placeholder="Where's your college?"
                                             className="w-full py-3 focus:outline-none text-slate-900 font-bold placeholder:text-slate-400 text-sm"
                                             value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setSearchQuery(val);
+                                                if (val.length > 1) {
+                                                    const filtered = suggestions.filter(s =>
+                                                        s.toLowerCase().includes(val.toLowerCase())
+                                                    ).slice(0, 5);
+                                                    setFilteredSuggestions(filtered);
+                                                    setShowSuggestions(filtered.length > 0);
+                                                } else {
+                                                    setShowSuggestions(false);
+                                                }
+                                            }}
+                                            onFocus={() => {
+                                                if (searchQuery.length > 1 && filteredSuggestions.length > 0) {
+                                                    setShowSuggestions(true);
+                                                }
+                                            }}
                                         />
                                     </div>
                                     <button
@@ -190,20 +220,34 @@ const Hero = ({ featuredProp }) => {
                                         Find <ArrowRight size={16} />
                                     </button>
                                 </div>
+
+                                {/* Suggestions Dropdown */}
+                                {showSuggestions && (
+                                    <div className="absolute top-full left-0 right-0 mt-3 bg-white border-2 border-slate-900 rounded-3xl shadow-[8px_8px_0px_#0f172a] z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                        <div className="p-2">
+                                            {filteredSuggestions.map((suggestion, index) => (
+                                                <button
+                                                    key={index}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setSearchQuery(suggestion);
+                                                        setShowSuggestions(false);
+                                                        navigate(`/listings?q=${suggestion}&type=${type}`);
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-left rounded-2xl transition-colors group/item"
+                                                >
+                                                    <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover/item:bg-blue-100 group-hover/item:text-blue-500 transition-colors">
+                                                        <MapPin size={14} />
+                                                    </div>
+                                                    <span className="text-sm font-bold text-slate-700 group-hover/item:text-blue-600 transition-colors">{suggestion}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </form>
                         </motion.div>
 
-                        <motion.div variants={text3DVariants} className="flex items-center gap-10">
-                            <div>
-                                <h4 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>12K</h4>
-                                <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Trusted Students</p>
-                            </div>
-                            <div className="w-px h-8 bg-slate-200" />
-                            <div>
-                                <h4 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>500+</h4>
-                                <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Verified Stays</p>
-                            </div>
-                        </motion.div>
                     </motion.div>
 
                     <div className="lg:col-span-5 relative mt-20 lg:mt-0 flex justify-center lg:block cursor-pointer" onClick={() => featuredListing && navigate(`/property/${featuredListing.$id || featuredListing.id}`)}>
@@ -230,7 +274,7 @@ const Hero = ({ featuredProp }) => {
                                         <h3 className="text-xl font-bold text-slate-900 truncate" style={{ fontFamily: 'Bungee' }}>
                                             {featuredListing?.title || 'Modern Stay'}
                                         </h3>
-                                        <div className="text-plum-600 font-bold shrink-0">
+                                        <div className="text-blue-600 font-bold shrink-0">
                                             ₹{(Number(featuredListing?.price) || 8500).toLocaleString()}/mo
                                         </div>
                                     </div>

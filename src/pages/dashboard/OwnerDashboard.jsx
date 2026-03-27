@@ -373,7 +373,7 @@ const OwnerDashboard = () => {
         return (
             <div className="min-h-screen flex items-center justify-center bg-surface">
                 <div className="text-center">
-                    <div className="w-10 h-10 border-3 border-plum-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <div className="w-10 h-10 border-3 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-slate-400 font-normal text-sm">Loading dashboard...</p>
                 </div>
             </div>
@@ -390,7 +390,7 @@ const OwnerDashboard = () => {
                         <div>
                             <div className="flex items-center gap-3 mb-2">
                                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white"
-                                    style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 8px 20px -4px rgba(99,102,241,0.3)' }}>
+                                    style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)', boxShadow: '0 8px 20px -4px rgba(59,130,246,0.3)' }}>
                                     <Building2 size={22} />
                                 </div>
                                 <div>
@@ -417,10 +417,10 @@ const OwnerDashboard = () => {
                 {/* Stats Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     {[
-                        { label: 'Total', value: stats.total, icon: Home, gradient: 'from-plum-950 to-plum-600' },
+                        { label: 'Total', value: stats.total, icon: Home, gradient: 'from-blue-950 to-blue-600' },
                         { label: 'Approved', value: stats.approved, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600' },
                         { label: 'Pending', value: stats.pending, icon: Clock, gradient: 'from-amber-500 to-orange-600' },
-                        { label: 'Views', value: stats.views, icon: Eye, gradient: 'from-plum-500 to-purple-600' },
+                        { label: 'Views', value: stats.views, icon: Eye, gradient: 'from-blue-500 to-purple-600' },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white rounded-3xl p-5 flex flex-col gap-2 border border-slate-200 shadow-sm">
                             <div className={`bg-gradient-to-br ${stat.gradient} w-10 h-10 rounded-xl flex items-center justify-center text-white`}
@@ -440,10 +440,10 @@ const OwnerDashboard = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 whitespace-nowrap ${activeTab === tab.id
-                                ? 'bg-plum-500 text-white'
+                                ? 'bg-blue-500 text-white'
                                 : 'text-slate-400 hover:bg-white hover:text-slate-900'
                                 }`}
-                            style={activeTab === tab.id ? { boxShadow: '0 4px 14px -2px rgba(99,102,241,0.35)' } : {}}
+                            style={activeTab === tab.id ? { boxShadow: '0 4px 14px -2px rgba(59,130,246,0.35)' } : {}}
                         >
                             <tab.icon size={16} />
                             <span>{tab.label}</span>
@@ -531,7 +531,7 @@ const OwnerDashboard = () => {
                                 </div>
                                 <button
                                     onClick={() => setActiveTab('add')}
-                                    className="flex items-center gap-2 bg-plum-50 text-plum-600 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-plum-100 transition-all"
+                                    className="flex items-center gap-2 bg-blue-50 text-blue-600 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-100 transition-all"
                                 >
                                     <Plus size={16} />
                                     Add Property
@@ -566,7 +566,7 @@ const OwnerDashboard = () => {
                                                         <div className="min-w-0">
                                                             <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>{listing.title}</h4>
                                                             <span className="text-xs font-normal text-slate-400 flex items-center gap-1 mt-0.5">
-                                                                <MapPin size={10} className="text-plum-400 shrink-0" />
+                                                                <MapPin size={10} className="text-blue-400 shrink-0" />
                                                                 <span className="truncate max-w-[180px]">{listing.location}</span>
                                                             </span>
                                                         </div>
@@ -576,7 +576,7 @@ const OwnerDashboard = () => {
                                                     <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md text-slate-500 border border-slate-200">{listing.type}</span>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <div className="flex items-center font-bold text-plum-600" style={{ fontFamily: 'Bungee' }}>
+                                                    <div className="flex items-center font-bold text-blue-600" style={{ fontFamily: 'Bungee' }}>
                                                         <IndianRupee size={13} className="mr-0.5" />
                                                         {listing.price?.toLocaleString()}
                                                     </div>
@@ -609,7 +609,7 @@ const OwnerDashboard = () => {
                                                         </Link>
                                                         <Link
                                                             to={`/dashboard/edit-listing/${listing.$id}`}
-                                                            className="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-plum-950 rounded-lg flex items-center justify-center transition-colors"
+                                                            className="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-blue-950 rounded-lg flex items-center justify-center transition-colors"
                                                             title="Edit"
                                                         >
                                                             <Edit2 size={16} />
@@ -671,7 +671,7 @@ const OwnerDashboard = () => {
                                                     <MapPin size={10} className="mr-1" /> {listing.location}
                                                 </span>
                                                 <div className="flex items-center gap-2 mt-1">
-                                                    <span className="text-plum-600 font-black text-sm flex items-center">
+                                                    <span className="text-blue-600 font-black text-sm flex items-center">
                                                         <IndianRupee size={12} />{listing.price?.toLocaleString()}
                                                     </span>
                                                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${listing.status === 'approved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
@@ -706,7 +706,7 @@ const OwnerDashboard = () => {
                         <div className="card-elevated overflow-hidden">
                             <div className="p-8 md:p-10 border-b border-slate-50">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-plum-50 rounded-2xl flex items-center justify-center text-plum-500">
+                                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500">
                                         <Plus size={24} />
                                     </div>
                                     <div>
@@ -734,7 +734,7 @@ const OwnerDashboard = () => {
                                 {/* Step 1 - Basic Info */}
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center" style={{ fontFamily: 'Bungee' }}>
-                                        <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">1</span>
+                                        <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">1</span>
                                         Basic Information
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -781,7 +781,7 @@ const OwnerDashboard = () => {
                                                         type="button"
                                                         onClick={() => toggleOccupancy(opt.id)}
                                                         className={`px-4 py-2 rounded-xl border-2 transition-all font-bold text-xs ${formData.occupancy.includes(opt.id)
-                                                            ? 'border-plum-500 bg-plum-50 text-plum-700'
+                                                            ? 'border-blue-500 bg-blue-50 text-blue-700'
                                                             : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
                                                             }`}
                                                     >
@@ -812,7 +812,7 @@ const OwnerDashboard = () => {
                                                 <button
                                                     type="button"
                                                     onClick={useCurrentLocation}
-                                                    className="flex items-center gap-1.5 text-xs font-black text-plum-600 hover:text-plum-700 transition-colors uppercase tracking-widest"
+                                                    className="flex items-center gap-1.5 text-xs font-black text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest"
                                                 >
                                                     <Locate size={14} />
                                                     Use Live Location
@@ -845,7 +845,7 @@ const OwnerDashboard = () => {
                                 {/* Step 2 - Amenities */}
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center" style={{ fontFamily: 'Bungee' }}>
-                                        <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">2</span>
+                                        <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">2</span>
                                         Amenities & Facilities
                                     </h3>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -855,8 +855,8 @@ const OwnerDashboard = () => {
                                                 type="button"
                                                 onClick={() => toggleAmenity(amenity)}
                                                 className={`flex items-center justify-center p-3.5 rounded-xl border transition-all font-medium text-sm ${formData.amenities.includes(amenity)
-                                                    ? 'border-plum-300 bg-plum-50 text-plum-600'
-                                                    : 'border-white/10/60 text-slate-400 hover:border-plum-200 hover:bg-[#0a080a]'
+                                                    ? 'border-blue-300 bg-blue-50 text-blue-600'
+                                                    : 'border-white/10/60 text-slate-400 hover:border-blue-200 hover:bg-[#0a080a]'
                                                     }`}
                                             >
                                                 {formData.amenities.includes(amenity) && <CheckCircle size={14} className="mr-2" />}
@@ -869,7 +869,7 @@ const OwnerDashboard = () => {
                                 {/* Step 3 - Photos */}
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center" style={{ fontFamily: 'Bungee' }}>
-                                        <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">3</span>
+                                        <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">3</span>
                                         Property Photos
                                     </h3>
 
@@ -887,21 +887,21 @@ const OwnerDashboard = () => {
                                         onClick={() => fileInputRef.current && fileInputRef.current.click()}
                                         disabled={uploadingImages || uploadedImages.length >= 8}
                                         className={`w-full flex flex-col items-center justify-center py-10 border-2 border-dashed rounded-2xl transition-all ${uploadingImages
-                                            ? 'border-plum-300 bg-plum-50 cursor-wait'
+                                            ? 'border-blue-300 bg-blue-50 cursor-wait'
                                             : uploadedImages.length >= 8
                                                 ? 'border-white/5 bg-[#0a080a] opacity-50 cursor-not-allowed'
-                                                : 'border-slate-200 hover:border-plum-400 hover:bg-plum-50/40 cursor-pointer'
+                                                : 'border-slate-200 hover:border-blue-400 hover:bg-blue-50/40 cursor-pointer'
                                             }`}
                                     >
                                         {uploadingImages ? (
                                             <>
-                                                <div className="w-8 h-8 border-3 border-plum-500 border-t-transparent rounded-full animate-spin mb-3" />
-                                                <p className="font-semibold text-plum-600 text-sm">Uploading photos...</p>
+                                                <div className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin mb-3" />
+                                                <p className="font-semibold text-blue-600 text-sm">Uploading photos...</p>
                                                 <p className="text-xs text-slate-400 mt-1">Please wait</p>
                                             </>
                                         ) : (
                                             <>
-                                                <div className="w-14 h-14 bg-plum-50 rounded-2xl flex items-center justify-center text-plum-500 mb-4">
+                                                <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 mb-4">
                                                     <Upload size={28} />
                                                 </div>
                                                 <p className="font-semibold text-slate-900 mb-1 text-sm">Click to upload photos</p>
@@ -919,7 +919,7 @@ const OwnerDashboard = () => {
                                                 <div key={index} className="relative group rounded-xl overflow-hidden aspect-square bg-slate-100">
                                                     <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
                                                     {index === 0 && (
-                                                        <span className="absolute top-2 left-2 text-[9px] font-semibold bg-plum-500 text-white px-2 py-0.5 rounded-md uppercase">Cover</span>
+                                                        <span className="absolute top-2 left-2 text-[9px] font-semibold bg-blue-500 text-white px-2 py-0.5 rounded-md uppercase">Cover</span>
                                                     )}
                                                     <button
                                                         type="button"
@@ -937,7 +937,7 @@ const OwnerDashboard = () => {
                                 {/* Step 4 - Contact */}
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center" style={{ fontFamily: 'Bungee' }}>
-                                        <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">4</span>
+                                        <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">4</span>
                                         Contact Information
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -45,7 +45,7 @@ const Categories = () => {
                     <div className="max-w-xl">
                         <span className="section-label mb-4 block w-fit">Discovery</span>
                         <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight" style={{ fontFamily: 'Bungee' }}>
-                            Find Your Perfect <span className="text-plum-600">Space</span>
+                            Find Your Perfect <span className="text-blue-600">Space</span>
                         </h2>
                         <p className="text-slate-500 font-normal mt-4 text-base leading-relaxed">
                             We've organized the best student housing options into clear categories to help you find your new home faster.

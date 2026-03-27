@@ -6,25 +6,25 @@ const steps = [
         title: 'Create Account',
         description: 'Sign up as a student to find stays, or as an owner to list your property.',
         icon: UserPlus,
-        gradient: 'from-plum-800 to-plum-900',
+        gradient: 'from-blue-800 to-indigo-950',
     },
     {
         title: 'Browse & Filter',
         description: 'Use smart filters to find PGs or flats that match your preferences.',
         icon: Search,
-        gradient: 'from-plum-700 to-plum-800',
+        gradient: 'from-blue-700 to-indigo-900',
     },
     {
         title: 'Connect & Chat',
         description: 'Message owners directly on the platform or connect via WhatsApp.',
         icon: MessageSquare,
-        gradient: 'from-plum-600 to-plum-700',
+        gradient: 'from-blue-600 to-indigo-800',
     },
     {
         title: 'Move In',
         description: 'Finalize the details, visit the stay, and move into your new home.',
         icon: Home,
-        gradient: 'from-plum-500 to-plum-600',
+        gradient: 'from-blue-500 to-indigo-700',
     },
 ];
 
@@ -62,7 +62,7 @@ const HowItWorks = () => {
                             </div>
 
                             {/* Card */}
-                            <div className={`card-elevated p-8 flex-1 w-full transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br ${step.gradient} group-hover:shadow-[0_20px_40px_-15px_rgba(58,31,61,0.2)]`}>
+                            <div className={`card-elevated p-8 flex-1 w-full transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br ${step.gradient} group-hover:shadow-[0_20px_40px_-15px_rgba(30,58,138,0.2)]`}>
                                 <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Bungee' }}>{step.title}</h3>
                                 <p className="text-white/80 text-sm leading-relaxed font-normal">{step.description}</p>
                             </div>

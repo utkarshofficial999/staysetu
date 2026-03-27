@@ -95,7 +95,7 @@ const Maids = () => {
                         <input
                             type="text"
                             placeholder="Search by name or location..."
-                            className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-2 border-slate-100 focus:border-plum-500 outline-none text-sm font-medium"
+                            className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-2 border-slate-100 focus:border-blue-500 outline-none text-sm font-medium"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />

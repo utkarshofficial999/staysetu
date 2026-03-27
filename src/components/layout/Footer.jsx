@@ -15,7 +15,7 @@ const Footer = () => {
     return (
         <footer className="relative z-10 bg-surface text-slate-600 pt-20 pb-8 overflow-hidden border-t border-slate-100">
             {/* Subtle gradient accent at top */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-plum-400/30 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
@@ -35,7 +35,7 @@ const Footer = () => {
                                 href="https://www.instagram.com/stay.setu/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-plum-900 hover:bg-slate-100 transition-all duration-300 border border-slate-100"
+                                className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-blue-900 hover:bg-slate-100 transition-all duration-300 border border-slate-100"
                             >
                                 <Instagram size={16} />
                             </a>
@@ -56,7 +56,7 @@ const Footer = () => {
                                 <li key={link.label} className="group">
                                     <button onClick={(e) => toggleDesc(e, link.id)} className="block w-full text-left focus:outline-none">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-sm font-bold text-slate-700 group-hover:text-plum-900 transition-colors">
+                                            <span className="text-sm font-bold text-slate-700 group-hover:text-blue-900 transition-colors">
                                                 {link.label}
                                             </span>
                                             <div className={`transition-transform duration-300 ${openId === link.id ? 'rotate-90' : ''}`}>
@@ -67,7 +67,7 @@ const Footer = () => {
                                             <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
                                                 {link.desc}
                                             </p>
-                                            <Link to={link.to} className="inline-block mt-2 text-[10px] font-black uppercase tracking-widest text-plum-600 hover:underline">
+                                            <Link to={link.to} className="inline-block mt-2 text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline">
                                                 Go to Page →
                                             </Link>
                                         </div>
@@ -90,7 +90,7 @@ const Footer = () => {
                             ].map((item) => (
                                 <li key={item.label} className="group">
                                     <button onClick={(e) => toggleDesc(e, item.id)} className="block w-full text-left focus:outline-none">
-                                        <span className="text-sm font-bold text-slate-700 group-hover:text-plum-900 transition-colors">
+                                        <span className="text-sm font-bold text-slate-700 group-hover:text-blue-900 transition-colors">
                                             {item.label}
                                         </span>
                                         <div className={`overflow-hidden transition-all duration-300 ${openId === item.id ? 'max-h-20 mt-2 opacity-100' : 'max-h-0 opacity-0'}`}>
@@ -110,21 +110,21 @@ const Footer = () => {
                         <ul className="space-y-4">
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-100">
-                                    <Mail size={14} className="text-plum-600" />
+                                    <Mail size={14} className="text-blue-600" />
                                 </div>
                                 <span className="text-slate-600">staysetu26@gmail.com</span>
                             </li>
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-100">
-                                    <Instagram size={14} className="text-plum-600" />
+                                    <Instagram size={14} className="text-blue-600" />
                                 </div>
-                                <a href="https://www.instagram.com/stay.setu/" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-plum-600 transition-colors">
+                                <a href="https://www.instagram.com/stay.setu/" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-blue-600 transition-colors">
                                     stay.setu
                                 </a>
                             </li>
                             <li className="flex items-center space-x-3 text-sm">
                                 <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border border-slate-100">
-                                    <MapPin size={14} className="text-plum-600" />
+                                    <MapPin size={14} className="text-blue-600" />
                                 </div>
                                 <span className="text-slate-600">Ghaziabad, Uttarpradesh</span>
                             </li>

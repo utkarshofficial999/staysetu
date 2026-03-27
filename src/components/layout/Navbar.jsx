@@ -52,9 +52,9 @@ const Navbar = () => {
 
     const roleBadge = {
         admin: { bg: 'bg-rose-50', text: 'text-rose-600', label: 'Admin' },
-        owner: { bg: 'bg-plum-100', text: 'text-plum-700', label: 'Owner' },
-        student: { bg: 'bg-plum-50', text: 'text-plum-900', label: 'Student' },
-    }[role] || { bg: 'bg-plum-50', text: 'text-plum-900', label: 'Student' };
+        owner: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Owner' },
+        student: { bg: 'bg-blue-50', text: 'text-blue-900', label: 'Student' },
+    }[role] || { bg: 'bg-blue-50', text: 'text-blue-900', label: 'Student' };
 
     return (
         <>
@@ -127,7 +127,7 @@ const Navbar = () => {
                                                 <div className="px-2 py-2">
                                                     <Link
                                                         to={dashPath}
-                                                        className="flex items-center gap-3 px-4 py-3 text-[12px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-100 hover:text-plum-900 rounded-2xl transition-all"
+                                                        className="flex items-center gap-3 px-4 py-3 text-[12px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-100 hover:text-blue-900 rounded-2xl transition-all"
                                                         onClick={() => setDropdownOpen(false)}
                                                     >
                                                         <LayoutDashboard size={14} /> Dashboard

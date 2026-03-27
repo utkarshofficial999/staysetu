@@ -186,16 +186,25 @@ const StudentDashboard = () => {
     };
 
     const filteredListings = listings.filter(listing => {
+        const searchLower = searchQuery.toLowerCase();
         const matchesSearch = !searchQuery ||
-            listing.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            listing.location?.toLowerCase().includes(searchQuery.toLowerCase());
+            listing.title?.toLowerCase().includes(searchLower) ||
+            listing.location?.toLowerCase().includes(searchLower) ||
+            listing.type?.toLowerCase().includes(searchLower) ||
+            listing.college?.toLowerCase().includes(searchLower) ||
+            listing.description?.toLowerCase().includes(searchLower);
+
         const matchesType = propertyType === 'all' || listing.type === propertyType;
-        const matchesPrice = listing.price <= priceRange;
+        const matchesPrice = Number(listing.price) <= priceRange;
+
         let matchesGender = true;
         if (genderFilter !== 'all') {
             const genderValue = genderFilter === 'male' ? 'boys' : 'girls';
-            matchesGender = listing.gender_preference === genderValue || listing.gender_preference === 'any';
+            // Check both camelCase and snake_case for compatibility
+            const propertyGender = listing.genderPreference || listing.gender_preference || listing.gender;
+            matchesGender = propertyGender === genderValue || propertyGender === 'any';
         }
+
         return matchesSearch && matchesType && matchesPrice && matchesGender;
     });
 
@@ -220,7 +229,7 @@ const StudentDashboard = () => {
         return (
             <div className="min-h-screen flex items-center justify-center bg-surface">
                 <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-plum-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-slate-400 font-medium">Loading your dashboard...</p>
                 </div>
             </div>
@@ -236,7 +245,7 @@ const StudentDashboard = () => {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="w-12 h-12 bg-gradient-to-br from-plum-500 to-plum-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-plum-200">
+                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-200">
                                     {profile?.name?.charAt(0)?.toUpperCase() || 'S'}
                                 </div>
                                 <div>
@@ -275,7 +284,7 @@ const StudentDashboard = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all duration-300 whitespace-nowrap ${activeTab === tab.id
-                                ? 'bg-plum-500 text-white shadow-lg shadow-plum-200'
+                                ? 'bg-blue-500 text-white shadow-lg shadow-blue-200'
                                 : 'text-slate-500 hover:bg-white hover:text-slate-900'
                                 }`}
                         >
@@ -302,7 +311,7 @@ const StudentDashboard = () => {
                                     <input
                                         type="text"
                                         placeholder="Search by location, property name, or college..."
-                                        className="w-full bg-white border border-slate-200 rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-plum-500/20 focus:border-plum-400 transition-all font-medium text-sm text-slate-900"
+                                        className="w-full bg-white border border-slate-200 rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium text-sm text-slate-900"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
@@ -314,7 +323,7 @@ const StudentDashboard = () => {
                                             key={type}
                                             onClick={() => setPropertyType(type)}
                                             className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${propertyType === type
-                                                ? 'bg-plum-500 text-white shadow-md shadow-plum-200'
+                                                ? 'bg-blue-500 text-white shadow-md shadow-blue-200'
                                                 : 'bg-white text-slate-500 hover:bg-slate-100 border border-slate-200'
                                                 }`}
                                         >
@@ -329,7 +338,7 @@ const StudentDashboard = () => {
                                             key={key}
                                             onClick={() => setGenderFilter(key)}
                                             className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${genderFilter === key
-                                                ? 'bg-plum-500 text-white shadow-md shadow-plum-200'
+                                                ? 'bg-blue-500 text-white shadow-md shadow-blue-200'
                                                 : 'bg-white text-slate-500 hover:bg-slate-100 border border-slate-200'
                                                 }`}
                                         >
@@ -347,11 +356,11 @@ const StudentDashboard = () => {
                                     min="2000"
                                     max="100000"
                                     step="500"
-                                    className="flex-1 h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-plum-500"
+                                    className="flex-1 h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blue-500"
                                     value={priceRange}
                                     onChange={(e) => setPriceRange(parseInt(e.target.value))}
                                 />
-                                <span className="text-plum-600 font-black flex items-center text-sm min-w-[80px] justify-end">
+                                <span className="text-blue-600 font-black flex items-center text-sm min-w-[80px] justify-end">
                                     <IndianRupee size={14} />
                                     {priceRange.toLocaleString()}
                                 </span>
@@ -485,7 +494,7 @@ const StudentDashboard = () => {
                         {showRoommateForm && (
                             <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 mb-8">
                                 <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                                    <UserCheck size={20} className="text-plum-500" />
+                                    <UserCheck size={20} className="text-blue-500" />
                                     Tell others what you're looking for
                                 </h3>
                                 {roommateSuccess ? (
@@ -588,7 +597,7 @@ const StudentDashboard = () => {
                                         {/* Card Header */}
                                         <div className="bg-slate-50 p-5 border-b border-slate-100">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-gradient-to-br from-plum-400 to-plum-500 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-md">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-500 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-md">
                                                     {(req.name || req.student?.full_name || 'S').charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
@@ -615,7 +624,7 @@ const StudentDashboard = () => {
                                         {/* Card Body */}
                                         <div className="p-5 space-y-3">
                                             <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
-                                                <MapPin size={14} className="text-plum-400 shrink-0" />
+                                                <MapPin size={14} className="text-blue-400 shrink-0" />
                                                 <span className="truncate">{req.location}</span>
                                             </div>
                                             {req.budget && (
@@ -653,7 +662,7 @@ const StudentDashboard = () => {
                                         )}
                                         {req.userId === user.$id && (
                                             <div className="px-5 pb-5">
-                                                <span className="w-full flex items-center justify-center gap-2 bg-plum-50 text-plum-600 font-bold py-3 rounded-2xl text-sm">
+                                                <span className="w-full flex items-center justify-center gap-2 bg-blue-50 text-blue-600 font-bold py-3 rounded-2xl text-sm">
                                                     <CheckCircle size={16} /> Your Post
                                                 </span>
                                             </div>
@@ -663,7 +672,7 @@ const StudentDashboard = () => {
                             </div>
                         ) : (
                             <div className="bg-slate-50 rounded-[2.5rem] p-20 text-center border border-dashed border-slate-200">
-                                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-plum-300 border border-slate-100">
+                                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-blue-300 border border-slate-100">
                                     <Users size={40} />
                                 </div>
                                 <h3 className="text-2xl font-bold text-slate-900 mb-2">No roommate posts yet</h3>
@@ -726,7 +735,7 @@ const StudentDashboard = () => {
 
                         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                             {/* Profile Header */}
-                            <div className="bg-gradient-to-r from-plum-500 to-plum-600 p-8 relative overflow-hidden">
+                            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-8 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
                                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
                                 <div className="relative flex items-center gap-5">

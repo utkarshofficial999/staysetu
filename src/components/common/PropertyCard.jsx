@@ -15,7 +15,7 @@ const amenityIcons = { WiFi: Wifi, AC: Wind, Food: UtensilsCrossed, Parking: Car
 
 const typeStyles = {
     PG: { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-200' },
-    Flat: { bg: 'bg-plum-50', text: 'text-plum-600', border: 'border-plum-200' },
+    Flat: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' },
     Hostel: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-200' },
 };
 
@@ -121,7 +121,7 @@ const PropertyCard = ({ property }) => {
                     )}
                 </div>
 
-                <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-1 group-hover:text-plum-600 transition-colors" style={{ fontFamily: 'Bungee' }}>
+                <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors" style={{ fontFamily: 'Bungee' }}>
                     {property?.title || 'Comfortable Stay'}
                 </h3>
 
@@ -132,7 +132,7 @@ const PropertyCard = ({ property }) => {
 
                 <div className="flex flex-wrap gap-1.5 mb-6">
                     {(parseJsonField(property?.occupancy) || ['single']).map((occ) => (
-                        <span key={occ} className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-plum-50 text-plum-600 border border-plum-100 uppercase">
+                        <span key={occ} className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border border-blue-100 uppercase">
                             {occ}
                         </span>
                     ))}

@@ -58,7 +58,7 @@
   h6 {
     font-family: 'Bungee', cursive;
     @apply font-normal tracking-tight;
-    color: #1a1a1a !important;
+    color: #1a1a1a;
     line-height: 1.1;
   }
 

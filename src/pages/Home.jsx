@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 
 const whys = [
     { icon: Shield, title: 'Every Listing Verified', desc: 'Our team personally reviews each property. Zero fake listings, guaranteed.', gradient: 'from-emerald-500 to-teal-600' },
-    { icon: Zap, title: 'Direct Owner Connect', desc: 'Chat directly with owners via WhatsApp. No brokerage fees, no delays.', gradient: 'from-plum-600 to-indigo-700' },
+    { icon: Zap, title: 'Direct Owner Connect', desc: 'Chat directly with owners via WhatsApp. No brokerage fees, no delays.', gradient: 'from-blue-600 to-indigo-800' },
     { icon: Star, title: 'Student-First Pricing', desc: 'All stays are budget-friendly and tailored for student lifestyles.', gradient: 'from-amber-400 to-orange-500' },
     { icon: Users, title: 'Thriving Community', desc: '12,000+ students have found their perfect stay through StaySetu.', gradient: 'from-rose-500 to-pink-600' },
 ];
@@ -104,7 +104,7 @@ const Home = () => {
 
 
             {/* Featured Listings */}
-            <section className="py-16 relative z-10">
+            <section className="pt-8 pb-16 relative z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
                         <span className="section-label mb-4 inline-block">Featured</span>
@@ -183,11 +183,11 @@ const Home = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="relative rounded-[2rem] overflow-hidden p-12 md:p-20 text-center"
                         style={{
-                            background: 'linear-gradient(135deg, #2D1B2E 0%, #3A1F3D 40%, #524058 100%)',
+                            background: 'linear-gradient(135deg, #172554 0%, #1e3a8a 40%, #1e40af 100%)',
                         }}>
                         {/* Decorative orbs */}
                         <div className="absolute top-0 right-0 w-80 h-80 rounded-full opacity-20 blur-[100px]"
-                            style={{ background: '#C4949E' }} />
+                            style={{ background: '#3b82f6' }} />
                         <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-20 blur-[100px]"
                             style={{ background: '#EDD9C4' }} />
 
@@ -204,7 +204,7 @@ const Home = () => {
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                                 <Link
                                     to="/signup"
-                                    className="w-full sm:w-auto bg-white text-plum-900 font-semibold py-3.5 px-10 rounded-2xl hover:bg-plum-50 transition-all active:scale-[0.97] text-sm"
+                                    className="w-full sm:w-auto bg-white text-blue-900 font-semibold py-3.5 px-10 rounded-2xl hover:bg-blue-50 transition-all active:scale-[0.97] text-sm"
                                     style={{ boxShadow: '0 4px 14px rgba(255,255,255,0.2)' }}
                                 >
                                     Get Started — It's Free

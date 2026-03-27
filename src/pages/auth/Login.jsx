@@ -100,7 +100,7 @@ const Login = () => {
                         <div>
                             <div className="flex justify-between mb-2">
                                 <label className="block text-sm font-medium text-slate-600">Password</label>
-                                <a href="#" className="text-xs font-medium text-plum-900 hover:text-plum-900">Forgot?</a>
+                                <a href="#" className="text-xs font-medium text-blue-900 hover:text-blue-900">Forgot?</a>
                             </div>
                             <div className="relative">
                                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
@@ -129,7 +129,7 @@ const Login = () => {
 
                 <p className="mt-8 text-center text-slate-500 font-normal text-sm">
                     Don't have an account?{' '}
-                    <Link to="/signup" className="text-plum-900 hover:text-plum-900 font-semibold">Sign up</Link>
+                    <Link to="/signup" className="text-blue-900 hover:text-blue-900 font-semibold">Sign up</Link>
                 </p>
             </div>
         </div>

@@ -118,14 +118,14 @@ const Signup = () => {
                             <label className="block text-sm font-medium text-slate-600 mb-3">I want to</label>
                             <div className="grid grid-cols-2 gap-3">
                                 <button type="button" onClick={() => setRole('student')}
-                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'student' ? 'border-plum-300 bg-plum-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
-                                    <UserCircle className={role === 'student' ? 'text-plum-900 transition-colors' : 'text-slate-400'} size={24} />
-                                    <span className={`text-sm font-semibold mt-2 ${role === 'student' ? 'text-plum-900 font-bold' : 'text-slate-600'}`}>Find a Stay</span>
+                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'student' ? 'border-blue-300 bg-blue-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
+                                    <UserCircle className={role === 'student' ? 'text-blue-900 transition-colors' : 'text-slate-400'} size={24} />
+                                    <span className={`text-sm font-semibold mt-2 ${role === 'student' ? 'text-blue-900 font-bold' : 'text-slate-600'}`}>Find a Stay</span>
                                 </button>
                                 <button type="button" onClick={() => setRole('owner')}
-                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'owner' ? 'border-plum-300 bg-plum-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
-                                    <Briefcase className={role === 'owner' ? 'text-plum-900 transition-colors' : 'text-slate-400'} size={24} />
-                                    <span className={`text-sm font-semibold mt-2 ${role === 'owner' ? 'text-plum-900 font-bold' : 'text-slate-600'}`}>List Property</span>
+                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'owner' ? 'border-blue-300 bg-blue-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
+                                    <Briefcase className={role === 'owner' ? 'text-blue-900 transition-colors' : 'text-slate-400'} size={24} />
+                                    <span className={`text-sm font-semibold mt-2 ${role === 'owner' ? 'text-blue-900 font-bold' : 'text-slate-600'}`}>List Property</span>
                                 </button>
                             </div>
                         </div>
@@ -177,7 +177,7 @@ const Signup = () => {
 
                 <p className="mt-8 text-center text-slate-500 font-normal text-sm">
                     Already have an account?{' '}
-                    <Link to="/login" className="text-plum-900 hover:text-plum-900 font-semibold">Log in</Link>
+                    <Link to="/login" className="text-blue-900 hover:text-blue-900 font-semibold">Log in</Link>
                 </p>
             </div>
         </div>

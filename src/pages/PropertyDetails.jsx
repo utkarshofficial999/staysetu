@@ -204,7 +204,7 @@ const PropertyDetails = () => {
                                     <CheckCircle2 size={10} className="mr-1" /> Verified
                                 </span>
                                 {property.type && (
-                                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-plum-50 text-plum-600 border border-plum-100">
+                                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
                                         {property.type}
                                     </span>
                                 )}
@@ -214,7 +214,7 @@ const PropertyDetails = () => {
                                 {property.title}
                             </h1>
                             <div className="flex items-center text-slate-500 text-sm font-normal mb-6 gap-1.5">
-                                <MapPin size={14} className="text-plum-400" />
+                                <MapPin size={14} className="text-blue-400" />
                                 {property.location}
                             </div>
 
@@ -234,7 +234,7 @@ const PropertyDetails = () => {
                                         const Icon = amenityIcons[amenity] || Home;
                                         return (
                                             <div key={amenity} className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-                                                <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center text-plum-600 border border-slate-200"
+                                                <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center text-blue-600 border border-slate-200"
                                                     style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
                                                     <Icon size={16} />
                                                 </div>
@@ -307,7 +307,7 @@ const PropertyDetails = () => {
 
                             {/* Owner info */}
                             <div className="flex items-center gap-3 mb-5">
-                                <div className="w-11 h-11 bg-gradient-to-br from-plum-600 to-plum-800 rounded-2xl flex items-center justify-center text-white font-semibold text-sm shadow-sm">
+                                <div className="w-11 h-11 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center text-white font-semibold text-sm shadow-sm">
                                     {(property.owner?.name || 'O').charAt(0).toUpperCase()}
                                 </div>
                                 <div>
