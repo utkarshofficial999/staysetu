@@ -23,7 +23,7 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="col-span-1 lg:col-span-1">
                         <Link to="/" className="flex items-center mb-6 group">
-                            <div className="w-36 h-16 flex items-center justify-center rounded-xl overflow-hidden group-hover:rotate-1 transition-transform">
+                            <div className="w-36 h-16 flex items-center justify-center rounded-3xl overflow-hidden group-hover:rotate-1 transition-transform bg-white p-1">
                                 <img src="/logo.png?v=8" alt="StaySetu Logo" className="w-full h-full object-contain" />
                             </div>
                         </Link>

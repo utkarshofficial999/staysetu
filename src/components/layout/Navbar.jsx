@@ -68,7 +68,7 @@ const Navbar = () => {
                     <div className="flex justify-between md:justify-between h-14 items-center relative">
 
                         <Link to="/" className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex items-center gap-3 group" onClick={() => setIsOpen(false)}>
-                            <div className="w-56 h-16 flex items-center justify-center rounded-xl overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                            <div className="w-56 h-16 flex items-center justify-center rounded-3xl overflow-hidden group-hover:scale-105 transition-transform duration-300 bg-white p-1">
                                 <img src="/logo.png?v=8" alt="StaySetu Logo" className="w-full h-full object-contain" />
                             </div>
                         </Link>

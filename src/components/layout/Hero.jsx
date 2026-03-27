@@ -156,7 +156,7 @@ const Hero = ({ featuredProp }) => {
                         </h1>
 
                         <motion.p variants={text3DVariants} className="text-lg text-slate-500 font-medium max-w-lg mb-8 leading-relaxed">
-                            Vetted Properties, Hostels, and Flats designed for student life. No brokerage, and verified listings.
+                            A smarter way to find your next stay with verified listings and trusted property connections you can rely on
                         </motion.p>
 
                         <motion.button

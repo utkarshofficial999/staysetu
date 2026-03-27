@@ -9,13 +9,10 @@ const databases = new Databases(client);
 
 async function check() {
     try {
-        const res = await databases.listDocuments('staysetu_db', 'listings');
-        console.log('LISTINGS:');
-        console.log(JSON.stringify(res.documents.map(d => ({ id: d.$id, title: d.title, status: d.status })), null, 2));
-
-        const resRoommates = await databases.listDocuments('staysetu_db', 'roommate_requests');
-        console.log('\nROOMMATES:');
-        console.log(JSON.stringify(resRoommates.documents.map(d => ({ id: d.$id, name: d.name, status: d.status })), null, 2));
+        console.log('Listing collections for staysetu_db...');
+        const res = await databases.listCollections('staysetu_db');
+        console.log('COLLECTIONS:');
+        console.log(JSON.stringify(res.collections.map(c => ({ id: c.$id, name: c.name })), null, 2));
     } catch (e) {
         console.error(e);
     }

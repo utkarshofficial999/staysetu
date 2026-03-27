@@ -5,18 +5,18 @@
 @tailwind utilities;
 
 :root {
-  --primary: #3A1F3D;
-  --primary-light: #524058;
-  --accent: #C4949E;
+  --primary: #1e3a8a;
+  --primary-light: #3b82f6;
+  --accent: #60a5fa;
   --warm: #EDD9C4;
-  --hot: #c4949e;
+  --hot: #3b82f6;
   --surface: #F3EDE8;
   --surface-2: #E9E1D8;
-  --border: rgba(58, 31, 61, 0.1);
+  --border: rgba(30, 58, 138, 0.1);
   --text-primary: #1a1a1a;
-  --text-secondary: #524058;
-  --gradient-brand: linear-gradient(135deg, #3A1F3D 0%, #524058 50%, #6e3f52 100%);
-  --gradient-warm: linear-gradient(135deg, #C4949E 0%, #EDD9C4 100%);
+  --text-secondary: #1e40af;
+  --gradient-brand: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%);
+  --gradient-warm: linear-gradient(135deg, #60a5fa 0%, #EDD9C4 100%);
   --radius: 16px;
 }
 
@@ -95,8 +95,8 @@
   }
 
   .btn-secondary:hover {
-    @apply border-plum-200 bg-slate-50 text-plum-900;
-    box-shadow: 0 8px 20px rgba(58, 31, 61, 0.05);
+    @apply border-blue-200 bg-slate-50 text-blue-900;
+    box-shadow: 0 8px 20px rgba(30, 58, 138, 0.05);
   }
 
   .btn-whatsapp {
@@ -121,9 +121,9 @@
   }
 
   .card-elevated:hover {
-    box-shadow: 0 12px 40px rgba(58, 31, 61, 0.08);
+    box-shadow: 0 12px 40px rgba(30, 58, 138, 0.08);
     transform: translateY(-4px);
-    border-color: rgba(58, 31, 61, 0.2);
+    border-color: rgba(30, 58, 138, 0.2);
   }
 
   /* ── Form ── */
@@ -135,8 +135,8 @@
   }
 
   .input-field:focus {
-    @apply outline-none border-plum-400;
-    box-shadow: 0 0 0 4px rgba(196, 148, 158, 0.1);
+    @apply outline-none border-blue-400;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
     background: #ffffff;
   }
 
@@ -194,12 +194,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ddb5c5;
+  background: #93c5fd;
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #C4949E;
+  background: #60a5fa;
 }
 
 /* ── Animations ── */
@@ -407,7 +407,7 @@
   background-position: 0 0;
   filter: brightness(1.4);
   background-image: conic-gradient(rgba(0, 0, 0, 0) 0%,
-      #C4949E,
+      #60a5fa,
       rgba(0, 0, 0, 0) 8%,
       rgba(0, 0, 0, 0) 50%,
       #EDD9C4,
@@ -434,10 +434,10 @@
   background-repeat: no-repeat;
   background-position: 0 0;
   background-image: conic-gradient(#faf7f5,
-      #3A1F3D 5%,
+      #1e3a8a 5%,
       #faf7f5 14%,
       #faf7f5 50%,
-      #C4949E 60%,
+      #60a5fa 60%,
       #faf7f5 64%);
   animation: rotate 4s 0.1s linear infinite;
   transition: all 2s;
@@ -477,10 +477,10 @@
   background-repeat: no-repeat;
   background-position: 0 0;
   background-image: conic-gradient(transparent,
-      #3A1F3D 5%,
+      #1e3a8a 5%,
       transparent 38%,
       transparent 50%,
-      #C4949E 60%,
+      #60a5fa 60%,
       transparent 87%);
   animation: rotate 4s 0.3s linear infinite;
   transition: all 2s;
