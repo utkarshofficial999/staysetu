@@ -104,7 +104,7 @@ const Home = () => {
 
 
             {/* Featured Listings */}
-            <section className="pt-8 pb-16 relative z-10">
+            <section className="pt-6 md:pt-8 pb-12 md:pb-16 relative z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
                         <span className="section-label mb-4 inline-block">Featured</span>

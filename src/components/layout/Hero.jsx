@@ -143,15 +143,15 @@ const Hero = ({ featuredProp }) => {
         : ['WiFi', 'AC', 'Power'];
 
     return (
-        <div className="relative min-h-[85vh] flex items-center bg-surface">
+        <div className="relative min-h-[70vh] lg:min-h-[85vh] flex items-center bg-surface">
             {/* Background elements - Clipped here instead of the whole Hero */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none -z-0">
                 <div className="absolute top-0 right-0 w-[55%] h-full bg-slate-50 opacity-40 -skew-x-[15deg] translate-x-1/4" />
                 <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-plum-100/20 rounded-full blur-[120px]" />
             </div>
 
-            <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 w-full">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-10 lg:pb-12 w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
                     {/* Left - Content & Search */}
                     <motion.div
@@ -176,13 +176,13 @@ const Hero = ({ featuredProp }) => {
                             variants={text3DVariants}
                             onClick={handleLiveLocation}
                             disabled={loadingLocation}
-                            className="flex items-center gap-2 mb-10 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-xl border-2 border-emerald-100 font-bold text-xs hover:bg-emerald-100 transition-all hover:-translate-y-0.5"
+                            className="flex items-center gap-2 mb-6 md:mb-10 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-xl border-2 border-emerald-100 font-bold text-xs hover:bg-emerald-100 transition-all hover:-translate-y-0.5"
                         >
                             <Navigation size={14} className={loadingLocation ? 'animate-spin' : ''} />
                             {loadingLocation ? 'Getting location...' : 'Find Properties Near Me'}
                         </motion.button>
 
-                        <motion.div variants={text3DVariants} className="w-full max-w-2xl mb-12">
+                        <motion.div variants={text3DVariants} className="w-full max-w-2xl mb-8 md:mb-12">
                             <form onSubmit={handleSearch} className="relative group" ref={searchRef}>
                                 <div className="absolute inset-0 bg-slate-900 rounded-[2rem] translate-x-1.5 translate-y-1.5 group-focus-within:translate-x-2.5 group-focus-within:translate-y-2.5 transition-transform" />
                                 <div className="relative flex flex-col md:flex-row items-center gap-2 p-2 bg-white border-2 border-slate-900 rounded-[2rem]">
@@ -250,7 +250,7 @@ const Hero = ({ featuredProp }) => {
 
                     </motion.div>
 
-                    <div className="lg:col-span-5 relative mt-20 lg:mt-0 flex justify-center lg:block cursor-pointer" onClick={() => featuredListing && navigate(`/property/${featuredListing.$id || featuredListing.id}`)}>
+                    <div className="lg:col-span-5 relative mt-6 md:mt-10 lg:mt-0 flex justify-center lg:block cursor-pointer" onClick={() => featuredListing && navigate(`/property/${featuredListing.$id || featuredListing.id}`)}>
                         <motion.div
                             initial={{ x: 60, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
