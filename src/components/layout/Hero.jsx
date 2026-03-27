@@ -164,7 +164,7 @@ const Hero = ({ featuredProp }) => {
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1] tracking-tight text-slate-900"
                             style={{ fontFamily: 'Bungee, cursive', perspective: '1000px' }}>
                             <motion.span variants={text3DVariants} className="block transform-gpu origin-bottom">Better</motion.span>
-                            <motion.span variants={text3DVariants} className="block text-plum-600 transform-gpu origin-bottom">Student</motion.span>
+                            <motion.span variants={text3DVariants} className="block text-[#8B5E6B] transform-gpu origin-bottom">Student</motion.span>
                             <motion.span variants={text3DVariants} className="block transform-gpu origin-bottom">Living.</motion.span>
                         </h1>
 
