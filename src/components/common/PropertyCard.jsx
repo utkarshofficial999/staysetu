@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { MapPin, IndianRupee, Star, Heart, ImageOff, Wifi, Wind, UtensilsCrossed, Car, CheckCircle2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { parseJsonField } from '../../lib/appwrite';
+import { useAuth } from '../../context/AuthContext';
 import { trackWhatsAppClick, openWhatsApp } from '../../lib/whatsappTracker';
 
 const FALLBACKS = [
@@ -20,6 +21,8 @@ const typeStyles = {
 };
 
 const PropertyCard = ({ property }) => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const [imgError, setImgError] = useState(false);
     const [imgLoaded, setImgLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
@@ -32,6 +35,13 @@ const PropertyCard = ({ property }) => {
 
     const handleWhatsAppClick = (e) => {
         e.preventDefault();
+
+        // Require sign in
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
         const messageText = `Hi, I found your listing "${property?.title}" on StaySetu. Is it available?`;
         const message = encodeURIComponent(messageText);
         const number = property?.whatsappNumber || property?.phoneNumber || property?.phone_number || property?.owner_phone;
@@ -115,8 +125,8 @@ const PropertyCard = ({ property }) => {
                         </div>
                     )}
                     {property?.listedBy && (
-                        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 bg-white text-slate-900 uppercase`}>
-                            {property.listedBy}
+                        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 ${property.listedBy.toLowerCase() === 'owner' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'} uppercase`}>
+                            {property.listedBy.toLowerCase() === 'owner' ? 'No Brokerage' : 'Mediator Fees'}
                         </div>
                     )}
                 </div>

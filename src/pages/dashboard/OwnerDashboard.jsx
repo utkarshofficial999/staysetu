@@ -281,6 +281,7 @@ const OwnerDashboard = () => {
                 amenities: JSON.stringify(formData.amenities),
                 images: JSON.stringify(imageUrls.length > 0 ? imageUrls : []),
                 ownerId: user.$id,
+                listedBy: profile?.role || 'owner',
                 status: 'pending',
                 genderPreference: formData.gender_preference || 'any',
                 occupancy: JSON.stringify(formData.occupancy),

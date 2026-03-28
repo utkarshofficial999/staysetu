@@ -21,7 +21,7 @@ const Signup = () => {
     useEffect(() => {
         if (user && profile) {
             const role = profile.role || 'student';
-            navigate(role === 'owner' ? '/owner-dashboard' : '/dashboard', { replace: true });
+            navigate((role === 'owner' || role === 'broker') ? '/owner-dashboard' : '/dashboard', { replace: true });
         }
     }, [user, profile, navigate]);
 
@@ -60,7 +60,7 @@ const Signup = () => {
 
             setSuccess(true);
             setTimeout(() => {
-                if (role === 'owner') {
+                if (role === 'owner' || role === 'broker') {
                     navigate('/owner-dashboard');
                 } else {
                     navigate('/dashboard');
@@ -116,16 +116,21 @@ const Signup = () => {
                     <form onSubmit={handleSignup} className="space-y-5">
                         <div>
                             <label className="block text-sm font-medium text-slate-600 mb-3">I want to</label>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-3 gap-2">
                                 <button type="button" onClick={() => setRole('student')}
-                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'student' ? 'border-blue-300 bg-blue-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
-                                    <UserCircle className={role === 'student' ? 'text-blue-900 transition-colors' : 'text-slate-400'} size={24} />
-                                    <span className={`text-sm font-semibold mt-2 ${role === 'student' ? 'text-blue-900 font-bold' : 'text-slate-600'}`}>Find a Stay</span>
+                                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 ${role === 'student' ? 'border-blue-300 bg-blue-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
+                                    <UserCircle className={role === 'student' ? 'text-blue-900 transition-colors' : 'text-slate-400'} size={20} />
+                                    <span className={`text-[10px] font-semibold mt-1.5 ${role === 'student' ? 'text-blue-900 font-bold' : 'text-slate-600'}`}>Student</span>
                                 </button>
                                 <button type="button" onClick={() => setRole('owner')}
-                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 ${role === 'owner' ? 'border-blue-300 bg-blue-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
-                                    <Briefcase className={role === 'owner' ? 'text-blue-900 transition-colors' : 'text-slate-400'} size={24} />
-                                    <span className={`text-sm font-semibold mt-2 ${role === 'owner' ? 'text-blue-900 font-bold' : 'text-slate-600'}`}>List Property</span>
+                                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 ${role === 'owner' ? 'border-blue-300 bg-blue-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
+                                    <Briefcase className={role === 'owner' ? 'text-blue-900 transition-colors' : 'text-slate-400'} size={20} />
+                                    <span className={`text-[10px] font-semibold mt-1.5 ${role === 'owner' ? 'text-blue-900 font-bold' : 'text-slate-600'}`}>Owner</span>
+                                </button>
+                                <button type="button" onClick={() => setRole('broker')}
+                                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 ${role === 'broker' ? 'border-blue-300 bg-blue-50 shadow-sm' : 'border-slate-200/60 hover:border-slate-200 hover:bg-slate-50'}`}>
+                                    <User className={role === 'broker' ? 'text-blue-900 transition-colors' : 'text-slate-400'} size={20} />
+                                    <span className={`text-[10px] font-semibold mt-1.5 ${role === 'broker' ? 'text-blue-900 font-bold' : 'text-slate-600'}`}>Broker</span>
                                 </button>
                             </div>
                         </div>
@@ -179,8 +184,8 @@ const Signup = () => {
                     Already have an account?{' '}
                     <Link to="/login" className="text-blue-900 hover:text-blue-900 font-semibold">Log in</Link>
                 </p>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

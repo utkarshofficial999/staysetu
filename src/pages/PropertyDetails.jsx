@@ -53,6 +53,11 @@ const PropertyDetails = () => {
     }, [id]);
 
     const initiateWhatsApp = () => {
+        if (!user) {
+            navigate('/login', { state: { from: `/property/${id}` } });
+            return;
+        }
+
         const phoneNumber = property.whatsappNumber || property.phoneNumber || property.whatsapp_number || property.phone_number;
         const messageText = `Hi, I found your listing "${property.title}" on StaySetu. Is it available?`;
         const message = encodeURIComponent(messageText);
@@ -203,9 +208,9 @@ const PropertyDetails = () => {
                                 <span className="chip-approved">
                                     <CheckCircle2 size={10} className="mr-1" /> Verified
                                 </span>
-                                {property.type && (
-                                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
-                                        {property.type}
+                                {property.listedBy && (
+                                    <span className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${property.listedBy.toLowerCase() === 'owner' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                                        {property.listedBy.toLowerCase() === 'owner' ? 'No Brokerage' : 'Mediator Fees'}
                                     </span>
                                 )}
                             </div>
