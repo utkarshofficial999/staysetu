@@ -182,11 +182,6 @@ const PropertyCard = ({ property }) => {
                             {property.genderPreference || property.gender_preference || property.gender} only
                         </div>
                     )}
-                    {property?.listedBy && (
-                        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 ${property.listedBy.toLowerCase() === 'owner' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'} uppercase`}>
-                            {property.listedBy.toLowerCase() === 'owner' ? 'No Brokerage' : 'Mediator Fees'}
-                        </div>
-                    )}
                 </div>
 
                 <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors" style={{ fontFamily: 'Bungee' }}>
