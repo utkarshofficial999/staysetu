@@ -182,6 +182,11 @@ const PropertyCard = ({ property }) => {
                             {property.genderPreference || property.gender_preference || property.gender} only
                         </div>
                     )}
+                    {property?.listedBy && String(property.listedBy).toLowerCase() !== 'owner' && (
+                        <div className="text-[10px] font-bold px-2 py-0.5 rounded-lg border border-amber-100 bg-amber-50 text-amber-600 uppercase">
+                            Mediator Fees
+                        </div>
+                    )}
                 </div>
 
                 <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors" style={{ fontFamily: 'Bungee' }}>

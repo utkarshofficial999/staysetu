@@ -255,6 +255,11 @@ const PropertyDetails = () => {
                                 <span className="chip-approved">
                                     <CheckCircle2 size={10} className="mr-1" /> Verified
                                 </span>
+                                {property.listedBy && String(property.listedBy).toLowerCase() !== 'owner' && (
+                                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border bg-amber-50 text-amber-600 border-amber-100">
+                                        Mediator Fees
+                                    </span>
+                                )}
                             </div>
 
                             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'Bungee' }}>
@@ -373,10 +378,10 @@ const PropertyDetails = () => {
 
                             <div className="grid grid-cols-2 gap-2.5">
                                 {[
+                                    ...(String(property.listedBy || 'owner').toLowerCase() !== 'owner' ? ['Mediator Fees'] : []),
                                     'Safe & Verified',
                                     'Direct Contact',
-                                    'Easy Move-in',
-                                    'Best Price Guide'
+                                    'Easy Move-in'
                                 ].map((t) => (
                                     <div key={t} className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600">
                                         <CheckCircle2 size={10} className="text-emerald-500 shrink-0" />{t}
