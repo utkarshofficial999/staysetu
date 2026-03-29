@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, IndianRupee, Star, Heart, ImageOff, Wifi, Wind, UtensilsCrossed, Car, CheckCircle2 } from 'lucide-react';
+import { MapPin, IndianRupee, Star, Heart, ImageOff, Wifi, Wind, UtensilsCrossed, Car, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { parseJsonField } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
@@ -23,15 +23,48 @@ const typeStyles = {
 const PropertyCard = ({ property }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const [activeImage, setActiveImage] = useState(0);
     const [imgError, setImgError] = useState(false);
-    const [imgLoaded, setImgLoaded] = useState(false);
     const [liked, setLiked] = useState(false);
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
 
+    const images = parseJsonField(property?.images) || [];
     const fallback = FALLBACKS[((property?.$id || property?.id || '').charCodeAt(0) || 0) % FALLBACKS.length];
-    const images = parseJsonField(property?.images);
-    const rawSrc = images[0];
-    const imgSrc = (!rawSrc || imgError) ? fallback : rawSrc;
-    const ts = typeStyles[property?.type] || typeStyles.PG;
+
+    const getImgSrc = (index) => {
+        const src = images[index];
+        return (!src || (index === activeImage && imgError)) ? fallback : src;
+    };
+
+    const nextImage = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActiveImage((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+    };
+
+    const prevImage = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActiveImage((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+    };
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+    const onTouchEnd = (e) => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > 50;
+        const isRightSwipe = distance < -50;
+
+        if (isLeftSwipe) nextImage(e);
+        if (isRightSwipe) prevImage(e);
+    };
 
     const handleWhatsAppClick = (e) => {
         e.preventDefault();
@@ -65,46 +98,71 @@ const PropertyCard = ({ property }) => {
     return (
         <div className="group relative flex flex-col bg-white rounded-[2.5rem] border-2 border-slate-900 overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)]">
             {/* Image Container */}
-            <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-                {!imgLoaded && (
-                    <div className="absolute inset-0 bg-slate-100 animate-pulse flex items-center justify-center">
-                        <ImageOff size={24} className="text-slate-300" />
-                    </div>
-                )}
+            <div
+                className="relative aspect-[4/3] overflow-hidden bg-slate-100"
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+            >
                 <div
                     className="absolute inset-0 bg-cover bg-center blur-xl opacity-20 scale-110"
-                    style={{ backgroundImage: `url(${imgSrc})` }}
+                    style={{ backgroundImage: `url(${getImgSrc(activeImage)})` }}
                 ></div>
                 <img
-                    src={imgSrc}
+                    src={getImgSrc(activeImage)}
                     alt={property?.title || 'Property'}
-                    className={`relative w-full h-full object-contain z-10 transition-transform duration-700 ease-out group-hover:scale-105 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
-                    onLoad={() => setImgLoaded(true)}
-                    onError={() => { setImgError(true); setImgLoaded(true); }}
+                    className="relative w-full h-full object-contain z-10 transition-transform duration-700 ease-out group-hover:scale-105"
+                    onError={() => setImgError(true)}
                 />
 
+                {/* Gallery Navigation */}
+                {images.length > 1 && (
+                    <>
+                        <button
+                            onClick={prevImage}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 z-30 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-all border border-slate-200"
+                        >
+                            <ChevronLeft size={14} />
+                        </button>
+                        <button
+                            onClick={nextImage}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 z-30 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-all border border-slate-200"
+                        >
+                            <ChevronRight size={14} />
+                        </button>
+
+                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 flex gap-1 px-2 py-1 rounded-full bg-black/20 backdrop-blur-sm">
+                            {images.slice(0, 5).map((_, i) => (
+                                <div
+                                    key={i}
+                                    className={`w-1.5 h-1.5 rounded-full transition-all ${activeImage === i ? 'bg-white w-3' : 'bg-white/50'}`}
+                                />
+                            ))}
+                        </div>
+                    </>
+                )}
+
                 {/* Subtle Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40 z-20"></div>
 
                 {/* Type Tag - Floating Top Left */}
-                <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full border-2 border-slate-900 bg-white text-slate-900 text-[9px] font-black uppercase tracking-widest shadow-[3px_3px_0px_#0f172a]`}>
+                <div className={`absolute top-4 left-4 z-40 px-3 py-1 rounded-full border-2 border-slate-900 bg-white text-slate-900 text-[9px] font-black uppercase tracking-widest shadow-[3px_3px_0px_#0f172a]`}>
                     {property?.type || 'PG'}
                 </div>
 
                 {/* Like Button */}
                 <button
-                    onClick={(e) => { e.preventDefault(); setLiked(!liked); }}
-                    className={`absolute top-4 right-4 z-10 w-9 h-9 rounded-full border-2 border-slate-900 flex items-center justify-center transition-all duration-300 ${liked
-                        ? 'bg-red-500 text-white'
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setLiked(!liked); }}
+                    className={`absolute top-4 right-4 z-40 w-9 h-9 rounded-full border-2 border-slate-900 flex items-center justify-center transition-all duration-300 ${liked
+                        ? 'bg-red-500 text-white border-red-500'
                         : 'bg-white text-slate-900 hover:bg-slate-900 hover:text-white'
                         }`}
                 >
                     <Heart size={14} fill={liked ? 'currentColor' : 'none'} />
                 </button>
 
-
-                {/* Floating Price Tag - Placed inside image container with margin to avoid overlap and clipping */}
-                <div className="absolute bottom-4 right-4 z-20 bg-slate-900 text-white px-3.5 py-2 rounded-xl border-2 border-slate-900 shadow-lg">
+                {/* Floating Price Tag */}
+                <div className="absolute bottom-4 right-4 z-40 bg-slate-900 text-white px-3.5 py-2 rounded-xl border-2 border-slate-900 shadow-lg">
                     <div className="flex items-center gap-0.5">
                         <IndianRupee size={12} className="text-white" />
                         <span className="text-base font-bold" style={{ fontFamily: 'Bungee' }}>{property?.price?.toLocaleString() || '8,500'}</span>
