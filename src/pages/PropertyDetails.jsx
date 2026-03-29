@@ -19,6 +19,32 @@ const PropertyDetails = () => {
     const [activeImage, setActiveImage] = useState(0);
     const [liked, setLiked] = useState(false);
     const [error, setError] = useState(null);
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+
+    // Minimum swipe distance in pixels
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe && property?.images) {
+            setActiveImage((prev) => (prev < property.images.length - 1 ? prev + 1 : 0));
+        }
+        if (isRightSwipe && property?.images) {
+            setActiveImage((prev) => (prev > 0 ? prev - 1 : property.images.length - 1));
+        }
+    };
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -167,7 +193,13 @@ const PropertyDetails = () => {
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Image Gallery */}
-                        <div className="relative rounded-3xl overflow-hidden bg-slate-100 group shadow-sm border border-slate-100" style={{ height: '500px' }}>
+                        <div
+                            className="relative rounded-3xl overflow-hidden bg-slate-100 group shadow-sm border border-slate-100"
+                            style={{ height: '500px' }}
+                            onTouchStart={onTouchStart}
+                            onTouchMove={onTouchMove}
+                            onTouchEnd={onTouchEnd}
+                        >
                             <div
                                 className="absolute inset-0 bg-cover bg-center blur-2xl opacity-30 scale-110"
                                 style={{ backgroundImage: `url(${property.images?.[activeImage] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80'})` }}
@@ -187,20 +219,20 @@ const PropertyDetails = () => {
                                 <>
                                     <button
                                         onClick={() => setActiveImage((prev) => (prev > 0 ? prev - 1 : property.images.length - 1))}
-                                        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white"
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white z-30"
                                         style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                                     >
                                         <ChevronLeft size={18} />
                                     </button>
                                     <button
                                         onClick={() => setActiveImage((prev) => (prev < property.images.length - 1 ? prev + 1 : 0))}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white z-30"
                                         style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                                     >
                                         <ChevronRight size={18} />
                                     </button>
 
-                                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-full">
+                                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-full z-30">
                                         {property.images.map((_, i) => (
                                             <button
                                                 key={i}
@@ -212,7 +244,7 @@ const PropertyDetails = () => {
                                 </>
                             )}
 
-                            <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white text-[11px] font-medium px-3 py-1.5 rounded-lg">
+                            <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white text-[11px] font-medium px-3 py-1.5 rounded-lg z-30">
                                 {activeImage + 1} / {property.images?.length || 1}
                             </div>
                         </div>
