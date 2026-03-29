@@ -101,6 +101,25 @@ const PropertyDetails = () => {
         fetchProperty();
     }, [id]);
 
+    const handleShare = async () => {
+        const shareData = {
+            title: property?.title || 'StaySetu Property',
+            text: `Check out this stay on StaySetu: ${property?.title}`,
+            url: window.location.href,
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(window.location.href);
+                alert('Property link copied to clipboard!');
+            }
+        } catch (err) {
+            console.error('Sharing error:', err);
+        }
+    };
+
     const initiateWhatsApp = () => {
         if (!user) {
             navigate('/login', { state: { from: `/property/${id}` } });
@@ -183,7 +202,10 @@ const PropertyDetails = () => {
                         >
                             <Heart size={15} fill={liked ? 'currentColor' : 'none'} />
                         </button>
-                        <button className="w-9 h-9 bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all">
+                        <button
+                            onClick={handleShare}
+                            className="w-9 h-9 bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all"
+                        >
                             <Share2 size={15} />
                         </button>
                     </div>
