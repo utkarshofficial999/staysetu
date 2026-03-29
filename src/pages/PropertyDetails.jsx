@@ -18,38 +18,61 @@ const PropertyDetails = () => {
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
     const [liked, setLiked] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchProperty = async () => {
+            setLoading(true);
             try {
+                if (!id) throw new Error('No property ID provided');
+
                 const data = await databases.getDocument(DATABASE_ID, COLLECTION.listings, id);
 
                 if (data) {
                     if (data.ownerId) {
-                        const ownerRes = await databases.listDocuments(
-                            DATABASE_ID,
-                            COLLECTION.profiles,
-                            [Query.equal('userId', data.ownerId)]
-                        );
+                        try {
+                            const ownerRes = await databases.listDocuments(
+                                DATABASE_ID,
+                                COLLECTION.profiles,
+                                [Query.equal('userId', data.ownerId)]
+                            );
 
-                        data.owner = ownerRes.documents.length > 0
-                            ? { ...ownerRes.documents[0], id: ownerRes.documents[0].userId, name: ownerRes.documents[0].fullName || 'Owner' }
-                            : { name: 'Owner' };
+                            data.owner = ownerRes.documents.length > 0
+                                ? {
+                                    ...ownerRes.documents[0],
+                                    id: ownerRes.documents[0].userId,
+                                    name: ownerRes.documents[0].fullName || ownerRes.documents[0].name || 'Owner'
+                                }
+                                : { name: 'Owner' };
+                        } catch (ownerErr) {
+                            console.error('Owner fetch error:', ownerErr);
+                            data.owner = { name: 'Owner' };
+                        }
+                    } else {
+                        data.owner = { name: 'Owner' };
                     }
-                    // Parse JSON fields
-                    data.images = parseJsonField(data.images);
-                    data.amenities = parseJsonField(data.amenities);
-                    data.occupancy = parseJsonField(data.occupancy) || ['single'];
+
+                    // Parse JSON fields safely
+                    data.images = parseJsonField(data.images) || [];
+                    data.amenities = parseJsonField(data.amenities) || [];
+                    data.occupancy = parseJsonField(data.occupancy);
+                    if (!Array.isArray(data.occupancy) || data.occupancy.length === 0) {
+                        data.occupancy = ['single'];
+                    }
+
                     setProperty(data);
+                } else {
+                    setError('Property not found');
                 }
             } catch (err) {
-                console.error('Unexpected error:', err);
+                console.error('Property details error:', err);
+                setError(err.message || 'Failed to load property');
             } finally {
                 setLoading(false);
             }
         };
 
-        if (id) fetchProperty();
+        fetchProperty();
     }, [id]);
 
     const initiateWhatsApp = () => {
@@ -58,15 +81,16 @@ const PropertyDetails = () => {
             return;
         }
 
+        if (!property) return;
+
         const phoneNumber = property.whatsappNumber || property.phoneNumber || property.whatsapp_number || property.phone_number;
         const messageText = `Hi, I found your listing "${property.title}" on StaySetu. Is it available?`;
         const message = encodeURIComponent(messageText);
 
-        // Track the click (fire-and-forget)
         trackWhatsAppClick({
             phoneNumber,
             listingId: property.$id || id,
-            listingTitle: property.title,
+            listingTitle: property.title || 'Property',
             ownerName: property.owner?.name || '',
             clickerUserId: user?.$id || '',
             clickerName: profile?.fullName || user?.name || '',
@@ -78,31 +102,24 @@ const PropertyDetails = () => {
         openWhatsApp(phoneNumber, message);
     };
 
-    const handleMessage = () => {
-        if (!user) {
-            navigate('/login', { state: { from: `/property/${id}` } });
-            return;
-        }
-        navigate(`/messages?id=${property.ownerId || property.owner_id}&listing=${id}`);
-    };
-
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-white">
-                <div className="w-10 h-10 border-3 border-slate-900 border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(0,0,0,0.1)]"></div>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
+                <div className="w-10 h-10 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Loading StaySetu...</p>
             </div>
         );
     }
 
-    if (!property) {
+    if (error || !property) {
         return (
             <div className="min-h-screen pt-32 text-center bg-white px-4">
                 <div className="card-elevated max-w-md mx-auto p-12 rounded-[2rem]">
                     <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
                         <AlertCircle className="text-red-500" size={28} />
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-2" style={{ fontFamily: 'Bungee' }}>Property not found</h2>
-                    <p className="text-slate-400 text-sm mb-6">This listing may have been removed or is no longer available.</p>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2" style={{ fontFamily: 'Bungee' }}>Listing Problem</h2>
+                    <p className="text-slate-400 text-sm mb-6">{error || 'This listing may have been removed or is no longer available.'}</p>
                     <button onClick={() => navigate('/listings')} className="btn-primary text-sm">Back to Listings</button>
                 </div>
             </div>
@@ -151,7 +168,6 @@ const PropertyDetails = () => {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Image Gallery */}
                         <div className="relative rounded-3xl overflow-hidden bg-slate-100 group shadow-sm border border-slate-100" style={{ height: '500px' }}>
-                            {/* Blurred Background Layer to fill empty space */}
                             <div
                                 className="absolute inset-0 bg-cover bg-center blur-2xl opacity-30 scale-110"
                                 style={{ backgroundImage: `url(${property.images?.[activeImage] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80'})` }}
@@ -159,7 +175,7 @@ const PropertyDetails = () => {
 
                             <img
                                 src={property.images?.[activeImage] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80'}
-                                alt={property.title}
+                                alt={property.title || 'Property'}
                                 className="relative w-full h-full object-contain z-10"
                                 onError={(e) => {
                                     e.target.onerror = null;
@@ -167,7 +183,7 @@ const PropertyDetails = () => {
                                 }}
                             />
 
-                            {property.images?.length > 1 && (
+                            {Array.isArray(property.images) && property.images.length > 1 && (
                                 <>
                                     <button
                                         onClick={() => setActiveImage((prev) => (prev > 0 ? prev - 1 : property.images.length - 1))}
@@ -196,7 +212,6 @@ const PropertyDetails = () => {
                                 </>
                             )}
 
-                            {/* Image counter */}
                             <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white text-[11px] font-medium px-3 py-1.5 rounded-lg">
                                 {activeImage + 1} / {property.images?.length || 1}
                             </div>
@@ -209,18 +224,18 @@ const PropertyDetails = () => {
                                     <CheckCircle2 size={10} className="mr-1" /> Verified
                                 </span>
                                 {property.listedBy && (
-                                    <span className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${property.listedBy.toLowerCase() === 'owner' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
-                                        {property.listedBy.toLowerCase() === 'owner' ? 'No Brokerage' : 'Mediator Fees'}
+                                    <span className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${String(property.listedBy).toLowerCase() === 'owner' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                                        {String(property.listedBy).toLowerCase() === 'owner' ? 'No Brokerage' : 'Mediator Fees'}
                                     </span>
                                 )}
                             </div>
 
                             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'Bungee' }}>
-                                {property.title}
+                                {property.title || 'Property Details'}
                             </h1>
                             <div className="flex items-center text-slate-500 text-sm font-normal mb-6 gap-1.5">
                                 <MapPin size={14} className="text-blue-400" />
-                                {property.location}
+                                {property.location || 'Location not specified'}
                             </div>
 
                             <div className="h-px bg-slate-100 mb-6" />
@@ -235,7 +250,7 @@ const PropertyDetails = () => {
                             <div className="mb-10">
                                 <h3 className="text-sm font-semibold text-slate-900 mb-4 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>Amenities</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                    {property.amenities?.map((amenity) => {
+                                    {(property.amenities || []).map((amenity) => {
                                         const Icon = amenityIcons[amenity] || Home;
                                         return (
                                             <div key={amenity} className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200">
@@ -253,7 +268,7 @@ const PropertyDetails = () => {
                             <div className="mb-10">
                                 <h3 className="text-sm font-semibold text-slate-900 mb-4 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>Available Room Types</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {property.occupancy?.map((occ) => (
+                                    {(property.occupancy || []).map((occ) => (
                                         <div key={occ} className="flex items-center gap-3 p-3.5 bg-emerald-50 rounded-xl border border-emerald-100">
                                             <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center text-emerald-600 border border-emerald-100">
                                                 <Users size={16} />
@@ -292,13 +307,12 @@ const PropertyDetails = () => {
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-3xl font-black text-slate-900 flex items-center" style={{ fontFamily: 'Bungee' }}>
                                         <IndianRupee size={22} className="mr-1" />
-                                        {property.price?.toLocaleString()}
+                                        {property.price?.toLocaleString() || 'N/A'}
                                     </span>
                                     <span className="text-slate-500 font-normal text-sm">/ month</span>
                                 </div>
                             </div>
 
-                            {/* WhatsApp CTA */}
                             <button
                                 onClick={initiateWhatsApp}
                                 className="btn-whatsapp w-full py-3.5 justify-center text-sm mb-3"
@@ -310,7 +324,6 @@ const PropertyDetails = () => {
 
                             <div className="h-px bg-slate-100 mb-6" />
 
-                            {/* Owner info */}
                             <div className="flex items-center gap-3 mb-5">
                                 <div className="w-11 h-11 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center text-white font-semibold text-sm shadow-sm">
                                     {(property.owner?.name || 'O').charAt(0).toUpperCase()}
@@ -325,14 +338,12 @@ const PropertyDetails = () => {
                                 </div>
                             </div>
 
-                            {/* Owner quote */}
                             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 mb-6">
                                 <p className="text-sm text-slate-600 leading-relaxed italic font-normal">
                                     "Hi, I'm {property.owner?.name || 'the owner'}. Feel free to reach out — I'll help you find the perfect stay!"
                                 </p>
                             </div>
 
-                            {/* Trust indicators */}
                             <div className="grid grid-cols-2 gap-2.5">
                                 {['No Brokerage', 'Safe & Verified', 'Direct Contact', 'Easy Move-in'].map((t) => (
                                     <div key={t} className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600">
