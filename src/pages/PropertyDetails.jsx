@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, IndianRupee, Wifi, Wind, Coffee, Car, Home,
     ChevronLeft, ChevronRight, Phone,
-    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, Users
+    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, Users as UsersIcon
 } from 'lucide-react';
 import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
@@ -271,7 +271,7 @@ const PropertyDetails = () => {
                                     {(property.occupancy || []).map((occ) => (
                                         <div key={occ} className="flex items-center gap-3 p-3.5 bg-emerald-50 rounded-xl border border-emerald-100">
                                             <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center text-emerald-600 border border-emerald-100">
-                                                <Users size={16} />
+                                                <UsersIcon size={16} />
                                             </div>
                                             <span className="font-bold text-emerald-700 text-xs uppercase tracking-tight">
                                                 {occ === 'single' ? 'Single' : occ === 'double' ? 'Double Sharing' : occ === 'triple' ? 'Triple Sharing' : 'Four Sharing'}
