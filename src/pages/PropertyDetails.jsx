@@ -377,7 +377,12 @@ const PropertyDetails = () => {
                             </div>
 
                             <div className="grid grid-cols-2 gap-2.5">
-                                {['No Brokerage', 'Safe & Verified', 'Direct Contact', 'Easy Move-in'].map((t) => (
+                                {[
+                                    String(property.listedBy || 'owner').toLowerCase() === 'owner' ? 'No Brokerage' : 'Mediator Fees',
+                                    'Safe & Verified',
+                                    'Direct Contact',
+                                    'Easy Move-in'
+                                ].map((t) => (
                                     <div key={t} className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600">
                                         <CheckCircle2 size={10} className="text-emerald-500 shrink-0" />{t}
                                     </div>
