@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, IndianRupee, Wifi, Wind, Coffee, Car, Home,
     ChevronLeft, ChevronRight, Phone,
-    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle
+    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, Users
 } from 'lucide-react';
 import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
