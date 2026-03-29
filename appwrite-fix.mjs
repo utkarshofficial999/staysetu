@@ -38,11 +38,17 @@ async function fix() {
     } catch (e) { console.log(`⚠️  listings.status: ${e.message}`); }
     await wait(2000);
 
-    // ── Fix LISTINGS: images (smaller size to fit limit) ────────
     try {
         await db.createStringAttribute(DB, 'listings', 'images', 2000, false, '[]');
         console.log('✅ listings.images added (size: 2000)');
     } catch (e) { console.log(`⚠️  listings.images: ${e.message}`); }
+    await wait(2000);
+
+    // ── Fix LISTINGS: listedBy ──────────────────────────────────
+    try {
+        await db.createStringAttribute(DB, 'listings', 'listedBy', 20, false, 'owner');
+        console.log('✅ listings.listedBy added (default: owner)');
+    } catch (e) { console.log(`⚠️  listings.listedBy: ${e.message}`); }
     await wait(2000);
 
     // ── Fix ROOMMATE_REQUESTS: status ───────────────────────────

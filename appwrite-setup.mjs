@@ -202,7 +202,8 @@ async function setupListings() {
     await createStringAttr(col, 'status', 20, true, 'pending');
     await createBooleanAttr(col, 'featured', false, false);
     await createStringAttr(col, 'genderPreference', 10, false, 'any');
-    await createStringAttr(col, 'occupancy', 20, false);
+    await createStringAttr(col, 'listedBy', 20, false, 'owner');
+    await createStringAttr(col, 'occupancy', 500, false);
     await createStringAttr(col, 'deposit', 50, false);
     await createStringAttr(col, 'availableFrom', 50, false);
     await createIntegerAttr(col, 'viewsCount', false, 0);
