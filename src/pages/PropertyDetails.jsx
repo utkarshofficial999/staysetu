@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, IndianRupee, Wifi, Wind, Coffee, Car, Home,
     ChevronLeft, ChevronRight, Phone,
-    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, Users as UsersIcon
+    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, Users as UsersIcon, Pencil
 } from 'lucide-react';
 import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
@@ -100,6 +100,8 @@ const PropertyDetails = () => {
 
         fetchProperty();
     }, [id]);
+
+    const isAdmin = user && ['sudhansu@gmail.com', 'yutkarsh669@gmail.com', 'staysetu26@gmail.com'].includes(user.email);
 
     const handleShare = async () => {
         const shareData = {
@@ -205,9 +207,19 @@ const PropertyDetails = () => {
                         <button
                             onClick={handleShare}
                             className="w-9 h-9 bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all"
+                            title="Share property"
                         >
                             <Share2 size={15} />
                         </button>
+                        {isAdmin && (
+                            <button
+                                onClick={() => navigate(`/dashboard/edit-listing/${id}`)}
+                                className="w-9 h-9 bg-plum-50 border border-plum-100 rounded-xl flex items-center justify-center text-plum-600 hover:bg-plum-100 transition-all shadow-sm"
+                                title="Edit Listing (Admin Only)"
+                            >
+                                <Pencil size={15} />
+                            </button>
+                        )}
                     </div>
                 </div>
 
