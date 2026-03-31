@@ -3,9 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, IndianRupee, Wifi, Wind, Coffee, Car, Home,
     ChevronLeft, ChevronRight, Phone,
-    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, Users as UsersIcon, Pencil
+    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, Users as UsersIcon, Pencil,
+    Star, Trash2, Send
 } from 'lucide-react';
-import { databases, DATABASE_ID, COLLECTION, Query, parseJsonField } from '../lib/appwrite';
+import { databases, DATABASE_ID, COLLECTION, Query, ID, parseJsonField } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
 import PropertyMap from '../components/common/PropertyMap';
 import { trackWhatsAppClick, openWhatsApp } from '../lib/whatsappTracker';
@@ -21,6 +22,16 @@ const PropertyDetails = () => {
     const [error, setError] = useState(null);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
+
+    // Reviews state
+    const [reviews, setReviews] = useState([]);
+    const [reviewsLoading, setReviewsLoading] = useState(false);
+    const [submittingReview, setSubmittingReview] = useState(false);
+    const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
+    const [reviewError, setReviewError] = useState(null);
+    const [reviewSuccess, setReviewSuccess] = useState(false);
+    const [hasReviewed, setHasReviewed] = useState(false);
+    const [hoverRating, setHoverRating] = useState(0);
 
     // Minimum swipe distance in pixels
     const minSwipeDistance = 50;
@@ -100,6 +111,69 @@ const PropertyDetails = () => {
 
         fetchProperty();
     }, [id]);
+
+    // Fetch reviews
+    const fetchReviews = async () => {
+        if (!id) return;
+        setReviewsLoading(true);
+        try {
+            const res = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTION.reviews,
+                [Query.equal('listingId', id), Query.orderDesc('$createdAt'), Query.limit(50)]
+            );
+            setReviews(res.documents);
+            if (user) {
+                setHasReviewed(res.documents.some(r => r.userId === user.$id));
+            }
+        } catch (err) {
+            console.error('Reviews fetch error:', err);
+        } finally {
+            setReviewsLoading(false);
+        }
+    };
+
+    useEffect(() => { fetchReviews(); }, [id, user]);
+
+    const handleSubmitReview = async (e) => {
+        e.preventDefault();
+        if (!user) { setReviewError('Please log in to write a review.'); return; }
+        if (!reviewForm.comment.trim()) { setReviewError('Please write your review.'); return; }
+        setSubmittingReview(true);
+        setReviewError(null);
+        try {
+            await databases.createDocument(DATABASE_ID, COLLECTION.reviews, ID.unique(), {
+                listingId: id,
+                userId: user.$id,
+                userName: profile?.fullName || profile?.name || user?.name || 'Anonymous',
+                rating: reviewForm.rating,
+                comment: reviewForm.comment.trim(),
+                createdAt: new Date().toISOString(),
+            });
+            setReviewForm({ rating: 5, comment: '' });
+            setReviewSuccess(true);
+            setTimeout(() => setReviewSuccess(false), 3000);
+            fetchReviews();
+        } catch (err) {
+            setReviewError('Failed to submit review. Please try again.');
+            console.error(err);
+        } finally {
+            setSubmittingReview(false);
+        }
+    };
+
+    const handleDeleteReview = async (reviewId) => {
+        try {
+            await databases.deleteDocument(DATABASE_ID, COLLECTION.reviews, reviewId);
+            fetchReviews();
+        } catch (err) {
+            console.error('Delete review error:', err);
+        }
+    };
+
+    const avgRating = reviews.length > 0
+        ? (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1)
+        : null;
 
     const isAdmin = user && ['sudhansu@gmail.com', 'yutkarsh669@gmail.com', 'staysetu26@gmail.com'].includes(user.email);
 
@@ -390,6 +464,162 @@ const PropertyDetails = () => {
                                     </div>
                                 )}
                             </div>
+                        </div>
+                    </div>
+
+                    {/* ===== REVIEWS SECTION (full width below) ===== */}
+                    <div className="lg:col-span-3 mt-2">
+                        <div className="card-elevated p-6 md:p-8">
+                            {/* Header */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                                <div>
+                                    <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>
+                                        Reviews &amp; Ratings
+                                    </h3>
+                                    {avgRating ? (
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <div className="flex">
+                                                {[1,2,3,4,5].map(s => (
+                                                    <Star key={s} size={14} className={parseFloat(avgRating) >= s ? 'text-amber-400 fill-amber-400' : 'text-slate-300 fill-slate-100'} />
+                                                ))}
+                                            </div>
+                                            <span className="font-black text-slate-900 text-sm">{avgRating}</span>
+                                            <span className="text-slate-400 text-xs font-medium">({reviews.length} review{reviews.length !== 1 ? 's' : ''})</span>
+                                        </div>
+                                    ) : (
+                                        <p className="text-slate-400 text-sm mt-1">No reviews yet — be the first!</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Write Review Form */}
+                            {user && !hasReviewed && (
+                                <form onSubmit={handleSubmitReview} className="bg-slate-50 rounded-2xl border border-slate-100 p-5 mb-8">
+                                    <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-4">Write a Review</h4>
+
+                                    {/* Star Picker */}
+                                    <div className="flex items-center gap-1 mb-4">
+                                        {[1,2,3,4,5].map(s => (
+                                            <button
+                                                key={s}
+                                                type="button"
+                                                onClick={() => setReviewForm(prev => ({ ...prev, rating: s }))}
+                                                onMouseEnter={() => setHoverRating(s)}
+                                                onMouseLeave={() => setHoverRating(0)}
+                                                className="focus:outline-none transition-transform hover:scale-110"
+                                            >
+                                                <Star
+                                                    size={28}
+                                                    className={(hoverRating || reviewForm.rating) >= s ? 'text-amber-400 fill-amber-400' : 'text-slate-300 fill-slate-100'}
+                                                />
+                                            </button>
+                                        ))}
+                                        <span className="ml-2 text-sm font-bold text-slate-500">
+                                            {['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'][(hoverRating || reviewForm.rating)]}
+                                        </span>
+                                    </div>
+
+                                    <textarea
+                                        rows={3}
+                                        placeholder="Share your experience about this property..."
+                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 resize-none focus:outline-none focus:border-blue-400 transition-colors mb-3"
+                                        value={reviewForm.comment}
+                                        onChange={e => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
+                                        maxLength={500}
+                                    />
+
+                                    {reviewError && (
+                                        <div className="flex items-center gap-2 text-red-500 text-xs font-semibold mb-3">
+                                            <AlertCircle size={12} /> {reviewError}
+                                        </div>
+                                    )}
+                                    {reviewSuccess && (
+                                        <div className="flex items-center gap-2 text-emerald-600 text-xs font-semibold mb-3">
+                                            <CheckCircle2 size={12} /> Review submitted! Thank you.
+                                        </div>
+                                    )}
+
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] text-slate-400">{reviewForm.comment.length}/500</span>
+                                        <button
+                                            type="submit"
+                                            disabled={submittingReview}
+                                            className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50"
+                                        >
+                                            {submittingReview ? (
+                                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                            ) : (
+                                                <Send size={13} />
+                                            )}
+                                            Submit Review
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
+
+                            {!user && (
+                                <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-8 text-center">
+                                    <p className="text-sm font-semibold text-blue-700 mb-2">Sign in to write a review</p>
+                                    <button onClick={() => navigate('/login')} className="bg-blue-600 text-white px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-blue-700 transition-all">
+                                        Sign In
+                                    </button>
+                                </div>
+                            )}
+
+                            {hasReviewed && (
+                                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 mb-8 flex items-center gap-2">
+                                    <CheckCircle2 size={16} className="text-emerald-500" />
+                                    <p className="text-sm font-semibold text-emerald-700">You've already reviewed this property.</p>
+                                </div>
+                            )}
+
+                            {/* Reviews List */}
+                            {reviewsLoading ? (
+                                <div className="flex justify-center py-10">
+                                    <div className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                                </div>
+                            ) : reviews.length === 0 ? (
+                                <div className="text-center py-10">
+                                    <Star size={36} className="text-slate-200 mx-auto mb-3" />
+                                    <p className="text-slate-400 font-medium text-sm">No reviews yet for this listing.</p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {reviews.map((review) => (
+                                        <div key={review.$id} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm relative">
+                                            <div className="flex items-start justify-between mb-3">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
+                                                        {(review.userName || 'A').charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-slate-900 text-sm">{review.userName || 'Anonymous'}</p>
+                                                        <p className="text-[10px] text-slate-400 font-medium">
+                                                            {new Date(review.createdAt || review.$createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    {[1,2,3,4,5].map(s => (
+                                                        <Star key={s} size={11} className={review.rating >= s ? 'text-amber-400 fill-amber-400' : 'text-slate-200 fill-slate-100'} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <p className="text-slate-600 text-sm leading-relaxed font-normal">{review.comment}</p>
+                                            {/* Delete — own review or admin */}
+                                            {(user && (review.userId === user.$id || isAdmin)) && (
+                                                <button
+                                                    onClick={() => handleDeleteReview(review.$id)}
+                                                    className="absolute top-3 right-3 w-7 h-7 bg-red-50 text-red-400 rounded-lg flex items-center justify-center hover:bg-red-100 transition-colors"
+                                                    title="Delete review"
+                                                >
+                                                    <Trash2 size={12} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
 

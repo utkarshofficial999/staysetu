@@ -30,6 +30,7 @@ export const COLLECTION = {
     whatsappLeads: 'whatsapp_leads',
     maidServices: 'maid_services',
     roommateConnectRequests: 'roommate_connect_requests',
+    reviews: 'reviews',
 };
 
 // Helper: Get image URL from Appwrite storage
