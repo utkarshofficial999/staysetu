@@ -289,7 +289,22 @@ const PropertyDetails = () => {
                                 <span className="chip-approved">
                                     <CheckCircle2 size={10} className="mr-1" /> Verified
                                 </span>
-                                {property.listedBy && String(property.listedBy).toLowerCase() !== 'owner' && (
+                                {/* Owner / Broker badge */}
+                                {String(property.listedBy || 'owner').toLowerCase() === 'owner' ? (
+                                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border bg-emerald-50 text-emerald-700 border-emerald-200">
+                                        Owner
+                                    </span>
+                                ) : (
+                                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border bg-violet-50 text-violet-700 border-violet-200">
+                                        Broker
+                                    </span>
+                                )}
+                                {/* Fee tag — always shown */}
+                                {String(property.listedBy || 'owner').toLowerCase() === 'owner' ? (
+                                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border bg-sky-50 text-sky-700 border-sky-200">
+                                        No Brokerage
+                                    </span>
+                                ) : (
                                     <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border bg-amber-50 text-amber-600 border-amber-100">
                                         Mediator Fees
                                     </span>
@@ -412,7 +427,7 @@ const PropertyDetails = () => {
 
                             <div className="grid grid-cols-2 gap-2.5">
                                 {[
-                                    ...(String(property.listedBy || 'owner').toLowerCase() !== 'owner' ? ['Mediator Fees'] : []),
+                                    String(property.listedBy || 'owner').toLowerCase() !== 'owner' ? 'Mediator Fees' : 'No Brokerage',
                                     'Safe & Verified',
                                     'Direct Contact',
                                     'Easy Move-in'
