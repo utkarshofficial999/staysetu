@@ -35,7 +35,8 @@ const OwnerDashboard = () => {
         deposit: '',
         available_from: '',
         latitude: '',
-        longitude: ''
+        longitude: '',
+        listed_by: 'owner'
     });
     const [formLoading, setFormLoading] = useState(false);
     const [formError, setFormError] = useState(null);
@@ -281,7 +282,7 @@ const OwnerDashboard = () => {
                 amenities: JSON.stringify(formData.amenities),
                 images: JSON.stringify(imageUrls.length > 0 ? imageUrls : []),
                 ownerId: user.$id,
-                listedBy: profile?.role || 'owner',
+                listedBy: formData.listed_by || 'owner',
                 status: 'pending',
                 genderPreference: formData.gender_preference || 'any',
                 occupancy: JSON.stringify(formData.occupancy),
@@ -299,7 +300,8 @@ const OwnerDashboard = () => {
                 amenities: [], images: [''],
                 gender_preference: 'any', occupancy: ['single'],
                 deposit: '', available_from: '',
-                latitude: '', longitude: ''
+                latitude: '', longitude: '',
+                listed_by: 'owner'
             });
             setUploadedImages([]);
 
@@ -739,6 +741,31 @@ const OwnerDashboard = () => {
                                         Basic Information
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="md:col-span-2">
+                                            <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Are you an Owner or a Broker?</label>
+                                            <div className="flex gap-4">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData(prev => ({ ...prev, listed_by: 'owner' }))}
+                                                    className={`flex-1 py-4 rounded-2xl border-2 transition-all font-bold text-sm ${formData.listed_by === 'owner'
+                                                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                                        : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
+                                                        }`}
+                                                >
+                                                    Owner
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData(prev => ({ ...prev, listed_by: 'broker' }))}
+                                                    className={`flex-1 py-4 rounded-2xl border-2 transition-all font-bold text-sm ${formData.listed_by === 'broker'
+                                                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                                        : 'border-slate-50 text-slate-500 hover:border-slate-100 bg-white'
+                                                        }`}
+                                                >
+                                                    Broker
+                                                </button>
+                                            </div>
+                                        </div>
                                         <div className="md:col-span-2">
                                             <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Property Title *</label>
                                             <input type="text" name="title" required placeholder="e.g. Modern Boys PG near Knowledge Park"

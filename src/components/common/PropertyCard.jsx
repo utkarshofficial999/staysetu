@@ -199,7 +199,7 @@ const PropertyCard = ({ property }) => {
                         </div>
                     ) : (
                         <div className="text-[10px] font-bold px-2 py-0.5 rounded-lg border border-amber-100 bg-amber-50 text-amber-600 uppercase tracking-wide">
-                            Mediator Fees
+                            Broker Fees
                         </div>
                     )}
                 </div>

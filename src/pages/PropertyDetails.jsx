@@ -306,7 +306,7 @@ const PropertyDetails = () => {
                                     </span>
                                 ) : (
                                     <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border bg-amber-50 text-amber-600 border-amber-100">
-                                        Mediator Fees
+                                        Broker Fees
                                     </span>
                                 )}
                             </div>
@@ -401,7 +401,7 @@ const PropertyDetails = () => {
                                 <Phone size={17} />
                                 Connect via WhatsApp
                             </button>
-                            <p className="text-center text-[11px] text-slate-500 font-medium mb-6">⚡ Owner typically replies within 5 mins</p>
+                            <p className="text-center text-[11px] text-slate-500 font-medium mb-6">⚡ {String(property.listedBy || 'owner').toLowerCase() === 'owner' ? 'Owner' : 'Broker'} typically replies within 5 mins</p>
 
                             <div className="h-px bg-slate-100 mb-6" />
 
@@ -414,20 +414,20 @@ const PropertyDetails = () => {
                                         {property.owner?.name || 'Property Owner'}
                                     </h4>
                                     <p className="text-emerald-600 text-xs font-medium flex items-center gap-1">
-                                        <CheckCircle2 size={10} /> Verified Owner
+                                        <CheckCircle2 size={10} /> Verified {String(property.listedBy || 'owner').toLowerCase() === 'owner' ? 'Owner' : 'Broker'}
                                     </p>
                                 </div>
                             </div>
 
                             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 mb-6">
                                 <p className="text-sm text-slate-600 leading-relaxed italic font-normal">
-                                    "Hi, I'm {property.owner?.name || 'the owner'}. Feel free to reach out — I'll help you find the perfect stay!"
+                                    "Hi, I'm {property.owner?.name || (String(property.listedBy || 'owner').toLowerCase() === 'owner' ? 'the owner' : 'the broker')}. Feel free to reach out — I'll help you find the perfect stay!"
                                 </p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2.5">
                                 {[
-                                    String(property.listedBy || 'owner').toLowerCase() !== 'owner' ? 'Mediator Fees' : 'No Brokerage',
+                                    String(property.listedBy || 'owner').toLowerCase() !== 'owner' ? 'Broker Fees' : 'No Brokerage',
                                     'Safe & Verified',
                                     'Direct Contact',
                                     'Easy Move-in'
