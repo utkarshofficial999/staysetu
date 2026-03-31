@@ -214,11 +214,22 @@ const PropertyCard = ({ property }) => {
                 </div>
 
                 <div className="flex flex-wrap gap-1.5 mb-6">
-                    {(parseJsonField(property?.occupancy) || ['single']).map((occ) => (
-                        <span key={occ} className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border border-blue-100 uppercase">
-                            {occ}
-                        </span>
-                    ))}
+                    {(parseJsonField(property?.occupancy) || ['single']).map((occ, idx) => {
+                        const isObj = typeof occ === 'object' && occ !== null;
+                        const label = isObj ? occ.type : occ;
+                        const price = isObj ? occ.price : null;
+                        
+                        return (
+                            <span key={idx} className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border border-blue-100 uppercase flex items-center gap-1">
+                                {label.replace('-', ' ')}
+                                {price && price > 0 && (
+                                    <span className="text-slate-400 font-bold ml-1 flex items-center">
+                                        ₹{price.toLocaleString()}
+                                    </span>
+                                )}
+                            </span>
+                        );
+                    })}
                 </div>
 
                 <div className="mt-auto grid grid-cols-2 gap-3">

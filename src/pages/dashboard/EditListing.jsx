@@ -30,7 +30,8 @@ const EditListing = () => {
         amenities: [],
         images: [''],
         listed_by: 'owner',
-        occupancy: []
+        occupancy: [],
+        occupancy_pricing: {}
     });
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry', 'Security', 'Gym', 'Attached Bath'];
@@ -42,6 +43,20 @@ const EditListing = () => {
                 if (data) {
                     const amenities = typeof data.amenities === 'string' ? JSON.parse(data.amenities) : (data.amenities || []);
                     const images = typeof data.images === 'string' ? JSON.parse(data.images) : (data.images || ['']);
+                    const rawOccupancy = data.occupancy ? JSON.parse(data.occupancy) : ['single'];
+                    const normalizedOccupancy = [];
+                    const pricingMap = {};
+
+                    rawOccupancy.forEach(item => {
+                        if (typeof item === 'object' && item !== null) {
+                            normalizedOccupancy.push(item.type);
+                            pricingMap[item.type] = item.price || '';
+                        } else {
+                            normalizedOccupancy.push(item);
+                            pricingMap[item] = '';
+                        }
+                    });
+
                     setFormData({
                         title: data.title || '',
                         description: data.description || '',
@@ -55,7 +70,8 @@ const EditListing = () => {
                         amenities: amenities,
                         images: images.length > 0 ? images : [''],
                         listed_by: data.listedBy || 'owner',
-                        occupancy: data.occupancy ? JSON.parse(data.occupancy) : ['single'],
+                        occupancy: normalizedOccupancy,
+                        occupancy_pricing: pricingMap,
                         gender_preference: data.genderPreference || 'any'
                     });
                 }
@@ -156,11 +172,30 @@ const EditListing = () => {
     };
 
     const toggleOccupancy = (type) => {
+        setFormData(prev => {
+            const newOccupancy = prev.occupancy.includes(type)
+                ? (prev.occupancy.length > 1 ? prev.occupancy.filter(o => o !== type) : prev.occupancy)
+                : [...prev.occupancy, type];
+            
+            // Sync pricing object
+            const newPricing = { ...prev.occupancy_pricing };
+            if (!newOccupancy.includes(type)) {
+                delete newPricing[type];
+            } else if (newPricing[type] === undefined) {
+                newPricing[type] = '';
+            }
+
+            return { ...prev, occupancy: newOccupancy, occupancy_pricing: newPricing };
+        });
+    };
+
+    const handlePriceForOccupancy = (type, value) => {
         setFormData(prev => ({
             ...prev,
-            occupancy: prev.occupancy.includes(type)
-                ? (prev.occupancy.length > 1 ? prev.occupancy.filter(o => o !== type) : prev.occupancy)
-                : [...prev.occupancy, type]
+            occupancy_pricing: {
+                ...prev.occupancy_pricing,
+                [type]: value
+            }
         }));
     };
 
@@ -191,10 +226,18 @@ const EditListing = () => {
 
             const imageUrls = formData.images.filter(url => url && url.trim());
 
+            const occupancyData = formData.occupancy.map(type => ({
+                type,
+                price: parseFloat(formData.occupancy_pricing[type]) || parseFloat(formData.price) || 0
+            }));
+
+            // Main price for search is the lowest available
+            const mainPrice = Math.min(...occupancyData.map(o => o.price).filter(p => p > 0)) || parseFloat(formData.price) || 0;
+
             await databases.updateDocument(DATABASE_ID, COLLECTION.listings, id, {
                 title: formData.title,
                 description: formData.description,
-                price: parseFloat(formData.price),
+                price: mainPrice,
                 location: formData.location,
                 latitude: formData.latitude,
                 longitude: formData.longitude,
@@ -205,7 +248,7 @@ const EditListing = () => {
                 images: JSON.stringify(imageUrls),
                 genderPreference: formData.gender_preference || 'any',
                 listedBy: formData.listed_by || 'owner',
-                occupancy: JSON.stringify(formData.occupancy),
+                occupancy: JSON.stringify(occupancyData),
                 updatedAt: new Date().toISOString(),
             });
 
@@ -335,20 +378,48 @@ const EditListing = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Monthly Rent (₹)</label>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
+                                        {formData.type === 'Hostel' ? 'Starting Price (Monthly Rent ₹)' : 'Monthly Rent (₹)'}
+                                    </label>
                                     <div className="relative">
                                         <IndianRupee size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                         <input
                                             type="number"
                                             name="price"
-                                            required
+                                            required={formData.type !== 'Hostel'}
                                             placeholder="8500"
                                             className="input-field pl-10"
                                             value={formData.price}
                                             onChange={handleChange}
                                         />
                                     </div>
+                                    {formData.type === 'Hostel' && (
+                                        <p className="text-[10px] text-slate-400 mt-1 font-medium italic">* Default price used if specific room prices aren't set.</p>
+                                    )}
                                 </div>
+
+                                {formData.type === 'Hostel' && (
+                                    <div className="md:col-span-2">
+                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Set Prices for Selected Room Types</label>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {formData.occupancy.map(type => (
+                                                <div key={type} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between gap-4">
+                                                    <span className="font-bold text-slate-700 text-xs uppercase">{type.replace('-', ' ')} Sharing</span>
+                                                    <div className="relative w-32 shrink-0">
+                                                        <IndianRupee size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                        <input
+                                                            type="number"
+                                                            placeholder="Price"
+                                                            className="w-full bg-white border border-slate-200 rounded-xl py-2 pl-8 pr-3 text-sm font-bold focus:outline-none focus:border-plum-500"
+                                                            value={formData.occupancy_pricing[type] || ''}
+                                                            onChange={(e) => handlePriceForOccupancy(type, e.target.value)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="md:col-span-2">
                                     <div className="flex gap-2 mb-6">
                                         <div className="relative flex-1">

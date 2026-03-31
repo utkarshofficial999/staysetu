@@ -349,16 +349,30 @@ const PropertyDetails = () => {
                             <div className="mb-10">
                                 <h3 className="text-sm font-semibold text-slate-900 mb-4 uppercase tracking-wider" style={{ fontFamily: 'Bungee' }}>Available Room Types</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {(property.occupancy || []).map((occ) => (
-                                        <div key={occ} className="flex items-center gap-3 p-3.5 bg-emerald-50 rounded-xl border border-emerald-100">
-                                            <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center text-emerald-600 border border-emerald-100">
-                                                <UsersIcon size={16} />
+                                    {(property.occupancy || []).map((occ, idx) => {
+                                        const isObj = typeof occ === 'object' && occ !== null;
+                                        const type = isObj ? occ.type : occ;
+                                        const price = isObj ? occ.price : null;
+
+                                        return (
+                                            <div key={idx} className="flex flex-col gap-1 p-3.5 bg-emerald-50 rounded-xl border border-emerald-100">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center text-emerald-600 border border-emerald-100">
+                                                        <UsersIcon size={16} />
+                                                    </div>
+                                                    <span className="font-bold text-emerald-700 text-xs uppercase tracking-tight">
+                                                        {type === 'single' ? 'Single' : type === 'double' ? 'Double Sharing' : type === 'triple' ? 'Triple Sharing' : (type.replace('-', ' ') + ' Sharing')}
+                                                    </span>
+                                                </div>
+                                                {price && price > 0 && (
+                                                    <div className="mt-2 pt-2 border-t border-emerald-100/50 flex items-center justify-between">
+                                                        <span className="text-[10px] text-emerald-600/70 font-bold uppercase tracking-wider">Rent</span>
+                                                        <span className="font-black text-emerald-700 text-sm">₹{price.toLocaleString()}</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <span className="font-bold text-emerald-700 text-xs uppercase tracking-tight">
-                                                {occ === 'single' ? 'Single' : occ === 'double' ? 'Double Sharing' : occ === 'triple' ? 'Triple Sharing' : 'Four Sharing'}
-                                            </span>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
 
