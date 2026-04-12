@@ -20,7 +20,9 @@ const AdminPanel = () => {
     const [filter, setFilter] = useState('pending');
     const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, total: 0, roommate_pending: 0, wa_leads: 0, maid_pending: 0 });
     const [actionLoading, setActionLoading] = useState(null);
+    const [editingItem, setEditingItem] = useState(null); // For editing photos
     const fileInputRef = useRef(null);
+    const editFileInputRef = useRef(null);
 
     // Add Listing Form State
     const [formData, setFormData] = useState({
@@ -178,6 +180,46 @@ const AdminPanel = () => {
             else setRoommates(prev => prev.filter(r => r.$id !== id));
         } catch (err) {
             console.error('Reject error:', err);
+        }
+        setActionLoading(null);
+    };
+
+    const handleEditImageUpload = async (e) => {
+        const files = Array.from(e.target.files);
+        if (!files.length || !editingItem) return;
+        setUploading(true);
+
+        const projectEndpoint = 'https://sgp.cloud.appwrite.io/v1';
+        const projectId = '69a2731e00047b3b01e9';
+
+        const newImages = [...(parseJsonField(editingItem.images) || [])];
+
+        for (const file of files) {
+            try {
+                const result = await storage.createFile(BUCKET_ID, ID.unique(), file);
+                const url = `${projectEndpoint}/storage/buckets/${BUCKET_ID}/files/${result.$id}/view?project=${projectId}`;
+                newImages.push(url);
+            } catch (err) {
+                console.error('Upload error:', err);
+            }
+        }
+
+        setEditingItem(prev => ({ ...prev, images: JSON.stringify(newImages) }));
+        setUploading(false);
+    };
+
+    const saveEditedItem = async () => {
+        if (!editingItem) return;
+        setActionLoading(editingItem.$id + '_save');
+        try {
+            await databases.updateDocument(DATABASE_ID, getCollectionForTab(), editingItem.$id, {
+                images: editingItem.images
+            });
+            await fetchData();
+            setEditingItem(null);
+            alert('Photos updated successfully!');
+        } catch (err) {
+            alert('Save error: ' + err.message);
         }
         setActionLoading(null);
     };
@@ -654,27 +696,36 @@ const AdminPanel = () => {
                                                     {item.status === 'approved' ? 'Live' : 'Pending'}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    {item.status !== 'approved' && (
-                                                        <button
-                                                            onClick={() => approve(item.$id)}
-                                                            disabled={actionLoading === item.$id + '_approve'}
-                                                            className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
-                                                            style={{ boxShadow: '0 2px 8px -2px rgba(99,102,241,0.4)' }}
-                                                        >
-                                                            {actionLoading === item.$id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
-                                                        </button>
-                                                    )}
-                                                    <button
-                                                        onClick={() => reject(item.$id)}
-                                                        disabled={actionLoading === item.$id + '_reject'}
-                                                        className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50 border border-red-100/60"
-                                                    >
-                                                        {actionLoading === item.$id + '_reject' ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                                                    </button>
-                                                </div>
-                                            </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center justify-end gap-2">
+                                                            {activeTab === 'listings' && (
+                                                                <button
+                                                                    onClick={() => setEditingItem(item)}
+                                                                    className="w-8 h-8 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center transition-all active:scale-90 border border-amber-100/60"
+                                                                    title="Edit Photos"
+                                                                >
+                                                                    <ImageIcon size={14} />
+                                                                </button>
+                                                            )}
+                                                            {item.status !== 'approved' && (
+                                                                <button
+                                                                    onClick={() => approve(item.$id)}
+                                                                    disabled={actionLoading === item.$id + '_approve'}
+                                                                    className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
+                                                                    style={{ boxShadow: '0 2px 8px -2px rgba(99,102,241,0.4)' }}
+                                                                >
+                                                                    {actionLoading === item.$id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                onClick={() => reject(item.$id)}
+                                                                disabled={actionLoading === item.$id + '_reject'}
+                                                                className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50 border border-red-100/60"
+                                                            >
+                                                                {actionLoading === item.$id + '_reject' ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                                            </button>
+                                                        </div>
+                                                    </td>
                                         </tr>
                                     )) : (
                                         <tr>
@@ -692,6 +743,70 @@ const AdminPanel = () => {
                     )}
                 </div>
             </div>
+
+            {/* Photo Editor Modal */}
+            {editingItem && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl overflow-hidden border border-white/20 animate-scale-in">
+                        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>Edit Listing Photos</h3>
+                                <p className="text-xs text-slate-400 font-medium">{editingItem.title}</p>
+                            </div>
+                            <button onClick={() => setEditingItem(null)} className="w-10 h-10 rounded-xl hover:bg-white hover:shadow-sm flex items-center justify-center text-slate-400 transition-all">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="p-8 max-h-[60vh] overflow-y-auto">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                {parseJsonField(editingItem.images)?.map((url, i) => (
+                                    <div key={i} className="aspect-square rounded-2xl overflow-hidden border-2 border-slate-100 relative group">
+                                        <img src={url} className="w-full h-full object-cover" alt="" />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const current = parseJsonField(editingItem.images) || [];
+                                                const updated = current.filter((_, idx) => idx !== i);
+                                                setEditingItem(prev => ({ ...prev, images: JSON.stringify(updated) }));
+                                            }}
+                                            className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:bg-red-600"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    onClick={() => editFileInputRef.current?.click()}
+                                    disabled={uploading}
+                                    className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-blue-400 hover:bg-blue-50/50 transition-all group"
+                                >
+                                    {uploading ? <Loader2 size={24} className="animate-spin text-blue-500" /> : <Upload size={24} className="group-hover:scale-110 transition-transform" />}
+                                    <span className="text-[10px] font-bold mt-2 uppercase tracking-wider">{uploading ? 'Uploading...' : 'Add Photos'}</span>
+                                </button>
+                            </div>
+                            <input type="file" multiple ref={editFileInputRef} onChange={handleEditImageUpload} className="hidden" accept="image/*" />
+                        </div>
+
+                        <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+                            <button
+                                onClick={saveEditedItem}
+                                disabled={actionLoading === editingItem.$id + '_save' || uploading}
+                                className="flex-1 btn-primary py-4 rounded-xl flex items-center justify-center gap-2 text-sm"
+                            >
+                                {actionLoading === editingItem.$id + '_save' ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+                                {actionLoading === editingItem.$id + '_save' ? 'Saving Changes...' : 'Save Photos'}
+                            </button>
+                            <button
+                                onClick={() => setEditingItem(null)}
+                                className="px-8 py-4 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
