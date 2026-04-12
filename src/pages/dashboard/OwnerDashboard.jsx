@@ -9,13 +9,15 @@ import {
     BarChart3, ArrowUpRight, ArrowLeft, Upload,
     Save, X, User, LogOut, Shield, Briefcase,
     Phone, Send, Bell, Settings, Building2,
-    ChevronLeft, MoreVertical, Filter, Locate, Brush
+    ChevronLeft, MoreVertical, Filter, Locate, Brush, Loader2
 } from 'lucide-react';
 import PropertyMap from '../../components/common/PropertyMap';
 
 const OwnerDashboard = () => {
-    const { user, profile, signOut } = useAuth();
+    const { user, profile, signOut, refreshProfile } = useAuth();
     const navigate = useNavigate();
+    const [roleUpdating, setRoleUpdating] = useState(false);
+    const [roleSuccess, setRoleSuccess] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -1245,6 +1247,65 @@ const OwnerDashboard = () => {
                                             </div>
                                         </div>
                                     ))}
+                                </div>
+                                
+                                {/* ── Role Switcher ── */}
+                                <div className="pt-4 border-t border-slate-100">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Switch Account Type</p>
+                                    <div className="grid grid-cols-3 gap-2 mb-3">
+                                        {[
+                                            { id: 'student', label: 'Student', icon: User },
+                                            { id: 'owner', label: 'Owner', icon: Home },
+                                            { id: 'broker', label: 'Broker', icon: Settings },
+                                        ].map(({ id, label, icon: Icon }) => (
+                                            <button
+                                                key={id}
+                                                disabled={roleUpdating}
+                                                onClick={async () => {
+                                                    if (profile?.role === id) return;
+                                                    setRoleUpdating(true);
+                                                    setRoleSuccess(false);
+                                                    try {
+                                                        await databases.updateDocument(
+                                                            DATABASE_ID,
+                                                            COLLECTION.profiles,
+                                                            profile.$id,
+                                                            { role: id, updatedAt: new Date().toISOString() }
+                                                        );
+                                                        await refreshProfile();
+                                                        setRoleSuccess(true);
+                                                        setTimeout(() => {
+                                                            if (id === 'student') navigate('/dashboard');
+                                                            else window.location.reload(); // Refresh to update view if staying in professional mode
+                                                        }, 800);
+                                                    } catch (err) {
+                                                        console.error('Role update error:', err);
+                                                    } finally {
+                                                        setRoleUpdating(false);
+                                                    }
+                                                }}
+                                                className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 ${
+                                                    profile?.role === id
+                                                        ? 'border-blue-300 bg-blue-50 text-blue-900'
+                                                        : 'border-slate-200 hover:border-blue-200 hover:bg-blue-50/50 text-slate-500'
+                                                } disabled:opacity-50`}
+                                            >
+                                                <Icon size={18} />
+                                                <span className="text-[10px] font-bold mt-1">{label}</span>
+                                                {profile?.role === id && <span className="text-[8px] text-blue-600 font-black uppercase mt-0.5">Current</span>}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    {roleSuccess && (
+                                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2.5 rounded-xl text-sm font-bold animate-fade-in mb-4">
+                                            <CheckCircle size={16} /> Role updated successfully!
+                                        </div>
+                                    )}
+                                    {roleUpdating && (
+                                        <div className="flex items-center gap-2 text-blue-600 bg-blue-50 px-4 py-2.5 rounded-xl text-sm font-bold animate-fade-in mb-4">
+                                            <Loader2 size={16} className="animate-spin" /> Updating...
+                                        </div>
+                                    )}
                                 </div>
 
                                 <button
