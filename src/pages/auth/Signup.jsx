@@ -16,6 +16,7 @@ const Signup = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [emailSent, setEmailSent] = useState(false);
 
     // If already logged in, redirect
     useEffect(() => {
@@ -55,19 +56,26 @@ const Signup = () => {
                 }
             );
 
+            // Send verification email
+            const verifyUrl = `${window.location.origin}/verify-email`;
+            await account.createVerification(verifyUrl);
+
             // Refresh auth context
             await checkUser();
 
-            setSuccess(true);
-            setTimeout(() => {
-                if (role === 'owner' || role === 'broker') {
-                    navigate('/owner-dashboard');
-                } else {
-                    navigate('/dashboard');
-                }
-            }, 1500);
+            // Show 'check inbox' screen
+            setEmailSent(true);
         } catch (err) {
-            setError(err.message);
+            // Map Appwrite error codes to user-friendly messages
+            if (err.type === 'user_already_exists' || err.code === 409) {
+                setError('An account with this email already exists. Please log in instead.');
+            } else if (err.type === 'user_invalid_credentials' || err.code === 401) {
+                setError('Invalid email or password. Please check your credentials.');
+            } else if (err.type === 'user_password_mismatch') {
+                setError('Password does not meet requirements. Use at least 8 characters.');
+            } else {
+                setError(err.message || 'Something went wrong. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -91,6 +99,40 @@ const Signup = () => {
 
             <div className="w-full max-w-md relative z-10">
                 <div className="card-elevated p-8 animate-slide-up">
+
+                    {/* ── Email Sent Screen ────────── */}
+                    {emailSent ? (
+                        <div className="text-center animate-fade-in py-4">
+                            <div className="w-32 h-16 rounded-3xl flex items-center justify-center mx-auto mb-6 p-2 bg-white shadow-sm border border-slate-100 overflow-hidden">
+                                <img src="/logo.png?v=8" alt="StaySetu Logo" className="w-full h-full object-contain" />
+                            </div>
+                            <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-5">
+                                <CheckCircle2 className="text-emerald-500" size={32} />
+                            </div>
+                            <h1 className="text-2xl font-bold text-slate-900 mb-2" style={{ fontFamily: 'Bungee' }}>Check your inbox!</h1>
+                            <p className="text-slate-500 text-sm mb-1">We sent a verification link to</p>
+                            <p className="text-blue-900 font-semibold text-sm mb-6">{email}</p>
+                            <p className="text-slate-400 text-xs mb-6">Click the link in the email to verify your account and get started. Check spam/junk if you don't see it.</p>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const verifyUrl = `${window.location.origin}/verify-email`;
+                                        await account.createVerification(verifyUrl);
+                                        alert('Verification email resent! Check your inbox.');
+                                    } catch {
+                                        alert('Could not resend. Please wait a moment and try again.');
+                                    }
+                                }}
+                                className="btn-secondary w-full py-3 mb-3"
+                            >
+                                Resend Verification Email
+                            </button>
+                            <Link to="/login" className="text-blue-900 font-semibold text-sm hover:underline">
+                                Back to Login →
+                            </Link>
+                        </div>
+                    ) : (
+                    <>
                     <div className="text-center mb-8">
                         <div className="w-32 h-16 rounded-3xl flex items-center justify-center mx-auto mb-5 p-2 bg-white shadow-sm border border-slate-100 overflow-hidden">
                             <img src="/logo.png?v=8" alt="StaySetu Logo" className="w-full h-full object-contain" />
@@ -149,7 +191,12 @@ const Signup = () => {
                             <div className="relative">
                                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                 <input type="email" required className="input-field pl-10" placeholder="name@example.com"
-                                    value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    inputMode="email"
+                                    autoCapitalize="none"
+                                    autoCorrect="off"
+                                    autoComplete="email"
+                                    spellCheck="false"
+                                    value={email} onChange={(e) => setEmail(e.target.value.trim())} />
                             </div>
                         </div>
 
@@ -178,14 +225,18 @@ const Signup = () => {
                         </div>
                         <GoogleButton onClick={handleGoogleLogin} loading={loading} />
                     </div>
+                    </>
+                    )}
                 </div>
 
-                <p className="mt-8 text-center text-slate-500 font-normal text-sm">
-                    Already have an account?{' '}
-                    <Link to="/login" className="text-blue-900 hover:text-blue-900 font-semibold">Log in</Link>
-                </p>
-            </div >
-        </div >
+                {!emailSent && (
+                    <p className="mt-8 text-center text-slate-500 font-normal text-sm">
+                        Already have an account?{' '}
+                        <Link to="/login" className="text-blue-900 hover:text-blue-900 font-semibold">Log in</Link>
+                    </p>
+                )}
+            </div>
+        </div>
     );
 };
 

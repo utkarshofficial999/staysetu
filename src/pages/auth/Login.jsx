@@ -18,7 +18,7 @@ const Login = () => {
     useEffect(() => {
         if (user && profile) {
             const role = profile.role || 'student';
-            navigate(role === 'owner' ? '/owner-dashboard' : '/dashboard', { replace: true });
+            navigate((role === 'owner' || role === 'broker') ? '/owner-dashboard' : '/dashboard', { replace: true });
         }
     }, [user, profile, navigate]);
 
@@ -43,13 +43,22 @@ const Login = () => {
             // Refresh auth context
             await checkUser();
 
-            if (role === 'owner') {
+            if (role === 'owner' || role === 'broker') {
                 navigate('/owner-dashboard', { replace: true });
             } else {
                 navigate('/dashboard', { replace: true });
             }
         } catch (err) {
-            setError(err.message);
+            // Map Appwrite error codes to user-friendly messages
+            if (err.type === 'user_invalid_credentials' || err.code === 401) {
+                setError('Incorrect email or password. Please try again.');
+            } else if (err.type === 'user_not_found' || err.code === 404) {
+                setError('No account found with this email. Please sign up first.');
+            } else if (err.type === 'general_rate_limit_exceeded' || err.code === 429) {
+                setError('Too many attempts. Please wait a moment and try again.');
+            } else {
+                setError(err.message || 'Login failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -93,7 +102,12 @@ const Login = () => {
                             <div className="relative">
                                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                 <input type="email" required className="input-field pl-10" placeholder="name@example.com"
-                                    value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    inputMode="email"
+                                    autoCapitalize="none"
+                                    autoCorrect="off"
+                                    autoComplete="email"
+                                    spellCheck="false"
+                                    value={email} onChange={(e) => setEmail(e.target.value.trim())} />
                             </div>
                         </div>
 

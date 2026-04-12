@@ -12,6 +12,7 @@ const ADMIN_EMAILS = ['sudhansu@gmail.com', 'yutkarsh669@gmail.com', 'staysetu26
 import Home from './pages/Home';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
+import VerifyEmail from './pages/auth/VerifyEmail';
 import Listings from './pages/Listings';
 import PropertyDetails from './pages/PropertyDetails';
 import Messages from './pages/Messages';
@@ -69,7 +70,7 @@ const AdminRoute = ({ children }) => {
 const AppContent = () => {
   const { loading } = useAuth();
   const location = useLocation();
-  const hideOn = ['/login', '/signup'];
+  const hideOn = ['/login', '/signup', '/verify-email'];
   const shouldHide = hideOn.includes(location.pathname);
 
   if (loading) {
@@ -90,6 +91,7 @@ const AppContent = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/listings" element={<Listings />} />
           <Route path="/property/:id" element={
             <ProtectedRoute><PropertyDetails /></ProtectedRoute>
