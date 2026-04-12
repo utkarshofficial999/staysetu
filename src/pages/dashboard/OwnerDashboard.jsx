@@ -331,16 +331,35 @@ const OwnerDashboard = () => {
     // Maid service form state
     const [maidForm, setMaidForm] = useState({
         title: '', description: '', location: '', serviceType: 'all-in-one',
-        timing: '', price: '', whatsappNumber: '', phoneNumber: '', genderPreference: 'any'
+        timing: '', price: '', whatsappNumber: '', phoneNumber: '', genderPreference: 'any',
+        image: null
     });
+    const [maidImageFile, setMaidImageFile] = useState(null);
+    const [maidImagePreview, setMaidImagePreview] = useState(null);
     const [maidFormLoading, setMaidFormLoading] = useState(false);
 
+    const maidImageInputRef = useRef(null);
+
     const handleMaidChange = (e) => setMaidForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+    const handleMaidImageSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setMaidImageFile(file);
+            setMaidImagePreview(URL.createObjectURL(file));
+        }
+    };
 
     const handleSubmitMaid = async (e) => {
         e.preventDefault();
         setMaidFormLoading(true);
         try {
+            let imageId = null;
+            if (maidImageFile) {
+                const uploadRes = await storage.createFile(BUCKET_ID, ID.unique(), maidImageFile);
+                imageId = uploadRes.$id;
+            }
+
             await databases.createDocument(DATABASE_ID, COLLECTION.maidServices, ID.unique(), {
                 title: maidForm.title,
                 description: maidForm.description,
@@ -353,11 +372,14 @@ const OwnerDashboard = () => {
                 postedBy: user.$id,
                 posterName: profile?.fullName || profile?.name || 'Owner',
                 genderPreference: maidForm.genderPreference,
+                image: imageId,
                 status: 'pending',
                 createdAt: new Date().toISOString(),
             });
             alert('Maid service posted! It will be visible after admin approval.');
-            setMaidForm({ title: '', description: '', location: '', serviceType: 'all-in-one', timing: '', price: '', whatsappNumber: '', phoneNumber: '', genderPreference: 'any' });
+            setMaidForm({ title: '', description: '', location: '', serviceType: 'all-in-one', timing: '', price: '', whatsappNumber: '', phoneNumber: '', genderPreference: 'any', image: null });
+            setMaidImageFile(null);
+            setMaidImagePreview(null);
             setActiveTab('overview');
         } catch (err) {
             alert('Error: ' + err.message);
@@ -1082,6 +1104,44 @@ const OwnerDashboard = () => {
                                             <Send size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                             <input type="tel" name="whatsappNumber" required placeholder="+91 XXXXX XXXXX"
                                                 className="input-field pl-11" value={maidForm.whatsappNumber} onChange={handleMaidChange} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Phone Number *</label>
+                                        <div className="relative">
+                                            <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                            <input type="tel" name="phoneNumber" required placeholder="+91 XXXXX XXXXX"
+                                                className="input-field pl-11" value={maidForm.phoneNumber} onChange={handleMaidChange} />
+                                        </div>
+                                    </div>
+
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Maid's Photo (Recommended)</label>
+                                        <input
+                                            ref={maidImageInputRef}
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={handleMaidImageSelect}
+                                        />
+                                        <div
+                                            onClick={() => maidImageInputRef.current?.click()}
+                                            className="w-full h-40 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-all overflow-hidden relative"
+                                        >
+                                            {maidImagePreview ? (
+                                                <>
+                                                    <img src={maidImagePreview} alt="Maid Preview" className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                                        <span className="text-white text-xs font-bold uppercase tracking-widest">Change Photo</span>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Upload className="text-slate-300 mb-2" size={32} />
+                                                    <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">Click to Upload Photo</p>
+                                                    <p className="text-[10px] text-slate-300 mt-1">PNG, JPG up to 5MB</p>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="md:col-span-2">

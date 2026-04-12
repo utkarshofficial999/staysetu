@@ -5,8 +5,9 @@ import { trackWhatsAppClick, openWhatsApp } from '../lib/whatsappTracker';
 import {
     MapPin, IndianRupee, Phone, Clock, CheckCircle2,
     Search, Filter, MessageCircle, Sparkles, UserCheck,
-    Loader2, Brush
+    Loader2, Brush, Mail
 } from 'lucide-react';
+import { getImageUrl } from '../lib/appwrite';
 
 const serviceTypeLabels = {
     'cooking': '🍳 Cooking',
@@ -133,22 +134,46 @@ const Maids = () => {
                         {filteredMaids.map((maid) => (
                             <div key={maid.$id} className="group bg-white rounded-3xl border-2 border-slate-900 overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)]">
                                 {/* Top Banner */}
-                                <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-5 relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white text-xl">
-                                            {serviceTypeLabels[maid.serviceType]?.charAt(0) || '🧹'}
-                                        </div>
-                                        <div>
-                                            <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest block">
-                                                {serviceTypeLabels[maid.serviceType] || maid.serviceType || 'Maid Service'}
-                                            </span>
-                                            <h3 className="text-lg font-bold text-white truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>
-                                                {maid.title}
-                                            </h3>
+                                {maid.image ? (
+                                    <div className="h-48 overflow-hidden relative">
+                                        <img
+                                            src={getImageUrl(maid.image)}
+                                            alt={maid.title}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                        <div className="absolute bottom-4 left-4 flex items-center gap-3">
+                                            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white text-xl">
+                                                {serviceTypeLabels[maid.serviceType]?.charAt(0) || '🧹'}
+                                            </div>
+                                            <div>
+                                                <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest block">
+                                                    {serviceTypeLabels[maid.serviceType] || maid.serviceType || 'Maid Service'}
+                                                </span>
+                                                <h3 className="text-lg font-bold text-white truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>
+                                                    {maid.title}
+                                                </h3>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-5 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white text-xl">
+                                                {serviceTypeLabels[maid.serviceType]?.charAt(0) || '🧹'}
+                                            </div>
+                                            <div>
+                                                <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest block">
+                                                    {serviceTypeLabels[maid.serviceType] || maid.serviceType || 'Maid Service'}
+                                                </span>
+                                                <h3 className="text-lg font-bold text-white truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>
+                                                    {maid.title}
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Content */}
                                 <div className="p-5 space-y-4">
@@ -173,6 +198,12 @@ const Maids = () => {
                                                 <span style={{ fontFamily: 'Bungee' }}>₹{Number(maid.price).toLocaleString()}/mo</span>
                                             </div>
                                         )}
+                                        {maid.phoneNumber && (
+                                            <div className="flex items-center gap-2 text-sm font-bold text-blue-600 bg-blue-50 px-3 py-2 rounded-xl border border-blue-100 italic">
+                                                <Phone size={14} className="text-blue-500 shrink-0" />
+                                                <span>Contact: {maid.phoneNumber}</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="flex items-center justify-between pt-3 border-t border-slate-100">
@@ -187,12 +218,23 @@ const Maids = () => {
                                                 </p>
                                             </div>
                                         </div>
-                                        <button
-                                            onClick={() => handleContactClick(maid)}
-                                            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all"
-                                        >
-                                            <MessageCircle size={13} /> WhatsApp
-                                        </button>
+                                        <div className="flex gap-2">
+                                            {maid.phoneNumber && (
+                                                <a
+                                                    href={`tel:${maid.phoneNumber}`}
+                                                    className="w-9 h-9 bg-slate-100 flex items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                                                    title="Call Maid"
+                                                >
+                                                    <Phone size={14} />
+                                                </a>
+                                            )}
+                                            <button
+                                                onClick={() => handleContactClick(maid)}
+                                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all"
+                                            >
+                                                <MessageCircle size={13} /> WhatsApp
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

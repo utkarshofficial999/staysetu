@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { getImageUrl } from '../../lib/appwrite';
 
 const AdminPanel = () => {
     const { user, profile, signOut } = useAuth();
@@ -404,17 +405,37 @@ const AdminPanel = () => {
                                             {maidServices.map((m) => (
                                                 <tr key={m.$id} className="hover:bg-amber-50/30 transition-colors text-sm">
                                                     <td className="px-4 py-3">
-                                                        <p className="text-xs font-bold text-slate-900 truncate max-w-[180px]">{m.title}</p>
-                                                        <p className="text-[10px] text-slate-400">by {m.posterName || 'Unknown'}</p>
+                                                        <div className="flex items-center gap-3">
+                                                            {m.image ? (
+                                                                <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-amber-100">
+                                                                    <img src={getImageUrl(m.image)} className="w-full h-full object-cover" alt="" />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center shrink-0 border border-amber-100 text-amber-500">
+                                                                    <Brush size={14} />
+                                                                </div>
+                                                            )}
+                                                            <div className="min-w-0">
+                                                                <p className="text-xs font-bold text-slate-900 truncate max-w-[150px]">{m.title}</p>
+                                                                <p className="text-[10px] text-slate-400 font-semibold truncate">by {m.posterName || 'Unknown'}</p>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td className="px-4 py-3">
                                                         <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">{m.serviceType || 'all-in-one'}</span>
                                                     </td>
                                                     <td className="px-4 py-3 text-xs text-slate-500"><span className="flex items-center gap-1"><MapPin size={10} />{m.location}</span></td>
                                                     <td className="px-4 py-3">
-                                                        <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200 flex items-center gap-1 w-fit">
-                                                            <Phone size={10} /> {m.whatsappNumber || m.phoneNumber || '-'}
-                                                        </span>
+                                                        <div className="flex flex-col gap-1">
+                                                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1 w-fit">
+                                                                WA: {m.whatsappNumber || '-'}
+                                                            </span>
+                                                            {m.phoneNumber && (
+                                                                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 flex items-center gap-1 w-fit">
+                                                                    PH: {m.phoneNumber}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </td>
                                                     <td className="px-4 py-3 text-xs font-bold text-slate-700">{m.price ? `₹${Number(m.price).toLocaleString()}` : '-'}</td>
                                                     <td className="px-4 py-3">
