@@ -20,6 +20,8 @@ const Listings = () => {
             ? { lat: parseFloat(searchParams.get('lat')), lng: parseFloat(searchParams.get('lng')) }
             : null
     );
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry'];
 
@@ -98,6 +100,32 @@ const Listings = () => {
             console.error('Fetch listings error:', err);
         }
         setLoading(false);
+    };
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchQuery.length > 2 && !showSuggestions) {
+                fetchSuggestions(searchQuery);
+            } else if (searchQuery.length <= 2) {
+                setSuggestions([]);
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    const fetchSuggestions = async (query) => {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=in`);
+            const data = await res.json();
+            setSuggestions(data.map(item => ({
+                display_name: item.display_name,
+                lat: item.lat,
+                lon: item.lon
+            })));
+            setShowSuggestions(true);
+        } catch (err) {
+            console.error('Fetch suggestions error:', err);
+        }
     };
 
     // Re-fetch when search params or internal state changes
@@ -257,17 +285,43 @@ const Listings = () => {
                         </p>
                     </div>
 
-                    <form onSubmit={handleSearch} className="flex-1 md:max-w-sm group">
+                    <form onSubmit={handleSearch} className="flex-1 md:max-w-sm group relative">
                         <div className="relative">
                             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-900 transition-colors" size={16} />
                             <input
                                 type="text"
-                                placeholder="Search by area, college..."
+                                placeholder="Search area, college, location..."
                                 className="input-field pl-10 text-sm"
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setShowSuggestions(true);
+                                }}
+                                onFocus={() => setShowSuggestions(suggestions.length > 0)}
                             />
                         </div>
+
+                        {/* Recommendation Dropdown */}
+                        {showSuggestions && suggestions.length > 0 && (
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden animate-scale-in">
+                                {suggestions.map((s, i) => (
+                                    <button
+                                        key={i}
+                                        type="button"
+                                        onClick={() => {
+                                            setSearchQuery(s.display_name.split(',')[0]);
+                                            setUserCoords({ lat: parseFloat(s.lat), lng: parseFloat(s.lon) });
+                                            setShowSuggestions(false);
+                                            fetchListings();
+                                        }}
+                                        className="w-full text-left px-5 py-3.5 hover:bg-blue-50 transition-colors border-b border-slate-50 last:border-0 flex items-start gap-3"
+                                    >
+                                        <MapPin size={14} className="text-blue-400 mt-1 shrink-0" />
+                                        <span className="text-xs font-medium text-slate-700 line-clamp-2">{s.display_name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </form>
 
                     <button
