@@ -81,8 +81,8 @@ export const AuthProvider = ({ children }) => {
 
         account.createOAuth2Session(
             'google',
-            window.location.origin,         // success redirect
-            window.location.origin + '/login' // failure redirect
+            window.location.origin + '/login', // success redirect (handles logic)
+            window.location.origin + '/login'  // failure redirect
         );
 
     };

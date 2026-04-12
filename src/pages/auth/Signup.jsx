@@ -6,18 +6,27 @@ import GoogleButton from '../../components/auth/GoogleButton';
 
 const Signup = () => {
     const navigate = useNavigate();
-    const { user, profile, signInWithGoogle } = useAuth();
+    const { user, profile, loading: authLoading, signInWithGoogle } = useAuth();
     const [role, setRole] = useState('student');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     // If already logged in, redirect
     useEffect(() => {
-        if (user && profile) {
+        if (!authLoading && user && profile) {
             const r = profile.role || 'student';
             navigate((r === 'owner' || r === 'broker') ? '/owner-dashboard' : '/dashboard', { replace: true });
         }
-    }, [user, profile, navigate]);
+    }, [user, profile, authLoading, navigate]);
+
+    if (authLoading || (user && profile)) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+                <div className="w-12 h-12 border-4 border-plum-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p className="text-slate-900 font-black uppercase tracking-widest text-sm animate-pulse">Setting up your experience...</p>
+            </div>
+        );
+    }
 
     const handleGoogleSignup = async () => {
         try {
