@@ -173,10 +173,6 @@ const PropertyCard = ({ property }) => {
             {/* Content Area */}
             <div className="p-6 pt-6 flex flex-col flex-1">
                 <div className="flex items-center flex-wrap gap-2 mb-3">
-                    <div className="flex items-center text-amber-500 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg text-[10px] font-bold">
-                        <Star size={10} fill="currentColor" className="mr-1" />
-                        4.8
-                    </div>
                     {(property?.genderPreference || property?.gender_preference || property?.gender) && (
                         <div className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 uppercase`}>
                             {property.genderPreference || property.gender_preference || property.gender} only

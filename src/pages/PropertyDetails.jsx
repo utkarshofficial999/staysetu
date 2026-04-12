@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, IndianRupee, Wifi, Wind, Coffee, Car, Home,
     ChevronLeft, ChevronRight, Phone,
-    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, Users as UsersIcon, Pencil,
-    Star, Trash2, Send
+    CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, MessageSquare, Users as UsersIcon, Pencil,
+    Trash2, Send
 } from 'lucide-react';
 import { databases, DATABASE_ID, COLLECTION, Query, ID, parseJsonField } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
@@ -474,50 +474,18 @@ const PropertyDetails = () => {
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                                 <div>
                                     <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>
-                                        Reviews &amp; Ratings
+                                        Property Feedback
                                     </h3>
-                                    {avgRating ? (
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <div className="flex">
-                                                {[1,2,3,4,5].map(s => (
-                                                    <Star key={s} size={14} className={parseFloat(avgRating) >= s ? 'text-amber-400 fill-amber-400' : 'text-slate-300 fill-slate-100'} />
-                                                ))}
-                                            </div>
-                                            <span className="font-black text-slate-900 text-sm">{avgRating}</span>
-                                            <span className="text-slate-400 text-xs font-medium">({reviews.length} review{reviews.length !== 1 ? 's' : ''})</span>
-                                        </div>
-                                    ) : (
-                                        <p className="text-slate-400 text-sm mt-1">No reviews yet — be the first!</p>
-                                    )}
+                                    <p className="text-slate-400 text-sm mt-1">
+                                        {reviews.length > 0 ? `${reviews.length} feedback message${reviews.length !== 1 ? 's' : ''}` : 'No feedback yet — be the first to share your experience!'}
+                                    </p>
                                 </div>
                             </div>
 
                             {/* Write Review Form */}
                             {user && !hasReviewed && (
                                 <form onSubmit={handleSubmitReview} className="bg-slate-50 rounded-2xl border border-slate-100 p-5 mb-8">
-                                    <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-4">Write a Review</h4>
-
-                                    {/* Star Picker */}
-                                    <div className="flex items-center gap-1 mb-4">
-                                        {[1,2,3,4,5].map(s => (
-                                            <button
-                                                key={s}
-                                                type="button"
-                                                onClick={() => setReviewForm(prev => ({ ...prev, rating: s }))}
-                                                onMouseEnter={() => setHoverRating(s)}
-                                                onMouseLeave={() => setHoverRating(0)}
-                                                className="focus:outline-none transition-transform hover:scale-110"
-                                            >
-                                                <Star
-                                                    size={28}
-                                                    className={(hoverRating || reviewForm.rating) >= s ? 'text-amber-400 fill-amber-400' : 'text-slate-300 fill-slate-100'}
-                                                />
-                                            </button>
-                                        ))}
-                                        <span className="ml-2 text-sm font-bold text-slate-500">
-                                            {['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'][(hoverRating || reviewForm.rating)]}
-                                        </span>
-                                    </div>
+                                    <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-4">Share Your Feedback</h4>
 
                                     <textarea
                                         rows={3}
@@ -551,7 +519,7 @@ const PropertyDetails = () => {
                                             ) : (
                                                 <Send size={13} />
                                             )}
-                                            Submit Review
+                                            Submit Feedback
                                         </button>
                                     </div>
                                 </form>
@@ -580,8 +548,8 @@ const PropertyDetails = () => {
                                 </div>
                             ) : reviews.length === 0 ? (
                                 <div className="text-center py-10">
-                                    <Star size={36} className="text-slate-200 mx-auto mb-3" />
-                                    <p className="text-slate-400 font-medium text-sm">No reviews yet for this listing.</p>
+                                    <MessageSquare size={36} className="text-slate-200 mx-auto mb-3" />
+                                    <p className="text-slate-400 font-medium text-sm">No feedback yet for this listing.</p>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -598,11 +566,6 @@ const PropertyDetails = () => {
                                                             {new Date(review.createdAt || review.$createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                                                         </p>
                                                     </div>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    {[1,2,3,4,5].map(s => (
-                                                        <Star key={s} size={11} className={review.rating >= s ? 'text-amber-400 fill-amber-400' : 'text-slate-200 fill-slate-100'} />
-                                                    ))}
                                                 </div>
                                             </div>
                                             <p className="text-slate-600 text-sm leading-relaxed font-normal">{review.comment}</p>
