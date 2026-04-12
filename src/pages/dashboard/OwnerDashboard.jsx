@@ -36,7 +36,8 @@ const OwnerDashboard = () => {
         available_from: '',
         latitude: '',
         longitude: '',
-        listed_by: 'owner'
+        listed_by: 'owner',
+        association: ''
     });
     const [formLoading, setFormLoading] = useState(false);
     const [formError, setFormError] = useState(null);
@@ -288,6 +289,7 @@ const OwnerDashboard = () => {
                 occupancy: JSON.stringify(formData.occupancy),
                 deposit: formData.deposit || null,
                 availableFrom: formData.available_from || null,
+                association: formData.association || '',
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             });
@@ -301,7 +303,8 @@ const OwnerDashboard = () => {
                 gender_preference: 'any', occupancy: ['single'],
                 deposit: '', available_from: '',
                 latitude: '', longitude: '',
-                listed_by: 'owner'
+                listed_by: 'owner',
+                association: ''
             });
             setUploadedImages([]);
 
@@ -800,6 +803,14 @@ const OwnerDashboard = () => {
                                                 <option value="Flat">Flat / Apartment</option>
                                                 <option value="Hostel">Hostel</option>
                                             </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Foundation / Association Name</label>
+                                            <div className="relative">
+                                                <Building2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                <input type="text" name="association" placeholder="e.g. Noida PG Association"
+                                                    className="input-field pl-10" value={formData.association} onChange={handleChange} />
+                                            </div>
                                         </div>
                                         <div>
                                             <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Monthly Rent (₹) *</label>

@@ -383,6 +383,12 @@ const PropertyDetails = () => {
                                         Broker Fees
                                     </span>
                                 )}
+                                {/* Association tag if present */}
+                                {property.association && (
+                                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border bg-slate-900 text-white border-slate-900 flex items-center gap-1.5">
+                                        <Home size={10} /> {property.association}
+                                    </span>
+                                )}
                             </div>
 
                             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'Bungee' }}>

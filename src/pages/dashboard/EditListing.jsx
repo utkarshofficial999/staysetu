@@ -31,7 +31,8 @@ const EditListing = () => {
         images: [''],
         listed_by: 'owner',
         occupancy: [],
-        occupancy_pricing: {}
+        occupancy_pricing: {},
+        association: ''
     });
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry', 'Security', 'Gym', 'Attached Bath'];
@@ -72,7 +73,8 @@ const EditListing = () => {
                         listed_by: data.listedBy || 'owner',
                         occupancy: normalizedOccupancy,
                         occupancy_pricing: pricingMap,
-                        gender_preference: data.genderPreference || 'any'
+                        gender_preference: data.genderPreference || 'any',
+                        association: data.association || ''
                     });
                 }
             } catch (err) {
@@ -249,6 +251,7 @@ const EditListing = () => {
                 genderPreference: formData.gender_preference || 'any',
                 listedBy: formData.listed_by || 'owner',
                 occupancy: JSON.stringify(occupancyData),
+                association: formData.association || '',
                 updatedAt: new Date().toISOString(),
             });
 
@@ -372,10 +375,19 @@ const EditListing = () => {
                                         value={formData.type}
                                         onChange={handleChange}
                                     >
-                                        <option value="PG">PG (Paying Guest)</option>
-                                        <option value="Flat">Flat / Apartment</option>
                                         <option value="Hostel">Hostel</option>
                                     </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Foundation / Association Name</label>
+                                    <input
+                                        type="text"
+                                        name="association"
+                                        placeholder="e.g. Noida PG Association"
+                                        className="input-field"
+                                        value={formData.association}
+                                        onChange={handleChange}
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">

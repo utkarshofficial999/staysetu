@@ -198,6 +198,12 @@ const PropertyCard = ({ property }) => {
                             Broker Fees
                         </div>
                     )}
+                    {/* Association tag if present */}
+                    {property?.association && (
+                        <div className="text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-900 bg-slate-900 text-white uppercase tracking-wide flex items-center gap-1">
+                            {property.association}
+                        </div>
+                    )}
                 </div>
 
                 <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors" style={{ fontFamily: 'Bungee' }}>
