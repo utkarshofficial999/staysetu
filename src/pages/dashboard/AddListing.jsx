@@ -4,7 +4,7 @@ import { databases, DATABASE_ID, COLLECTION, ID } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
 import {
     ArrowLeft, Upload, MapPin, IndianRupee, Home,
-    CheckCircle2, AlertCircle, Save, X, Plus, Locate, Search
+    CheckCircle2, AlertCircle, Save, X, Plus, Locate, Search, Building2, Users
 } from 'lucide-react';
 import PropertyMap from '../../components/common/PropertyMap';
 
@@ -30,7 +30,9 @@ const AddListing = () => {
         images: [''], // Array of image URLs
         listed_by: 'owner', // owner or broker
         occupancy: ['single'],
-        occupancy_pricing: { single: '' }
+        occupancy_pricing: { single: '' },
+        association: '',
+        nearbyCollege: ''
     });
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry', 'Security', 'Gym', 'Attached Bath'];
@@ -202,6 +204,8 @@ const AddListing = () => {
                 genderPreference: formData.gender_preference || 'any',
                 listedBy: formData.listed_by || 'owner',
                 occupancy: JSON.stringify(occupancyData),
+                association: formData.association || '',
+                nearbyCollege: formData.nearbyCollege || '',
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             });
@@ -315,6 +319,22 @@ const AddListing = () => {
                                         <option value="boys">Boys Only</option>
                                         <option value="girls">Girls Only</option>
                                     </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Foundation / Association Name</label>
+                                    <div className="relative">
+                                        <Building2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                        <input type="text" name="association" placeholder="e.g. Noida PG Association"
+                                            className="input-field pl-10" value={formData.association} onChange={handleChange} />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Nearby College / University</label>
+                                    <div className="relative">
+                                        <Users size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                        <input type="text" name="nearbyCollege" placeholder="e.g. GL Bajaj, Galgotias"
+                                            className="input-field pl-10" value={formData.nearbyCollege} onChange={handleChange} />
+                                    </div>
                                 </div>
                                 <div className="md:col-span-2">
                                     <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Room Occupancy</label>

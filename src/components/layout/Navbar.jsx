@@ -48,7 +48,7 @@ const Navbar = () => {
     ];
 
     const role = profile?.role || 'student';
-    const dashPath = role === 'owner' ? '/owner-dashboard' : '/dashboard';
+    const dashPath = (role === 'owner' || role === 'broker') ? '/owner-dashboard' : '/dashboard';
 
     const roleBadge = {
         admin: { bg: 'bg-rose-50', text: 'text-rose-600', label: 'Admin' },

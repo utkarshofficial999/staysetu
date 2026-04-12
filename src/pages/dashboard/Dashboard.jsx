@@ -29,8 +29,8 @@ const Dashboard = () => {
         return <Navigate to="/admin" replace />;
     }
 
-    // Owner → owner dashboard
-    if (role === 'owner') {
+    // Owner or Broker → management dashboard
+    if (role === 'owner' || role === 'broker') {
         return <OwnerDashboard />;
     }
 
