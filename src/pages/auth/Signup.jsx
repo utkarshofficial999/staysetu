@@ -66,13 +66,17 @@ const Signup = () => {
             // Show 'check inbox' screen
             setEmailSent(true);
         } catch (err) {
-            // Map Appwrite error codes to user-friendly messages
-            if (err.type === 'user_already_exists' || err.code === 409) {
+            console.error('Signup error:', err); // helps debug
+            const msg = err?.message?.toLowerCase() || '';
+            const code = err?.code;
+            const type = err?.type || '';
+
+            if (type === 'user_already_exists' || code === 409 || msg.includes('already exists') || msg.includes('same id')) {
                 setError('An account with this email already exists. Please log in instead.');
-            } else if (err.type === 'user_invalid_credentials' || err.code === 401) {
+            } else if (type === 'user_invalid_credentials' || code === 401 || msg.includes('invalid credentials')) {
                 setError('Invalid email or password. Please check your credentials.');
-            } else if (err.type === 'user_password_mismatch') {
-                setError('Password does not meet requirements. Use at least 8 characters.');
+            } else if (msg.includes('password') && msg.includes('least')) {
+                setError('Password must be at least 8 characters.');
             } else {
                 setError(err.message || 'Something went wrong. Please try again.');
             }
