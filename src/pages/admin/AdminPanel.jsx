@@ -16,6 +16,7 @@ const AdminPanel = () => {
     const [roommates, setRoommates] = useState([]);
     const [whatsappLeads, setWhatsappLeads] = useState([]);
     const [maidServices, setMaidServices] = useState([]);
+    const [usersList, setUsersList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('pending');
     const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, total: 0, roommate_pending: 0, wa_leads: 0, maid_pending: 0 });
@@ -30,9 +31,16 @@ const AdminPanel = () => {
         whatsapp: '', description: '', gender: 'any',
         amenities: []
     });
+    const [maidFormData, setMaidFormData] = useState({
+        title: '', description: '', location: '', serviceType: 'all-in-one',
+        timing: '', price: '', whatsappNumber: '', phoneNumber: '', genderPreference: 'any'
+    });
+    const [maidImageFile, setMaidImageFile] = useState(null);
+    const [maidImagePreview, setMaidImagePreview] = useState(null);
     const [uploadedImages, setUploadedImages] = useState([]);
     const [uploading, setUploading] = useState(false);
     const [formLoading, setFormLoading] = useState(false);
+    const [maidFormLoading, setMaidFormLoading] = useState(false);
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry', 'Security'];
 
@@ -101,6 +109,45 @@ const AdminPanel = () => {
         setFormLoading(false);
     };
 
+    const submitMaidService = async (e) => {
+        e.preventDefault();
+        setMaidFormLoading(true);
+        try {
+            let imageId = null;
+            if (maidImageFile) {
+                const uploadRes = await storage.createFile(BUCKET_ID, ID.unique(), maidImageFile);
+                imageId = uploadRes.$id;
+            }
+
+            await databases.createDocument(DATABASE_ID, COLLECTION.maidServices, ID.unique(), {
+                title: maidFormData.title,
+                description: maidFormData.description,
+                location: maidFormData.location,
+                serviceType: maidFormData.serviceType,
+                timing: maidFormData.timing,
+                price: maidFormData.price ? parseFloat(maidFormData.price) : null,
+                whatsappNumber: maidFormData.whatsappNumber,
+                phoneNumber: maidFormData.phoneNumber,
+                postedBy: user.$id,
+                posterName: 'Admin',
+                genderPreference: maidFormData.genderPreference,
+                image: imageId,
+                status: 'approved', // Admin posts are auto-approved
+                createdAt: new Date().toISOString(),
+            });
+
+            alert('Maid service posted successfully!');
+            setMaidFormData({ title: '', description: '', location: '', serviceType: 'all-in-one', timing: '', price: '', whatsappNumber: '', phoneNumber: '', genderPreference: 'any' });
+            setMaidImageFile(null);
+            setMaidImagePreview(null);
+            setActiveTab('maids');
+            fetchData();
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+        setMaidFormLoading(false);
+    };
+
     useEffect(() => { fetchData(); }, [filter, activeTab]);
 
     const fetchData = async () => {
@@ -120,7 +167,10 @@ const AdminPanel = () => {
                 if (filter !== 'all') queries.push(Query.equal('status', filter));
                 const res = await databases.listDocuments(DATABASE_ID, COLLECTION.maidServices, queries);
                 setMaidServices(res.documents);
-            } else if (activeTab !== 'add') {
+            } else if (activeTab === 'users') {
+                const res = await databases.listDocuments(DATABASE_ID, COLLECTION.profiles, [Query.orderDesc('$createdAt'), Query.limit(200)]);
+                setUsersList(res.documents);
+            } else if (activeTab !== 'add' && activeTab !== 'add_maid') {
                 const queries = [Query.orderDesc('$createdAt'), Query.limit(100)];
                 if (filter !== 'all') queries.push(Query.equal('status', filter));
                 const res = await databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, queries);
@@ -322,10 +372,28 @@ const AdminPanel = () => {
                         >
                             <Brush size={14} /> Maids ({stats.maid_pending})
                         </button>
+                        <button
+                            onClick={() => { setActiveTab('users'); }}
+                            className={`flex-1 py-4 text-sm font-semibold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'users'
+                                ? 'text-purple-600 border-b-2 border-purple-500 bg-purple-50/30'
+                                : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            <Users size={14} /> Users ({stats.users})
+                        </button>
+                        <button
+                            onClick={() => { setActiveTab('add_maid'); }}
+                            className={`flex-1 py-4 text-sm font-semibold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'add_maid'
+                                ? 'text-amber-600 border-b-2 border-amber-500 bg-amber-50/30'
+                                : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            <Plus size={14} /> Post Maid
+                        </button>
                     </div>
 
                     {/* Filter Bar */}
-                    {activeTab !== 'add' && activeTab !== 'whatsapp_leads' && (
+                    {activeTab !== 'add' && activeTab !== 'add_maid' && activeTab !== 'whatsapp_leads' && activeTab !== 'users' && (
                         <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>
                                 {activeTab === 'listings' ? 'Listing Verification' : activeTab === 'maids' ? 'Maid Service Approvals' : 'Student Requirements'}
@@ -607,6 +675,118 @@ const AdminPanel = () => {
                                     {formLoading ? 'Publishing...' : 'Publish Verified Stay'}
                                 </button>
                             </form>
+                        </div>
+                    ) : activeTab === 'add_maid' ? (
+                        <div className="p-8 max-w-2xl mx-auto">
+                            <h3 className="text-xl font-bold text-slate-900 mb-6" style={{ fontFamily: 'Bungee' }}>Post New Maid Service</h3>
+                            <form onSubmit={submitMaidService} className="space-y-6">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase">Service Title</label>
+                                    <input required value={maidFormData.title} onChange={(e) => setMaidFormData({ ...maidFormData, title: e.target.value })} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 outline-none" placeholder="e.g. Experienced Cook Available" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">Service Type</label>
+                                        <select value={maidFormData.serviceType} onChange={(e) => setMaidFormData({ ...maidFormData, serviceType: e.target.value })} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 outline-none">
+                                            <option value="all-in-one">All-in-One</option>
+                                            <option value="cooking">Cooking</option>
+                                            <option value="cleaning">Cleaning</option>
+                                            <option value="laundry">Laundry</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">Monthly Price</label>
+                                        <input type="number" required value={maidFormData.price} onChange={(e) => setMaidFormData({ ...maidFormData, price: e.target.value })} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 outline-none" placeholder="e.g. 3500" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase">Location</label>
+                                    <input required value={maidFormData.location} onChange={(e) => setMaidFormData({ ...maidFormData, location: e.target.value })} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 outline-none" placeholder="e.g. Pari Chowk, Greater Noida" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">WhatsApp Number</label>
+                                        <input required value={maidFormData.whatsappNumber} onChange={(e) => setMaidFormData({ ...maidFormData, whatsappNumber: e.target.value })} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 outline-none" placeholder="+91 XXXX XXXX" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase">Phone Number</label>
+                                        <input required value={maidFormData.phoneNumber} onChange={(e) => setMaidFormData({ ...maidFormData, phoneNumber: e.target.value })} className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 outline-none" placeholder="+91 XXXX XXXX" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase">Maid Photo</label>
+                                    <div
+                                        onClick={() => fileInputRef.current.click()}
+                                        className="w-full h-32 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-amber-300 transition-all overflow-hidden bg-slate-50/50"
+                                    >
+                                        {maidImagePreview ? (
+                                            <img src={maidImagePreview} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <>
+                                                <Upload size={24} className="text-slate-300" />
+                                                <span className="text-[10px] font-bold text-slate-400 mt-2 uppercase">Click to upload photo</span>
+                                            </>
+                                        )}
+                                    </div>
+                                    <input type="file" ref={fileInputRef} onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            setMaidImageFile(file);
+                                            setMaidImagePreview(URL.createObjectURL(file));
+                                        }
+                                    }} className="hidden" accept="image/*" />
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={maidFormLoading}
+                                    className="w-full bg-amber-500 hover:bg-amber-600 text-white py-4 rounded-xl flex items-center justify-center gap-2 font-bold shadow-lg shadow-amber-200 transition-all"
+                                >
+                                    {maidFormLoading ? <Loader2 size={20} className="animate-spin" /> : <Brush size={20} />}
+                                    {maidFormLoading ? 'Publishing...' : 'Publish Maid Service'}
+                                </button>
+                            </form>
+                        </div>
+                    ) : activeTab === 'users' ? (
+                        <div className="p-6">
+                            <h3 className="text-lg font-bold text-slate-900 mb-6" style={{ fontFamily: 'Bungee' }}>Registered Users</h3>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead>
+                                        <tr className="bg-purple-50/50">
+                                            <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">User</th>
+                                            <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Role</th>
+                                            <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Join Date</th>
+                                            <th className="px-4 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">ID</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                        {usersList.map((u) => (
+                                            <tr key={u.$id} className="hover:bg-purple-50/30 transition-colors text-sm">
+                                                <td className="px-4 py-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-9 h-9 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold text-xs uppercase">
+                                                            {u.name?.charAt(0) || u.fullName?.charAt(0) || 'U'}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-xs font-bold text-slate-900">{u.name || u.fullName || 'No Name'}</p>
+                                                            <p className="text-[10px] text-slate-400 font-medium">Click to see more</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${u.role === 'owner' ? 'bg-blue-50 text-blue-700 border-blue-100' : 'bg-green-50 text-green-700 border-green-100'}`}>
+                                                        {u.role || 'Student'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-xs text-slate-500">
+                                                    {new Date(u.$createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                </td>
+                                                <td className="px-4 py-3 font-mono text-[10px] text-slate-300">{u.$id}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
