@@ -37,7 +37,8 @@ const OwnerDashboard = () => {
         latitude: '',
         longitude: '',
         listed_by: 'owner',
-        association: ''
+        association: '',
+        nearbyCollege: ''
     });
     const [formLoading, setFormLoading] = useState(false);
     const [formError, setFormError] = useState(null);
@@ -290,6 +291,7 @@ const OwnerDashboard = () => {
                 deposit: formData.deposit || null,
                 availableFrom: formData.available_from || null,
                 association: formData.association || '',
+                nearbyCollege: formData.nearbyCollege || '',
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             });
@@ -304,7 +306,8 @@ const OwnerDashboard = () => {
                 deposit: '', available_from: '',
                 latitude: '', longitude: '',
                 listed_by: 'owner',
-                association: ''
+                association: '',
+                nearbyCollege: ''
             });
             setUploadedImages([]);
 
@@ -810,6 +813,14 @@ const OwnerDashboard = () => {
                                                 <Building2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                                 <input type="text" name="association" placeholder="e.g. Noida PG Association"
                                                     className="input-field pl-10" value={formData.association} onChange={handleChange} />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Nearby College / University</label>
+                                            <div className="relative">
+                                                <UsersIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                <input type="text" name="nearbyCollege" placeholder="e.g. GL Bajaj, Galgotias"
+                                                    className="input-field pl-10" value={formData.nearbyCollege} onChange={handleChange} />
                                             </div>
                                         </div>
                                         <div>

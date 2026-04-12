@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, IndianRupee, Star, Heart, ImageOff, Wifi, Wind, UtensilsCrossed, Car, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, IndianRupee, Star, Heart, ImageOff, Wifi, Wind, UtensilsCrossed, Car, CheckCircle2, ChevronLeft, ChevronRight, GraduationCap } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { parseJsonField } from '../../lib/appwrite';
 import { useAuth } from '../../context/AuthContext';
@@ -210,10 +210,17 @@ const PropertyCard = ({ property }) => {
                     {property?.title || 'Comfortable Stay'}
                 </h3>
 
-                <div className="flex items-center text-slate-500 text-sm font-medium mb-3">
+                <div className="flex items-center text-slate-500 text-sm font-medium mb-1">
                     <MapPin size={14} className="text-slate-400 mr-1.5 shrink-0" />
                     <span className="truncate">{property?.location || 'Greater Noida'}</span>
                 </div>
+
+                {property?.nearbyCollege && (
+                    <div className="flex items-center text-blue-600 text-[11px] font-bold mb-3 uppercase tracking-wider">
+                        <GraduationCap size={14} className="mr-1.5 shrink-0" />
+                        <span className="truncate">Near {property.nearbyCollege}</span>
+                    </div>
+                )}
 
                 <div className="flex flex-wrap gap-1.5 mb-6">
                     {(parseJsonField(property?.occupancy) || ['single']).map((occ, idx) => {

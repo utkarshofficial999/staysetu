@@ -32,7 +32,8 @@ const EditListing = () => {
         listed_by: 'owner',
         occupancy: [],
         occupancy_pricing: {},
-        association: ''
+        association: '',
+        nearbyCollege: ''
     });
 
     const amenityOptions = ['WiFi', 'AC', 'Food', 'Parking', 'Laundry', 'Security', 'Gym', 'Attached Bath'];
@@ -74,7 +75,8 @@ const EditListing = () => {
                         occupancy: normalizedOccupancy,
                         occupancy_pricing: pricingMap,
                         gender_preference: data.genderPreference || 'any',
-                        association: data.association || ''
+                        association: data.association || '',
+                        nearbyCollege: data.nearbyCollege || ''
                     });
                 }
             } catch (err) {
@@ -252,6 +254,7 @@ const EditListing = () => {
                 listedBy: formData.listed_by || 'owner',
                 occupancy: JSON.stringify(occupancyData),
                 association: formData.association || '',
+                nearbyCollege: formData.nearbyCollege || '',
                 updatedAt: new Date().toISOString(),
             });
 
@@ -386,6 +389,17 @@ const EditListing = () => {
                                         placeholder="e.g. Noida PG Association"
                                         className="input-field"
                                         value={formData.association}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Nearby College / University</label>
+                                    <input
+                                        type="text"
+                                        name="nearbyCollege"
+                                        placeholder="e.g. GL Bajaj, Galgotias"
+                                        className="input-field"
+                                        value={formData.nearbyCollege}
                                         onChange={handleChange}
                                     />
                                 </div>

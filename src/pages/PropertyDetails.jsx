@@ -4,7 +4,7 @@ import {
     MapPin, IndianRupee, Wifi, Wind, Coffee, Car, Home,
     ChevronLeft, ChevronRight, Phone,
     CheckCircle2, AlertCircle, Share2, Heart, MessageCircle, MessageSquare, Users as UsersIcon, Pencil,
-    Trash2, Send
+    Trash2, Send, GraduationCap
 } from 'lucide-react';
 import { databases, DATABASE_ID, COLLECTION, Query, ID, parseJsonField } from '../lib/appwrite';
 import { useAuth } from '../context/AuthContext';
@@ -394,10 +394,16 @@ const PropertyDetails = () => {
                             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'Bungee' }}>
                                 {property.title || 'Property Details'}
                             </h1>
-                            <div className="flex items-center text-slate-500 text-sm font-normal mb-6 gap-1.5">
+                            <div className="flex items-center text-slate-500 text-sm font-normal mb-1 gap-1.5">
                                 <MapPin size={14} className="text-blue-400" />
                                 {property.location || 'Location not specified'}
                             </div>
+                            {property.nearbyCollege && (
+                                <div className="flex items-center text-blue-600 text-xs font-bold mb-6 gap-1.5 uppercase tracking-wider">
+                                    <GraduationCap size={15} />
+                                    Near {property.nearbyCollege}
+                                </div>
+                            )}
 
                             <div className="h-px bg-slate-100 mb-6" />
 
