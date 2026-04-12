@@ -1230,29 +1230,10 @@ const OwnerDashboard = () => {
                                     ))}
                                 </div>
 
-                                <div className="space-y-4 pt-4 border-t border-slate-50">
-                                    {[
-                                        { icon: User, label: 'Full Name', value: profile?.name || 'Not set' },
-                                        { icon: MapPin, label: 'Email', value: user?.email || 'Not set' },
-                                        { icon: Briefcase, label: 'Account Type', value: profile?.role === 'owner' ? 'Owner / Broker' : profile?.role || 'Owner' },
-                                        { icon: Clock, label: 'Member Since', value: user?.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : 'N/A' },
-                                    ].map((item, i) => (
-                                        <div key={i} className="flex items-center gap-3 py-3">
-                                            <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400">
-                                                <item.icon size={18} />
-                                            </div>
-                                            <div>
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.label}</span>
-                                                <p className="text-slate-900 font-bold">{item.value}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                
                                 {/* ── Role Switcher ── */}
-                                <div className="pt-4 border-t border-slate-100">
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Switch Account Type</p>
-                                    <div className="grid grid-cols-3 gap-2 mb-3">
+                                <div className="p-4 bg-slate-50/50 border border-slate-100 rounded-3xl">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 px-2">Switch Account Type</p>
+                                    <div className="grid grid-cols-3 gap-3">
                                         {[
                                             { id: 'student', label: 'Student', icon: User },
                                             { id: 'owner', label: 'Owner', icon: Home },
@@ -1276,7 +1257,7 @@ const OwnerDashboard = () => {
                                                         setRoleSuccess(true);
                                                         setTimeout(() => {
                                                             if (id === 'student') navigate('/dashboard');
-                                                            else window.location.reload(); // Refresh to update view if staying in professional mode
+                                                            else window.location.reload();
                                                         }, 800);
                                                     } catch (err) {
                                                         console.error('Role update error:', err);
@@ -1284,28 +1265,49 @@ const OwnerDashboard = () => {
                                                         setRoleUpdating(false);
                                                     }
                                                 }}
-                                                className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 ${
+                                                className={`flex flex-col items-center justify-center py-4 px-2 rounded-2xl border-2 transition-all duration-300 ${
                                                     profile?.role === id
-                                                        ? 'border-blue-300 bg-blue-50 text-blue-900'
-                                                        : 'border-slate-200 hover:border-blue-200 hover:bg-blue-50/50 text-slate-500'
+                                                        ? 'border-blue-500 bg-white shadow-md shadow-blue-100/50 text-blue-700'
+                                                        : 'border-white bg-white/50 hover:border-blue-200 hover:bg-white text-slate-400 hover:text-blue-500'
                                                 } disabled:opacity-50`}
                                             >
-                                                <Icon size={18} />
-                                                <span className="text-[10px] font-bold mt-1">{label}</span>
-                                                {profile?.role === id && <span className="text-[8px] text-blue-600 font-black uppercase mt-0.5">Current</span>}
+                                                <Icon size={20} className={profile?.role === id ? 'animate-bounce-subtle' : ''} />
+                                                <span className="text-[10px] font-black mt-2 uppercase tracking-wider">{label}</span>
+                                                {profile?.role === id && (
+                                                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2"></div>
+                                                )}
                                             </button>
                                         ))}
                                     </div>
                                     {roleSuccess && (
-                                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2.5 rounded-xl text-sm font-bold animate-fade-in mb-4">
-                                            <CheckCircle size={16} /> Role updated successfully!
+                                        <div className="mt-4 flex items-center justify-center gap-2 text-emerald-600 font-bold text-xs animate-fade-in">
+                                            <CheckCircle size={14} /> Role updated! Refreshing...
                                         </div>
                                     )}
                                     {roleUpdating && (
-                                        <div className="flex items-center gap-2 text-blue-600 bg-blue-50 px-4 py-2.5 rounded-xl text-sm font-bold animate-fade-in mb-4">
-                                            <Loader2 size={16} className="animate-spin" /> Updating...
+                                        <div className="mt-4 flex items-center justify-center gap-2 text-blue-600 font-bold text-xs animate-fade-in">
+                                            <Loader2 size={14} className="animate-spin" /> Updating role...
                                         </div>
                                     )}
+                                </div>
+
+                                <div className="space-y-4 pt-4 border-t border-slate-50">
+                                    {[
+                                        { icon: User, label: 'Full Name', value: profile?.name || 'Not set' },
+                                        { icon: MapPin, label: 'Email', value: user?.email || 'Not set' },
+                                        { icon: Briefcase, label: 'Account Type', value: profile?.role === 'owner' ? 'Owner / Broker' : profile?.role || 'Owner' },
+                                        { icon: Clock, label: 'Member Since', value: user?.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : 'N/A' },
+                                    ].map((item, i) => (
+                                        <div key={i} className="flex items-center gap-3 py-3">
+                                            <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400">
+                                                <item.icon size={18} />
+                                            </div>
+                                            <div>
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.label}</span>
+                                                <p className="text-slate-900 font-bold">{item.value}</p>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
 
                                 <button
