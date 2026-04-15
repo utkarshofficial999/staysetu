@@ -44,7 +44,7 @@ const Listings = () => {
         try {
             // Build query filters
             const queries = [
-                Query.equal('status', 'approved'),
+                Query.equal('status', ['approved', 'rented', 'sold']),
                 Query.orderDesc('$createdAt'),
                 Query.limit(100),
             ];

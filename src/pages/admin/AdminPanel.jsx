@@ -19,7 +19,7 @@ const AdminPanel = () => {
     const [usersList, setUsersList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('pending');
-    const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, total: 0, roommate_pending: 0, wa_leads: 0, maid_pending: 0 });
+    const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, rented: 0, total: 0, roommate_pending: 0, wa_leads: 0, maid_pending: 0 });
     const [actionLoading, setActionLoading] = useState(null);
     const [editingItem, setEditingItem] = useState(null); // For editing photos
     const fileInputRef = useRef(null);
@@ -178,10 +178,11 @@ const AdminPanel = () => {
             }
 
             // Fetch stats
-            const [profilesRes, pendingRes, approvedRes, totalRes, rmPendingRes, waLeadsRes, maidPendingRes] = await Promise.all([
+            const [profilesRes, pendingRes, approvedRes, rentedRes, totalRes, rmPendingRes, waLeadsRes, maidPendingRes] = await Promise.all([
                 databases.listDocuments(DATABASE_ID, COLLECTION.profiles, [Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'pending'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'approved'), Query.limit(1)]),
+                databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'rented'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, [Query.equal('status', 'pending'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.whatsappLeads, [Query.limit(1)]).catch(() => ({ total: 0 })),
@@ -192,6 +193,7 @@ const AdminPanel = () => {
                 users: profilesRes.total || 0,
                 pending: pendingRes.total || 0,
                 approved: approvedRes.total || 0,
+                rented: rentedRes.total || 0,
                 total: totalRes.total || 0,
                 roommate_pending: rmPendingRes.total || 0,
                 wa_leads: waLeadsRes.total || 0,
@@ -216,6 +218,18 @@ const AdminPanel = () => {
             await fetchData();
         } catch (err) {
             console.error('Approve error:', err);
+        }
+        setActionLoading(null);
+    };
+
+    const toggleRented = async (id, currentStatus) => {
+        const newStatus = currentStatus === 'rented' ? 'approved' : 'rented';
+        setActionLoading(id + '_rented');
+        try {
+            await databases.updateDocument(DATABASE_ID, getCollectionForTab(), id, { status: newStatus });
+            await fetchData();
+        } catch (err) {
+            console.error('Toggle rented error:', err);
         }
         setActionLoading(null);
     };
@@ -308,7 +322,7 @@ const AdminPanel = () => {
                         { label: 'Listings', value: stats.total, icon: Home, gradient: 'from-blue-950 to-blue-600' },
                         { label: 'Pending', value: stats.pending, icon: Clock, gradient: 'from-amber-500 to-orange-600' },
                         { label: 'Live', value: stats.approved, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600' },
-                        { label: 'RM Pending', value: stats.roommate_pending, icon: Users, gradient: 'from-pink-500 to-rose-600' },
+                        { label: 'Rented', value: stats.rented, icon: Home, gradient: 'from-indigo-500 to-blue-600' },
                         { label: 'WA Leads', value: stats.wa_leads, icon: Phone, gradient: 'from-green-500 to-emerald-600' },
                         { label: 'Maid Req', value: stats.maid_pending, icon: Brush, gradient: 'from-amber-500 to-yellow-600' },
                     ].map((s, i) => (
@@ -402,6 +416,7 @@ const AdminPanel = () => {
                                 {[
                                     { key: 'pending', label: 'Pending' },
                                     { key: 'approved', label: 'Approved' },
+                                    { key: 'rented', label: 'Rented' },
                                     { key: 'all', label: 'All' },
                                 ].map(({ key, label }) => (
                                     <button
@@ -872,40 +887,50 @@ const AdminPanel = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={item.status === 'approved' ? 'chip-approved' : 'chip-pending'}>
-                                                    {item.status === 'approved' ? 'Live' : 'Pending'}
+                                                <span className={item.status === 'approved' ? 'chip-approved' : item.status === 'rented' ? 'bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' : 'chip-pending'}>
+                                                    {item.status === 'approved' ? 'Live' : item.status === 'rented' ? 'Rented' : 'Pending'}
                                                 </span>
                                             </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex items-center justify-end gap-2">
-                                                            {activeTab === 'listings' && (
-                                                                <button
-                                                                    onClick={() => setEditingItem(item)}
-                                                                    className="w-8 h-8 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center transition-all active:scale-90 border border-amber-100/60"
-                                                                    title="Edit Photos"
-                                                                >
-                                                                    <ImageIcon size={14} />
-                                                                </button>
-                                                            )}
-                                                            {item.status !== 'approved' && (
-                                                                <button
-                                                                    onClick={() => approve(item.$id)}
-                                                                    disabled={actionLoading === item.$id + '_approve'}
-                                                                    className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
-                                                                    style={{ boxShadow: '0 2px 8px -2px rgba(99,102,241,0.4)' }}
-                                                                >
-                                                                    {actionLoading === item.$id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
-                                                                </button>
-                                                            )}
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    {activeTab === 'listings' && (
+                                                        <>
                                                             <button
-                                                                onClick={() => reject(item.$id)}
-                                                                disabled={actionLoading === item.$id + '_reject'}
-                                                                className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50 border border-red-100/60"
+                                                                onClick={() => setEditingItem(item)}
+                                                                className="w-8 h-8 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center transition-all active:scale-90 border border-amber-100/60"
+                                                                title="Edit Photos"
                                                             >
-                                                                {actionLoading === item.$id + '_reject' ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                                                <ImageIcon size={14} />
                                                             </button>
-                                                        </div>
-                                                    </td>
+                                                            <button
+                                                                onClick={() => toggleRented(item.$id, item.status)}
+                                                                disabled={actionLoading === item.$id + '_rented'}
+                                                                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50 border ${item.status === 'rented' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-indigo-50 text-indigo-600 border-indigo-100/60'}`}
+                                                                title={item.status === 'rented' ? 'Mark as Available' : 'Mark as Rented'}
+                                                            >
+                                                                {actionLoading === item.$id + '_rented' ? <Loader2 size={14} className="animate-spin" /> : <Home size={14} />}
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    {item.status !== 'approved' && item.status !== 'rented' && (
+                                                        <button
+                                                            onClick={() => approve(item.$id)}
+                                                            disabled={actionLoading === item.$id + '_approve'}
+                                                            className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50"
+                                                            style={{ boxShadow: '0 2px 8px -2px rgba(99,102,241,0.4)' }}
+                                                        >
+                                                            {actionLoading === item.$id + '_approve' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        onClick={() => reject(item.$id)}
+                                                        disabled={actionLoading === item.$id + '_reject'}
+                                                        className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50 border border-red-100/60"
+                                                    >
+                                                        {actionLoading === item.$id + '_reject' ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     )) : (
                                         <tr>

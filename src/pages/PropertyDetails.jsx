@@ -22,6 +22,7 @@ const PropertyDetails = () => {
     const [error, setError] = useState(null);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
+    const isRented = property?.status === 'rented' || property?.status === 'sold';
 
     // Reviews state
     const [reviews, setReviews] = useState([]);
@@ -197,6 +198,7 @@ const PropertyDetails = () => {
     };
 
     const initiateWhatsApp = () => {
+        if (isRented) return;
         if (!user) {
             navigate('/login', { state: { from: `/property/${id}` } });
             return;
@@ -269,6 +271,11 @@ const PropertyDetails = () => {
                         <span className="hidden sm:flex chip-approved">
                             <CheckCircle2 size={10} className="mr-1" /> Verified
                         </span>
+                        {isRented && (
+                            <span className="px-3 py-1 bg-slate-900 text-white rounded-lg text-[10px] font-black uppercase tracking-[0.2em] shadow-lg transform -rotate-2" style={{ fontFamily: 'Bungee' }}>
+                                Rented Out
+                            </span>
+                        )}
                         <button
                             onClick={() => setLiked(!liked)}
                             className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all border ${liked
@@ -322,6 +329,14 @@ const PropertyDetails = () => {
                                     e.target.src = 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80';
                                 }}
                             />
+
+                            {isRented && (
+                                <div className="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center p-4">
+                                    <div className="bg-white/90 backdrop-blur-md border-3 border-slate-900 px-10 py-5 rounded-[2rem] transform -rotate-6 shadow-2xl">
+                                        <span className="text-3xl font-black text-slate-900 uppercase tracking-[0.2em]" style={{ fontFamily: 'Bungee' }}>Rented Out</span>
+                                    </div>
+                                </div>
+                            )}
 
                             {Array.isArray(property.images) && property.images.length > 1 && (
                                 <>
@@ -613,12 +628,17 @@ const PropertyDetails = () => {
                                 </div>
                             </div>
 
-                            <button
+                             <button
                                 onClick={initiateWhatsApp}
-                                className="btn-whatsapp w-full py-3.5 justify-center text-sm mb-3"
+                                disabled={isRented}
+                                className={`w-full py-4 justify-center text-sm font-black uppercase tracking-widest rounded-2xl flex items-center gap-2 transition-all ${
+                                    isRented 
+                                        ? 'bg-slate-100 text-slate-400 border-2 border-slate-200 cursor-not-allowed shadow-none' 
+                                        : 'bg-[#25D366] text-white hover:bg-[#128C7E] shadow-lg shadow-emerald-200/50'
+                                }`}
                             >
-                                <Phone size={17} />
-                                Connect via WhatsApp
+                                {isRented ? <Home size={17} /> : <Phone size={17} />}
+                                {isRented ? 'Already Rented Out' : 'Connect via WhatsApp'}
                             </button>
                             <p className="text-center text-[11px] text-slate-500 font-medium mb-6">⚡ {String(property.listedBy || 'owner').toLowerCase() === 'owner' ? 'Owner' : 'Broker'} typically replies within 5 mins</p>
 

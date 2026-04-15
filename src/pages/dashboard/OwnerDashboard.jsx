@@ -22,7 +22,7 @@ const OwnerDashboard = () => {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
-        total: 0, approved: 0, pending: 0, views: 0
+        total: 0, approved: 0, pending: 0, rented: 0, views: 0
     });
     const [incomingRequests, setIncomingRequests] = useState([]);
 
@@ -90,22 +90,30 @@ const OwnerDashboard = () => {
             setListings(data);
             const total = data.length;
             const approved = data.filter(l => l.status === 'approved').length;
-            const pending = total - approved;
+            const rented = data.filter(l => l.status === 'rented' || l.status === 'sold').length;
+            const pending = total - approved - rented;
             const views = data.reduce((acc, curr) => acc + (curr.viewsCount || 0), 0);
-            setStats(prev => ({ ...prev, total, approved, pending, views }));
+            setStats(prev => ({ ...prev, total, approved, pending, rented, views }));
         } catch (err) {
             console.error('Fetch error:', err);
         }
     };
 
 
-    const handleMarkAsSold = async (id) => {
-        if (window.confirm('Mark this property as sold? It will no longer be visible to users.')) {
+    const handleToggleRented = async (id, currentStatus) => {
+        const isRented = currentStatus === 'rented' || currentStatus === 'sold';
+        const newStatus = isRented ? 'approved' : 'rented';
+        const confirmMsg = isRented 
+            ? 'Mark this property as available again?' 
+            : 'Mark this property as rented out? It will still be visible but labeled as rented.';
+
+        if (window.confirm(confirmMsg)) {
             try {
                 await databases.updateDocument(DATABASE_ID, COLLECTION.listings, id, {
-                    status: 'sold'
+                    status: newStatus
                 });
-                setListings(listings.map(l => l.$id === id ? { ...l, status: 'sold' } : l));
+                setListings(listings.map(l => l.$id === id ? { ...l, status: newStatus } : l));
+                await fetchUserListings(); // Refresh stats
             } catch (err) {
                 console.error('Update error:', err);
             }
@@ -397,6 +405,7 @@ const OwnerDashboard = () => {
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: BarChart3 },
+        { id: 'rented', label: 'Rented Out', icon: CheckCircle, count: stats.rented },
         { id: 'add', label: 'Add Listing', icon: Plus },
         { id: 'maid', label: 'Post Maid', icon: Brush },
         { id: 'profile', label: 'Profile', icon: User },
@@ -451,8 +460,8 @@ const OwnerDashboard = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     {[
                         { label: 'Total', value: stats.total, icon: Home, gradient: 'from-blue-950 to-blue-600' },
-                        { label: 'Approved', value: stats.approved, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600' },
-                        { label: 'Pending', value: stats.pending, icon: Clock, gradient: 'from-amber-500 to-orange-600' },
+                        { label: 'Live', value: stats.approved, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600' },
+                        { label: 'Rented', value: stats.rented, icon: Building2, gradient: 'from-indigo-500 to-blue-600' },
                         { label: 'Views', value: stats.views, icon: Eye, gradient: 'from-blue-500 to-purple-600' },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white rounded-3xl p-5 flex flex-col gap-2 border border-slate-200 shadow-sm">
@@ -585,7 +594,7 @@ const OwnerDashboard = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-50">
-                                        {listings.length > 0 ? listings.map((listing) => (
+                                        {listings.filter(l => l.status !== 'rented' && l.status !== 'sold').length > 0 ? listings.filter(l => l.status !== 'rented' && l.status !== 'sold').map((listing) => (
                                             <tr key={listing.$id} className="hover:bg-[#0a080a]/50 transition-colors">
                                                 <td className="px-8 py-5">
                                                     <div className="flex items-center">
@@ -618,11 +627,11 @@ const OwnerDashboard = () => {
                                                 <td className="px-6 py-4">
                                                     <span className={
                                                         listing.status === 'approved' ? 'chip-approved' :
-                                                            listing.status === 'sold' ? 'bg-slate-100 text-slate-500 border border-slate-200 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' :
+                                                            (listing.status === 'sold' || listing.status === 'rented') ? 'bg-slate-100 text-slate-500 border border-slate-200 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' :
                                                                 'chip-pending'
                                                     }>
                                                         {listing.status === 'approved' ? 'Live' :
-                                                            listing.status === 'sold' ? 'Sold' : 'Pending'}
+                                                            (listing.status === 'sold' || listing.status === 'rented') ? 'Rented' : 'Pending'}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-5">
@@ -649,11 +658,11 @@ const OwnerDashboard = () => {
                                                         </Link>
                                                         {listing.status === 'approved' && (
                                                             <button
-                                                                onClick={() => handleMarkAsSold(listing.$id)}
+                                                                onClick={() => handleToggleRented(listing.$id, listing.status)}
                                                                 className="w-9 h-9 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center transition-colors"
-                                                                title="Mark as Sold"
+                                                                title="Mark as Rented"
                                                             >
-                                                                <CheckCircle size={16} />
+                                                                <Home size={16} />
                                                             </button>
                                                         )}
                                                         <button
@@ -688,7 +697,7 @@ const OwnerDashboard = () => {
 
                             {/* Mobile Cards */}
                             <div className="md:hidden p-4 space-y-2">
-                                {listings.length > 0 ? listings.map((listing) => (
+                                {listings.filter(l => l.status !== 'rented' && l.status !== 'sold').length > 0 ? listings.filter(l => l.status !== 'rented' && l.status !== 'sold').map((listing) => (
                                     <div key={listing.$id} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
                                         <div className="flex items-center gap-3 mb-3">
                                             <div className="w-[4.5rem] h-[4.5rem] rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-white/10">
@@ -733,7 +742,87 @@ const OwnerDashboard = () => {
                     </div>
                 )}
 
-                {/* ===== ADD LISTING TAB ===== */}
+                {/* ===== RENTED TAB ===== */}
+                {activeTab === 'rented' && (
+                    <div className="animate-fade-in">
+                        <div className="card-elevated overflow-hidden">
+                            <div className="p-6 md:p-8 border-b border-slate-50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                                <div>
+                                    <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>Rented Properties</h3>
+                                    <p className="text-slate-400 text-sm font-normal">Properties currently marked as rented out.</p>
+                                </div>
+                            </div>
+
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-slate-50">
+                                            <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Property</th>
+                                            <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Type</th>
+                                            <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Rent</th>
+                                            <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                        {listings.filter(l => l.status === 'rented' || l.status === 'sold').length > 0 ? listings.filter(l => l.status === 'rented' || l.status === 'sold').map((listing) => (
+                                            <tr key={listing.$id} className="hover:bg-slate-50/50 transition-colors">
+                                                <td className="px-8 py-5">
+                                                    <div className="flex items-center">
+                                                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 mr-4 shrink-0 border border-slate-200 shadow-sm">
+                                                            <img
+                                                                src={parseJsonField(listing.images)?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
+                                                                alt={listing.title}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>{listing.title}</h4>
+                                                            <span className="text-xs font-normal text-slate-400 flex items-center gap-1 mt-0.5">
+                                                                <MapPin size={10} className="text-blue-400 shrink-0" />
+                                                                <span className="truncate max-w-[180px]">{listing.location}</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md text-slate-500 border border-slate-200">{listing.type}</span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center font-bold text-blue-600" style={{ fontFamily: 'Bungee' }}>
+                                                        <IndianRupee size={13} className="mr-0.5" />
+                                                        {listing.price?.toLocaleString()}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-5">
+                                                    <div className="flex items-center gap-2">
+                                                        <button
+                                                            onClick={() => handleToggleRented(listing.$id, listing.status)}
+                                                            className="flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 px-4 py-2 rounded-lg text-xs font-bold transition-all"
+                                                        >
+                                                            <CheckCircle size={14} /> Mark as Available
+                                                        </button>
+                                                        <Link
+                                                            to={`/dashboard/edit-listing/${listing.$id}`}
+                                                            className="w-9 h-9 bg-blue-50 hover:bg-blue-100 text-blue-950 rounded-lg flex items-center justify-center transition-colors"
+                                                        >
+                                                            <Edit2 size={16} />
+                                                        </Link>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )) : (
+                                            <tr>
+                                                <td colSpan={4} className="px-8 py-20 text-center text-slate-400 text-sm font-medium">
+                                                    No rented properties found.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 {activeTab === 'add' && (
                     <div className="animate-fade-in max-w-4xl mx-auto">
                         <div className="card-elevated overflow-hidden">
