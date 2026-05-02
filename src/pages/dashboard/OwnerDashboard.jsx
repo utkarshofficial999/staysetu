@@ -627,11 +627,13 @@ const OwnerDashboard = () => {
                                                 <td className="px-6 py-4">
                                                     <span className={
                                                         listing.status === 'approved' ? 'chip-approved' :
-                                                            (listing.status === 'sold' || listing.status === 'rented') ? 'bg-slate-100 text-slate-500 border border-slate-200 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' :
+                                                            listing.status === 'sold' ? 'bg-red-100 text-red-600 border border-red-200 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' :
+                                                            listing.status === 'rented' ? 'bg-slate-100 text-slate-500 border border-slate-200 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' :
                                                                 'chip-pending'
                                                     }>
                                                         {listing.status === 'approved' ? 'Live' :
-                                                            (listing.status === 'sold' || listing.status === 'rented') ? 'Rented' : 'Pending'}
+                                                            listing.status === 'sold' ? 'Sold Out' :
+                                                            listing.status === 'rented' ? 'Rented' : 'Pending'}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-5">
@@ -748,8 +750,8 @@ const OwnerDashboard = () => {
                         <div className="card-elevated overflow-hidden">
                             <div className="p-6 md:p-8 border-b border-slate-50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                                 <div>
-                                    <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>Rented Properties</h3>
-                                    <p className="text-slate-400 text-sm font-normal">Properties currently marked as rented out.</p>
+                                    <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>Rented & Sold Properties</h3>
+                                    <p className="text-slate-400 text-sm font-normal">Properties currently marked as rented or sold out.</p>
                                 </div>
                             </div>
 

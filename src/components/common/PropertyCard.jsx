@@ -23,7 +23,9 @@ const typeStyles = {
 const PropertyCard = ({ property }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const isRented = property?.status === 'rented' || property?.status === 'sold';
+    const isRented = property?.status === 'rented';
+    const isSold = property?.status === 'sold';
+    const isUnavailable = isRented || isSold;
     const [activeImage, setActiveImage] = useState(0);
     const [imgError, setImgError] = useState(false);
     const [liked, setLiked] = useState(false);
@@ -69,7 +71,7 @@ const PropertyCard = ({ property }) => {
 
     const handleWhatsAppClick = (e) => {
         e.preventDefault();
-        if (isRented) return;
+        if (isUnavailable) return;
 
         // Require sign in
         if (!user) {
@@ -113,15 +115,15 @@ const PropertyCard = ({ property }) => {
                 <img
                     src={getImgSrc(activeImage)}
                     alt={property?.title || 'Property'}
-                    className={`relative w-full h-full object-contain z-10 transition-transform duration-700 ease-out group-hover:scale-105 ${isRented ? 'grayscale-[0.8] opacity-60' : ''}`}
+                    className={`relative w-full h-full object-contain z-10 transition-transform duration-700 ease-out group-hover:scale-105 ${isUnavailable ? 'grayscale-[0.8] opacity-60' : ''}`}
                     onError={() => setImgError(true)}
                 />
 
-                {/* Rented Out Overlay */}
-                {isRented && (
+                {/* Rented / Sold Out Overlay */}
+                {isUnavailable && (
                     <div className="absolute inset-0 z-40 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center p-4">
                         <div className="bg-white/90 backdrop-blur-md border-2 border-slate-900 px-6 py-3 rounded-2xl transform -rotate-12 shadow-2xl">
-                            <span className="text-xl font-black text-slate-900 uppercase tracking-[0.2em]" style={{ fontFamily: 'Bungee' }}>Rented Out</span>
+                            <span className="text-xl font-black text-slate-900 uppercase tracking-[0.2em]" style={{ fontFamily: 'Bungee' }}>{isSold ? 'Sold Out' : 'Rented Out'}</span>
                         </div>
                     </div>
                 )}
@@ -261,14 +263,14 @@ const PropertyCard = ({ property }) => {
                     </Link>
                     <button
                         onClick={handleWhatsAppClick}
-                        disabled={isRented}
+                        disabled={isUnavailable}
                         className={`border-2 border-slate-900 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${
-                            isRented 
+                            isUnavailable 
                                 ? 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed' 
                                 : 'text-slate-900 hover:bg-slate-50'
                         }`}
                     >
-                        {isRented ? 'Already Rented' : 'Contact Us'}
+                        {isSold ? 'Sold Out' : isRented ? 'Already Rented' : 'Contact Us'}
                     </button>
                 </div>
             </div>

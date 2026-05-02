@@ -22,7 +22,9 @@ const PropertyDetails = () => {
     const [error, setError] = useState(null);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
-    const isRented = property?.status === 'rented' || property?.status === 'sold';
+    const isRented = property?.status === 'rented';
+    const isSold = property?.status === 'sold';
+    const isUnavailable = isRented || isSold;
 
     // Reviews state
     const [reviews, setReviews] = useState([]);
@@ -198,7 +200,7 @@ const PropertyDetails = () => {
     };
 
     const initiateWhatsApp = () => {
-        if (isRented) return;
+        if (isUnavailable) return;
         if (!user) {
             navigate('/login', { state: { from: `/property/${id}` } });
             return;
@@ -271,9 +273,9 @@ const PropertyDetails = () => {
                         <span className="hidden sm:flex chip-approved">
                             <CheckCircle2 size={10} className="mr-1" /> Verified
                         </span>
-                        {isRented && (
+                        {isUnavailable && (
                             <span className="px-3 py-1 bg-slate-900 text-white rounded-lg text-[10px] font-black uppercase tracking-[0.2em] shadow-lg transform -rotate-2" style={{ fontFamily: 'Bungee' }}>
-                                Rented Out
+                                {isSold ? 'Sold Out' : 'Rented Out'}
                             </span>
                         )}
                         <button
@@ -330,10 +332,10 @@ const PropertyDetails = () => {
                                 }}
                             />
 
-                            {isRented && (
+                            {isUnavailable && (
                                 <div className="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center p-4">
                                     <div className="bg-white/90 backdrop-blur-md border-3 border-slate-900 px-10 py-5 rounded-[2rem] transform -rotate-6 shadow-2xl">
-                                        <span className="text-3xl font-black text-slate-900 uppercase tracking-[0.2em]" style={{ fontFamily: 'Bungee' }}>Rented Out</span>
+                                        <span className="text-3xl font-black text-slate-900 uppercase tracking-[0.2em]" style={{ fontFamily: 'Bungee' }}>{isSold ? 'Sold Out' : 'Rented Out'}</span>
                                     </div>
                                 </div>
                             )}
@@ -630,15 +632,15 @@ const PropertyDetails = () => {
 
                              <button
                                 onClick={initiateWhatsApp}
-                                disabled={isRented}
+                                disabled={isUnavailable}
                                 className={`w-full py-4 justify-center text-sm font-black uppercase tracking-widest rounded-2xl flex items-center gap-2 transition-all ${
-                                    isRented 
+                                    isUnavailable 
                                         ? 'bg-slate-100 text-slate-400 border-2 border-slate-200 cursor-not-allowed shadow-none' 
                                         : 'bg-[#25D366] text-white hover:bg-[#128C7E] shadow-lg shadow-emerald-200/50'
                                 }`}
                             >
-                                {isRented ? <Home size={17} /> : <Phone size={17} />}
-                                {isRented ? 'Already Rented Out' : 'Connect via WhatsApp'}
+                                {isUnavailable ? <Home size={17} /> : <Phone size={17} />}
+                                {isSold ? 'Sold Out' : isRented ? 'Already Rented Out' : 'Connect via WhatsApp'}
                             </button>
                             <p className="text-center text-[11px] text-slate-500 font-medium mb-6">⚡ {String(property.listedBy || 'owner').toLowerCase() === 'owner' ? 'Owner' : 'Broker'} typically replies within 5 mins</p>
 

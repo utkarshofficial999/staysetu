@@ -19,7 +19,7 @@ const AdminPanel = () => {
     const [usersList, setUsersList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('pending');
-    const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, rented: 0, total: 0, roommate_pending: 0, wa_leads: 0, maid_pending: 0 });
+    const [stats, setStats] = useState({ users: 0, pending: 0, approved: 0, rented: 0, total: 0, roommate_pending: 0, wa_leads: 0, maid_pending: 0, sold: 0 });
     const [actionLoading, setActionLoading] = useState(null);
     const [editingItem, setEditingItem] = useState(null); // For editing photos
     const fileInputRef = useRef(null);
@@ -178,7 +178,7 @@ const AdminPanel = () => {
             }
 
             // Fetch stats
-            const [profilesRes, pendingRes, approvedRes, rentedRes, totalRes, rmPendingRes, waLeadsRes, maidPendingRes] = await Promise.all([
+            const [profilesRes, pendingRes, approvedRes, rentedRes, totalRes, rmPendingRes, waLeadsRes, maidPendingRes, soldRes] = await Promise.all([
                 databases.listDocuments(DATABASE_ID, COLLECTION.profiles, [Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'pending'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'approved'), Query.limit(1)]),
@@ -187,6 +187,7 @@ const AdminPanel = () => {
                 databases.listDocuments(DATABASE_ID, COLLECTION.roommateRequests, [Query.equal('status', 'pending'), Query.limit(1)]),
                 databases.listDocuments(DATABASE_ID, COLLECTION.whatsappLeads, [Query.limit(1)]).catch(() => ({ total: 0 })),
                 databases.listDocuments(DATABASE_ID, COLLECTION.maidServices, [Query.equal('status', 'pending'), Query.limit(1)]).catch(() => ({ total: 0 })),
+                databases.listDocuments(DATABASE_ID, COLLECTION.listings, [Query.equal('status', 'sold'), Query.limit(1)]).catch(() => ({ total: 0 })),
             ]);
 
             setStats({
@@ -198,6 +199,7 @@ const AdminPanel = () => {
                 roommate_pending: rmPendingRes.total || 0,
                 wa_leads: waLeadsRes.total || 0,
                 maid_pending: maidPendingRes.total || 0,
+                sold: soldRes.total || 0,
             });
         } catch (err) {
             console.error('Fetch error:', err);
@@ -230,6 +232,18 @@ const AdminPanel = () => {
             await fetchData();
         } catch (err) {
             console.error('Toggle rented error:', err);
+        }
+        setActionLoading(null);
+    };
+
+    const toggleSold = async (id, currentStatus) => {
+        const newStatus = currentStatus === 'sold' ? 'approved' : 'sold';
+        setActionLoading(id + '_sold');
+        try {
+            await databases.updateDocument(DATABASE_ID, getCollectionForTab(), id, { status: newStatus });
+            await fetchData();
+        } catch (err) {
+            console.error('Toggle sold error:', err);
         }
         setActionLoading(null);
     };
@@ -316,13 +330,14 @@ const AdminPanel = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
                     {[
                         { label: 'Users', value: stats.users, icon: Users, gradient: 'from-blue-500 to-purple-600' },
                         { label: 'Listings', value: stats.total, icon: Home, gradient: 'from-blue-950 to-blue-600' },
                         { label: 'Pending', value: stats.pending, icon: Clock, gradient: 'from-amber-500 to-orange-600' },
                         { label: 'Live', value: stats.approved, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600' },
                         { label: 'Rented', value: stats.rented, icon: Home, gradient: 'from-indigo-500 to-blue-600' },
+                        { label: 'Sold Out', value: stats.sold, icon: ShieldCheck, gradient: 'from-red-500 to-pink-600' },
                         { label: 'WA Leads', value: stats.wa_leads, icon: Phone, gradient: 'from-green-500 to-emerald-600' },
                         { label: 'Maid Req', value: stats.maid_pending, icon: Brush, gradient: 'from-amber-500 to-yellow-600' },
                     ].map((s, i) => (
@@ -417,6 +432,7 @@ const AdminPanel = () => {
                                     { key: 'pending', label: 'Pending' },
                                     { key: 'approved', label: 'Approved' },
                                     { key: 'rented', label: 'Rented' },
+                                    { key: 'sold', label: 'Sold Out' },
                                     { key: 'all', label: 'All' },
                                 ].map(({ key, label }) => (
                                     <button
@@ -887,8 +903,8 @@ const AdminPanel = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={item.status === 'approved' ? 'chip-approved' : item.status === 'rented' ? 'bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' : 'chip-pending'}>
-                                                    {item.status === 'approved' ? 'Live' : item.status === 'rented' ? 'Rented' : 'Pending'}
+                                                <span className={item.status === 'approved' ? 'chip-approved' : item.status === 'rented' ? 'bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' : item.status === 'sold' ? 'bg-red-50 text-red-600 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider' : 'chip-pending'}>
+                                                    {item.status === 'approved' ? 'Live' : item.status === 'rented' ? 'Rented' : item.status === 'sold' ? 'Sold Out' : 'Pending'}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
@@ -910,9 +926,17 @@ const AdminPanel = () => {
                                                             >
                                                                 {actionLoading === item.$id + '_rented' ? <Loader2 size={14} className="animate-spin" /> : <Home size={14} />}
                                                             </button>
+                                                            <button
+                                                                onClick={() => toggleSold(item.$id, item.status)}
+                                                                disabled={actionLoading === item.$id + '_sold'}
+                                                                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all active:scale-90 disabled:opacity-50 border ${item.status === 'sold' ? 'bg-red-600 text-white border-red-600' : 'bg-red-50 text-red-600 border-red-100/60'}`}
+                                                                title={item.status === 'sold' ? "Mark as Available" : "Mark as Sold Out"}
+                                                            >
+                                                                {actionLoading === item.$id + '_sold' ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
+                                                            </button>
                                                         </>
                                                     )}
-                                                    {item.status !== 'approved' && item.status !== 'rented' && (
+                                                    {item.status !== 'approved' && item.status !== 'rented' && item.status !== 'sold' && (
                                                         <button
                                                             onClick={() => approve(item.$id)}
                                                             disabled={actionLoading === item.$id + '_approve'}
