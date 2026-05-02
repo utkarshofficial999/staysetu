@@ -153,9 +153,13 @@ const AdminPanel = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            if (activeTab === 'listings') {
+            if (activeTab === 'listings' || activeTab === 'sold_listings') {
                 const queries = [Query.orderDesc('$createdAt'), Query.limit(100)];
-                if (filter !== 'all') queries.push(Query.equal('status', filter));
+                if (activeTab === 'sold_listings') {
+                    queries.push(Query.equal('status', 'sold'));
+                } else if (filter !== 'all') {
+                    queries.push(Query.equal('status', filter));
+                }
                 const res = await databases.listDocuments(DATABASE_ID, COLLECTION.listings, queries);
                 setListings(res.documents);
             } else if (activeTab === 'whatsapp_leads') {
@@ -208,7 +212,7 @@ const AdminPanel = () => {
     };
 
     const getCollectionForTab = () => {
-        if (activeTab === 'listings') return COLLECTION.listings;
+        if (activeTab === 'listings' || activeTab === 'sold_listings') return COLLECTION.listings;
         if (activeTab === 'maids') return COLLECTION.maidServices;
         return COLLECTION.roommateRequests;
     };
@@ -253,7 +257,7 @@ const AdminPanel = () => {
         setActionLoading(id + '_reject');
         try {
             await databases.deleteDocument(DATABASE_ID, getCollectionForTab(), id);
-            if (activeTab === 'listings') setListings(prev => prev.filter(l => l.$id !== id));
+            if (activeTab === 'listings' || activeTab === 'sold_listings') setListings(prev => prev.filter(l => l.$id !== id));
             else if (activeTab === 'maids') setMaidServices(prev => prev.filter(m => m.$id !== id));
             else setRoommates(prev => prev.filter(r => r.$id !== id));
         } catch (err) {
@@ -375,6 +379,15 @@ const AdminPanel = () => {
                             Roommate Req ({stats.roommate_pending})
                         </button>
                         <button
+                            onClick={() => { setActiveTab('sold_listings'); }}
+                            className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === 'sold_listings'
+                                ? 'text-red-600 border-b-2 border-red-500 bg-red-50/30'
+                                : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            Sold Out ({stats.sold})
+                        </button>
+                        <button
                             onClick={() => setActiveTab('add')}
                             className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === 'add'
                                 ? 'text-blue-600 border-b-2 border-blue-500 bg-blue-50/30'
@@ -422,7 +435,7 @@ const AdminPanel = () => {
                     </div>
 
                     {/* Filter Bar */}
-                    {activeTab !== 'add' && activeTab !== 'add_maid' && activeTab !== 'whatsapp_leads' && activeTab !== 'users' && (
+                    {activeTab !== 'add' && activeTab !== 'add_maid' && activeTab !== 'whatsapp_leads' && activeTab !== 'users' && activeTab !== 'sold_listings' && (
                         <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Bungee' }}>
                                 {activeTab === 'listings' ? 'Listing Verification' : activeTab === 'maids' ? 'Maid Service Approvals' : 'Student Requirements'}
@@ -432,7 +445,6 @@ const AdminPanel = () => {
                                     { key: 'pending', label: 'Pending' },
                                     { key: 'approved', label: 'Approved' },
                                     { key: 'rented', label: 'Rented' },
-                                    { key: 'sold', label: 'Sold Out' },
                                     { key: 'all', label: 'All' },
                                 ].map(({ key, label }) => (
                                     <button
@@ -826,11 +838,11 @@ const AdminPanel = () => {
                                     <tr className="bg-slate-50/50">
                                         <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">ID</th>
                                         <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                                            {activeTab === 'listings' ? 'Property' : 'Student'}
+                                            {activeTab === 'listings' || activeTab === 'sold_listings' ? 'Property' : 'Student'}
                                         </th>
                                         <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Contact</th>
                                         <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                                            {activeTab === 'listings' ? 'Type / Rent' : 'College / Budget'}
+                                            {activeTab === 'listings' || activeTab === 'sold_listings' ? 'Type / Rent' : 'College / Budget'}
                                         </th>
                                         <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Location</th>
                                         <th className="px-6 py-3.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status</th>
@@ -846,14 +858,14 @@ const AdminPanel = () => {
                                                 </td>
                                             </tr>
                                         ))
-                                    ) : (activeTab === 'listings' ? listings : roommates).length > 0 ? (activeTab === 'listings' ? listings : roommates).map((item) => (
+                                    ) : (activeTab === 'listings' || activeTab === 'sold_listings' ? listings : roommates).length > 0 ? (activeTab === 'listings' || activeTab === 'sold_listings' ? listings : roommates).map((item) => (
                                         <tr key={item.$id} className="hover:bg-slate-50/50 transition-colors text-sm">
                                             <td className="px-6 py-4">
                                                 <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded uppercase">{item.$id.slice(-6)}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    {activeTab === 'listings' ? (
+                                                    {activeTab === 'listings' || activeTab === 'sold_listings' ? (
                                                         <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100/60">
                                                             <img
                                                                 src={parseJsonField(item.images)?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=200&q=80'}
@@ -868,10 +880,10 @@ const AdminPanel = () => {
                                                     )}
                                                     <div className="min-w-0">
                                                         <h4 className="font-semibold text-slate-900 truncate max-w-[180px]" style={{ fontFamily: 'Bungee' }}>
-                                                            {activeTab === 'listings' ? item.title : (item.name || 'Student')}
+                                                            {activeTab === 'listings' || activeTab === 'sold_listings' ? item.title : (item.name || 'Student')}
                                                         </h4>
                                                         <span className="text-[10px] font-medium text-slate-400 block italic">
-                                                            {activeTab === 'listings' ? `Owner: ${item.owner?.full_name || 'User'}` : `ID: ${item.$id.slice(0, 8)}...`}
+                                                            {activeTab === 'listings' || activeTab === 'sold_listings' ? `Owner: ${item.owner?.full_name || 'User'}` : `ID: ${item.$id.slice(0, 8)}...`}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -890,7 +902,7 @@ const AdminPanel = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-50 px-2 py-0.5 rounded-md text-slate-500 block mb-1 w-fit border border-slate-100/60">
-                                                    {activeTab === 'listings' ? item.type : (item.college || 'N/A')}
+                                                    {activeTab === 'listings' || activeTab === 'sold_listings' ? item.type : (item.college || 'N/A')}
                                                 </span>
                                                 <span className="text-sm font-bold text-slate-900 flex items-center" style={{ fontFamily: 'Bungee' }}>
                                                     <IndianRupee size={12} className="mr-0.5" />{Number(item.budget || item.price || 0).toLocaleString()}/mo
@@ -909,7 +921,7 @@ const AdminPanel = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    {activeTab === 'listings' && (
+                                                    {(activeTab === 'listings' || activeTab === 'sold_listings') && (
                                                         <>
                                                             <button
                                                                 onClick={() => setEditingItem(item)}
@@ -960,9 +972,9 @@ const AdminPanel = () => {
                                         <tr>
                                             <td colSpan={5} className="px-8 py-20 text-center">
                                                 <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-300">
-                                                    {activeTab === 'listings' ? <Home size={24} /> : <Users size={24} />}
+                                                    {activeTab === 'listings' || activeTab === 'sold_listings' ? <Home size={24} /> : <Users size={24} />}
                                                 </div>
-                                                <p className="text-slate-400 font-medium">No {filter} items found.</p>
+                                                <p className="text-slate-400 font-medium">No {activeTab === 'sold_listings' ? 'sold properties' : `${filter} items`} found.</p>
                                             </td>
                                         </tr>
                                     )}
