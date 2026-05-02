@@ -530,9 +530,9 @@ const EditListing = () => {
                             </div>
                         </div>
 
-                        {/* Photos */}
+                        {/* Photos & Videos */}
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-plum-500">Step 3 — Photos</h3>
+                            <h3 className="text-xl font-bold text-slate-900 mb-6 font-black uppercase tracking-widest text-[10px] text-plum-500">Step 3 — Photos & Videos</h3>
                             <div className="space-y-4">
                                 {formData.images.map((url, index) => (
                                     <div key={index} className="flex gap-3">
@@ -560,7 +560,7 @@ const EditListing = () => {
                                     className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 flex items-center justify-center space-x-2 hover:border-plum-300 hover:text-plum-500 transition-all font-bold"
                                 >
                                     <Plus size={20} />
-                                    <span>Add Another Image URL</span>
+                                    <span>Add Another Media URL</span>
                                 </button>
                             </div>
                         </div>

@@ -493,9 +493,9 @@ const AddListing = () => {
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
                                 <span className="w-8 h-8 bg-plum-100 text-plum-600 rounded-lg flex items-center justify-center mr-3 text-sm">3</span>
-                                Property Photos (URLs)
+                                Property Photos & Videos (URLs)
                             </h3>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Paste image URLs from the web (Unsplash, etc.)</p>
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Paste image or video URLs from the web (Unsplash, etc.)</p>
                             <div className="space-y-4">
                                 {formData.images.map((url, index) => (
                                     <div key={index} className="flex gap-3">
@@ -523,7 +523,7 @@ const AddListing = () => {
                                     className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 flex items-center justify-center space-x-2 hover:border-plum-300 hover:text-plum-500 transition-all font-bold"
                                 >
                                     <Plus size={20} />
-                                    <span>Add Another Image URL</span>
+                                    <span>Add Another Media URL</span>
                                 </button>
                             </div>
                         </div>

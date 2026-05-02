@@ -254,8 +254,11 @@ const OwnerDashboard = () => {
                 // Construct the file view URL manually for reliability
                 const endpoint = 'https://sgp.cloud.appwrite.io/v1';
                 const projectId = '69a2731e00047b3b01e9';
-                const url = `${endpoint}/storage/buckets/${BUCKET_ID}/files/${result.$id}/view?project=${projectId}`;
-                newUploads.push({ url, name: file.name, fileId: result.$id });
+                let url = `${endpoint}/storage/buckets/${BUCKET_ID}/files/${result.$id}/view?project=${projectId}`;
+                if (file.type.startsWith('video/')) {
+                    url += '&is_video=true';
+                }
+                newUploads.push({ url, name: file.name, fileId: result.$id, isVideo: file.type.startsWith('video/') });
             } catch (err) {
                 console.error('Upload error:', err);
                 alert(`Failed to upload ${file.name}: ${err.message}`);
@@ -599,11 +602,15 @@ const OwnerDashboard = () => {
                                                 <td className="px-8 py-5">
                                                     <div className="flex items-center">
                                                         <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 mr-4 shrink-0 border border-white/5 shadow-sm">
-                                                            <img
-                                                                src={parseJsonField(listing.images)?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
-                                                                alt={listing.title}
-                                                                className="w-full h-full object-cover"
-                                                            />
+                                                            {parseJsonField(listing.images)?.[0]?.includes('is_video=true') ? (
+                                                                <video src={parseJsonField(listing.images)[0]} className="w-full h-full object-cover" muted autoPlay loop playsInline />
+                                                            ) : (
+                                                                <img
+                                                                    src={parseJsonField(listing.images)?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
+                                                                    alt={listing.title}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            )}
                                                         </div>
                                                         <div className="min-w-0">
                                                             <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>{listing.title}</h4>
@@ -703,11 +710,15 @@ const OwnerDashboard = () => {
                                     <div key={listing.$id} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
                                         <div className="flex items-center gap-3 mb-3">
                                             <div className="w-[4.5rem] h-[4.5rem] rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-white/10">
-                                                <img
-                                                    src={parseJsonField(listing.images)?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
-                                                    alt={listing.title}
-                                                    className="w-full h-full object-cover"
-                                                />
+                                                {parseJsonField(listing.images)?.[0]?.includes('is_video=true') ? (
+                                                    <video src={parseJsonField(listing.images)[0]} className="w-full h-full object-cover" muted autoPlay loop playsInline />
+                                                ) : (
+                                                    <img
+                                                        src={parseJsonField(listing.images)?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
+                                                        alt={listing.title}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                )}
                                             </div>
                                             <div className="min-w-0 flex-1">
                                                 <h4 className="font-bold text-slate-900 truncate">{listing.title}</h4>
@@ -771,11 +782,15 @@ const OwnerDashboard = () => {
                                                 <td className="px-8 py-5">
                                                     <div className="flex items-center">
                                                         <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 mr-4 shrink-0 border border-slate-200 shadow-sm">
-                                                            <img
-                                                                src={parseJsonField(listing.images)?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
-                                                                alt={listing.title}
-                                                                className="w-full h-full object-cover"
-                                                            />
+                                                            {parseJsonField(listing.images)?.[0]?.includes('is_video=true') ? (
+                                                                <video src={parseJsonField(listing.images)[0]} className="w-full h-full object-cover" muted autoPlay loop playsInline />
+                                                            ) : (
+                                                                <img
+                                                                    src={parseJsonField(listing.images)?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&q=80'}
+                                                                    alt={listing.title}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            )}
                                                         </div>
                                                         <div className="min-w-0">
                                                             <h4 className="font-semibold text-slate-900 truncate max-w-[200px]" style={{ fontFamily: 'Bungee' }}>{listing.title}</h4>
@@ -1035,7 +1050,7 @@ const OwnerDashboard = () => {
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center" style={{ fontFamily: 'Bungee' }}>
                                         <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3 text-sm font-bold">3</span>
-                                        Property Photos
+                                        Property Photos & Videos
                                     </h3>
 
                                     {/* Upload Zone */}
@@ -1043,7 +1058,7 @@ const OwnerDashboard = () => {
                                         ref={fileInputRef}
                                         type="file"
                                         multiple
-                                        accept="image/*"
+                                        accept="image/*,video/*"
                                         style={{ display: 'none' }}
                                         onChange={handleImageUpload}
                                     />
@@ -1069,9 +1084,9 @@ const OwnerDashboard = () => {
                                                 <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 mb-4">
                                                     <Upload size={28} />
                                                 </div>
-                                                <p className="font-semibold text-slate-900 mb-1 text-sm">Click to upload photos</p>
+                                                <p className="font-semibold text-slate-900 mb-1 text-sm">Click to upload photos/videos</p>
                                                 <p className="text-xs text-slate-400 font-normal">
-                                                    JPG, PNG, WEBP — up to 8 photos · {uploadedImages.length}/8 uploaded
+                                                    JPG, PNG, WEBP, MP4 — up to 8 items · {uploadedImages.length}/8 uploaded
                                                 </p>
                                             </>
                                         )}
@@ -1082,7 +1097,11 @@ const OwnerDashboard = () => {
                                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
                                             {uploadedImages.map((img, index) => (
                                                 <div key={index} className="relative group rounded-xl overflow-hidden aspect-square bg-slate-100">
-                                                    <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
+                                                    {(img.isVideo || img.url.includes('is_video=true')) ? (
+                                                        <video src={img.url} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                                                    ) : (
+                                                        <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
+                                                    )}
                                                     {index === 0 && (
                                                         <span className="absolute top-2 left-2 text-[9px] font-semibold bg-blue-500 text-white px-2 py-0.5 rounded-md uppercase">Cover</span>
                                                     )}

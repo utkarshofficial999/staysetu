@@ -112,12 +112,24 @@ const PropertyCard = ({ property }) => {
                     className="absolute inset-0 bg-cover bg-center blur-xl opacity-20 scale-110"
                     style={{ backgroundImage: `url(${getImgSrc(activeImage)})` }}
                 ></div>
-                <img
-                    src={getImgSrc(activeImage)}
-                    alt={property?.title || 'Property'}
-                    className={`relative w-full h-full object-contain z-10 transition-transform duration-700 ease-out group-hover:scale-105 ${isUnavailable ? 'grayscale-[0.8] opacity-60' : ''}`}
-                    onError={() => setImgError(true)}
-                />
+                {getImgSrc(activeImage)?.includes('is_video=true') ? (
+                    <video
+                        src={getImgSrc(activeImage)}
+                        className={`relative w-full h-full object-contain z-10 transition-transform duration-700 ease-out group-hover:scale-105 ${isUnavailable ? 'grayscale-[0.8] opacity-60' : ''}`}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        onError={() => setImgError(true)}
+                    />
+                ) : (
+                    <img
+                        src={getImgSrc(activeImage)}
+                        alt={property?.title || 'Property'}
+                        className={`relative w-full h-full object-contain z-10 transition-transform duration-700 ease-out group-hover:scale-105 ${isUnavailable ? 'grayscale-[0.8] opacity-60' : ''}`}
+                        onError={() => setImgError(true)}
+                    />
+                )}
 
                 {/* Rented / Sold Out Overlay */}
                 {isUnavailable && (

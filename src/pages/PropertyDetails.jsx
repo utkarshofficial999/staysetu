@@ -322,15 +322,27 @@ const PropertyDetails = () => {
                                 style={{ backgroundImage: `url(${property.images?.[activeImage] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80'})` }}
                             ></div>
 
-                            <img
-                                src={property.images?.[activeImage] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80'}
-                                alt={property.title || 'Property'}
-                                className="relative w-full h-full object-contain z-10"
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80';
-                                }}
-                            />
+                            {property.images?.[activeImage]?.includes('is_video=true') ? (
+                                <video
+                                    src={property.images[activeImage]}
+                                    className="relative w-full h-full object-contain z-10"
+                                    autoPlay
+                                    controls
+                                    loop
+                                    muted
+                                    playsInline
+                                />
+                            ) : (
+                                <img
+                                    src={property.images?.[activeImage] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80'}
+                                    alt={property.title || 'Property'}
+                                    className="relative w-full h-full object-contain z-10"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80';
+                                    }}
+                                />
+                            )}
 
                             {isUnavailable && (
                                 <div className="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center p-4">

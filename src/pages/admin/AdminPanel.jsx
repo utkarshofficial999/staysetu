@@ -67,7 +67,10 @@ const AdminPanel = () => {
                 const result = await storage.createFile(BUCKET_ID, ID.unique(), file);
                 const endpoint = 'https://sgp.cloud.appwrite.io/v1';
                 const projectId = '69a2731e00047b3b01e9';
-                const url = `${endpoint}/storage/buckets/${BUCKET_ID}/files/${result.$id}/view?project=${projectId}`;
+                let url = `${endpoint}/storage/buckets/${BUCKET_ID}/files/${result.$id}/view?project=${projectId}`;
+                if (file.type.startsWith('video/')) {
+                    url += '&is_video=true';
+                }
                 setUploadedImages(prev => [...prev, url]);
             } catch (err) {
                 console.error('Upload error:', err);
@@ -279,7 +282,10 @@ const AdminPanel = () => {
         for (const file of files) {
             try {
                 const result = await storage.createFile(BUCKET_ID, ID.unique(), file);
-                const url = `${projectEndpoint}/storage/buckets/${BUCKET_ID}/files/${result.$id}/view?project=${projectId}`;
+                let url = `${projectEndpoint}/storage/buckets/${BUCKET_ID}/files/${result.$id}/view?project=${projectId}`;
+                if (file.type.startsWith('video/')) {
+                    url += '&is_video=true';
+                }
                 newImages.push(url);
             } catch (err) {
                 console.error('Upload error:', err);
@@ -682,11 +688,15 @@ const AdminPanel = () => {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Photos (Required)</label>
+                                    <label className="text-xs font-bold text-slate-400 uppercase">Photos & Videos (Required)</label>
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                         {uploadedImages.map((url, i) => (
                                             <div key={i} className="aspect-square rounded-2xl overflow-hidden border-2 border-slate-100 relative group">
-                                                <img src={url} className="w-full h-full object-cover" />
+                                                {url.includes('is_video=true') ? (
+                                                    <video src={url} className="w-full h-full object-cover" muted playsInline loop autoPlay />
+                                                ) : (
+                                                    <img src={url} className="w-full h-full object-cover" />
+                                                )}
                                                 <button
                                                     type="button"
                                                     onClick={() => setUploadedImages(prev => prev.filter((_, idx) => idx !== i))}
@@ -703,10 +713,10 @@ const AdminPanel = () => {
                                             className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-all bg-slate-50/50"
                                         >
                                             {uploading ? <Loader2 size={24} className="animate-spin" /> : <Upload size={24} />}
-                                            <span className="text-[10px] font-bold mt-2 uppercase tracking-wider">{uploading ? 'Uploading...' : 'Add Photos'}</span>
+                                            <span className="text-[10px] font-bold mt-2 uppercase tracking-wider">{uploading ? 'Uploading...' : 'Add Media'}</span>
                                         </button>
                                     </div>
-                                    <input type="file" multiple ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
+                                    <input type="file" multiple ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*,video/*" />
                                 </div>
 
                                 <button
@@ -867,11 +877,19 @@ const AdminPanel = () => {
                                                 <div className="flex items-center gap-3">
                                                     {activeTab === 'listings' || activeTab === 'sold_listings' ? (
                                                         <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100/60">
-                                                            <img
-                                                                src={parseJsonField(item.images)?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=200&q=80'}
-                                                                className="w-full h-full object-cover"
-                                                                alt=""
-                                                            />
+                                                            {parseJsonField(item.images)?.[0]?.includes('is_video=true') ? (
+                                                                <video
+                                                                    src={parseJsonField(item.images)?.[0]}
+                                                                    className="w-full h-full object-cover"
+                                                                    muted playsInline loop autoPlay
+                                                                />
+                                                            ) : (
+                                                                <img
+                                                                    src={parseJsonField(item.images)?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=200&q=80'}
+                                                                    className="w-full h-full object-cover"
+                                                                    alt=""
+                                                                />
+                                                            )}
                                                         </div>
                                                     ) : (
                                                         <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-xl flex items-center justify-center shrink-0 text-white text-sm font-semibold">
@@ -1003,7 +1021,11 @@ const AdminPanel = () => {
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                 {parseJsonField(editingItem.images)?.map((url, i) => (
                                     <div key={i} className="aspect-square rounded-2xl overflow-hidden border-2 border-slate-100 relative group">
-                                        <img src={url} className="w-full h-full object-cover" alt="" />
+                                        {url?.includes('is_video=true') ? (
+                                            <video src={url} className="w-full h-full object-cover" muted playsInline loop autoPlay />
+                                        ) : (
+                                            <img src={url} className="w-full h-full object-cover" alt="" />
+                                        )}
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -1026,7 +1048,7 @@ const AdminPanel = () => {
                                     <span className="text-[10px] font-bold mt-2 uppercase tracking-wider">{uploading ? 'Uploading...' : 'Add Photos'}</span>
                                 </button>
                             </div>
-                            <input type="file" multiple ref={editFileInputRef} onChange={handleEditImageUpload} className="hidden" accept="image/*" />
+                            <input type="file" multiple ref={editFileInputRef} onChange={handleEditImageUpload} className="hidden" accept="image/*,video/*" />
                         </div>
 
                         <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
