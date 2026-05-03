@@ -28,7 +28,7 @@ async function fixBucket() {
             false,      // fileSecurity
             true,       // enabled  
             30000000,   // maximumFileSize (30MB)
-            ['jpg', 'jpeg', 'png', 'webp', 'gif'],  // file EXTENSIONS, not MIME types
+            ['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'mov', 'avi', 'mkv', 'webm'],  // file EXTENSIONS, not MIME types
             'none',     // compression
             false,      // encryption
             false       // antivirus

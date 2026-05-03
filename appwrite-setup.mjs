@@ -310,7 +310,7 @@ async function setupStorage() {
             false,     // fileSecurity
             true,      // enabled
             30000000,  // maximumFileSize (30MB)
-            ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],  // allowedFileExtensions
+            ['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'mov', 'avi', 'mkv', 'webm'],  // allowedFileExtensions
             'none',    // compression
             false,     // encryption
             false      // antivirus
